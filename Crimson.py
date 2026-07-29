@@ -15,7 +15,7 @@ import subprocess # Usado para executar comandos do sistema (como atualizar o yt
 # *******************************
 # -------------------------------
 
-caminho_base = os.path.dirname(os.path.abspath(__file__))
+caminho_base = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
 caminho_ffmpeg_dir = os.path.join(caminho_base, 'ffmpeg') # Pasta do ffmpeg
 
 # Adiciona a pasta do ffmpeg ao PATH do sistema apenas durante a execução do código
@@ -68,14 +68,21 @@ def baixar_midia_youtube(url, tipo, formato, hook_progresso, pasta_destino='Down
     
     # Se o usuário escolheu vídeo, configuro para baixar vídeo e áudio juntos
     elif tipo == 'video':
-        ydl_opts['format'] = 'bestvideo+bestaudio/best' # Pega melhor vídeo + melhor áudio
         
-        # Usa o ffmpeg para juntar o áudio e o vídeo no formato escolhido (ex: mp4)
-        ydl_opts['merge_output_format'] = formato 
+        # Força o download de formatos que sejam naturalmente compatíveis
+        # com o que o usuário pediu, evitando que o FFmpeg precise re-renderizar o vídeo (poupando 100% de CPU, experiência pessoal)
+        if formato == 'mp4':
+            ydl_opts['format'] = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best'
+        else:
+            ydl_opts['format'] = 'bestvideo+bestaudio/best'
+            
+        # O merge_output_format diz ao FFmpeg apenas para juntar o áudio e o vídeo (Muxing)
+        # Isso leva pouco tempo e não gasta muito de CPU, diferentemente do FFmpegVideoConvertor
+        ydl_opts['merge_output_format'] = formato
 
     print(f"[*] Preparando para baixar ({tipo} - {formato}): {url}")
     
-    # Execução do download
+    # Inicializa o yt-dlp com as configurações preparadas e dispara o download
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
         
@@ -174,7 +181,12 @@ if __name__ == '__main__':
             # ela vai travar o "mainloop" da janela gráfica, paralisando tudo
             def thread_download():
                 try:
-                    baixar_midia_youtube(url, tipo, formato, hook_progresso=atualizar_progresso)
+                    baixar_midia_youtube(
+                        url, 
+                        tipo, 
+                        formato, 
+                        hook_progresso=atualizar_progresso
+                    )
                     
                     # Quando a função acima terminar, aviso a tela principal
                     janela.after(0, finalizar_com_sucesso, tipo, formato)
@@ -201,9 +213,10 @@ if __name__ == '__main__':
     entrada_url = tk.Entry(janela, width=50, font=("Arial", 12))
     entrada_url.pack(pady=5)
 
+    # ------------------------------------------------------------------
     # Criação de um Frame (uma caixa invisível) para organizar os botões lado a lado
     frame_botoes = tk.Frame(janela)
-    frame_botoes.pack(pady=20)
+    frame_botoes.pack(pady=10)
 
     # ------------------------------------------------------------------
     # --- Seção do Áudio ---
@@ -247,12 +260,12 @@ if __name__ == '__main__':
     # ------------------------------------------------------------------
     # --- Lógica da Tela de Carregamento (Update Inicial) ---
     
-    # Esconde os elementos principais temporariamente para mostrar a animação de carregamento
+    # Esconde a interface principal para colocar a barrinha de carregamento (apenas no início)
     frame_botoes.pack_forget()
     entrada_url.pack_forget()
     label_instrucao.config(text="Procurando atualizações de segurança...")
     
-    # mode="indeterminate" cria aquela barrinha que fica indo e voltando sem fim (estilo loading bootstrap)
+    # mode="indeterminate" cria aquela barrinha que fica indo e voltando sem fim
     barra_loading = ttk.Progressbar(janela, orient="horizontal", length=300, mode="indeterminate")
     barra_loading.pack(pady=20)
     barra_loading.start(10) # Velocidade da animação (em ms)
@@ -263,13 +276,16 @@ if __name__ == '__main__':
         barra_loading.pack_forget()
         label_instrucao.config(text="Insira a URL do vídeo do YouTube:")
         entrada_url.pack(pady=5)
-        frame_botoes.pack(pady=20)
+        frame_botoes.pack(pady=10)
 
     # Função que roda em background para a barrinha poder animar sem travar
     def thread_atualizacao_inicial():
         try:
             print("[*] Verificando atualizações de segurança")
-            subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "yt-dlp", "--quiet"])
+            
+            # Usa o --pre para garantir que ele sempre busque a versão "Nightly" do yt-dlp
+            # Essa versão recebe correções diárias contra os bloqueios do YouTube
+            subprocess.run([sys.executable, "-m", "pip", "install", "-U", "--pre", "yt-dlp", "--quiet"])
             print("[*] Tudo atualizado - Interface pronta!")
         except Exception:
             pass
