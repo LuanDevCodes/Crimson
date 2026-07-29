@@ -40,6 +40,11 @@ O Crimson não confia na instalação global das dependências no computador do 
 
 4. Ao rodar o código pela IDE, o Python irá ler o caminho relativo dessa pasta de forma inteligente e injetar ele temporariamente nas Variáveis de Ambiente (`os.environ["PATH"]`).
 
+## ° Tecnologias Avançadas de Bypass e Otimização
+O Crimson passou por uma profunda otimização no seu núcleo (core) para resolver gargalos históricos de bloqueios anti-bot e superaquecimento de CPU:
+- **Bypass Anônimo (Apple Vision Pro & Android VR)**: Graças ao versionamento de segurança agressivo (`--pre` Nightly), o Crimson acessa endpoints secretos e experimentais do YouTube. Ele simula chamadas em nome dos óculos de realidade virtual da Apple e do Android, que recebem fluxos de dados sem limitação de cookies e qualidade (1080p e 4K puros).
+- **Muxing Zero-CPU**: Substituímos os conversores de vídeo tradicionais (que re-renderizam os vídeos e sobrecarregam processadores em 100%) por um sistema de *Smart Muxing*. O programa exige do YouTube apenas formatos de vídeo compatíveis com a extensão desejada (ex: H.264 para MP4). Assim, o FFmpeg apenas "cola" o vídeo e o áudio em questão de segundos e gastando **0% de processamento extra**.
+
 ## • Arquitetura de Compilação (O Teste de "Releases")
 O Crimson nasce não só como uma utilidade do dia a dia, mas também com o papel de ser um **projeto de homologação para o sistema de "Releases" do GitHub**.
 
