@@ -54,5 +54,5 @@ A arquitetura final do projeto tem como objetivo compilar (via **PyInstaller**) 
 
 <br>
 
-**Desenvolvido por Luan** 
+**Desenvolvido por Luan** <br>
 *Primeiro projeto focado em criar um programa para facilitar o dia a dia através de automação e engenharia de software*
