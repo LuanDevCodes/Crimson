@@ -1,0 +1,19 @@
+# Arquivos de ambiente e variáveis
+.env
+GEMINI.md
+downloads - Versão beta
+
+# Diretório do FFmpeg (Arquivos binários pesados)
+ffmpeg/
+
+# Diretório de downloads (Onde os vídeos e áudios baixados são salvos)
+Downloads/
+
+# Arquivos de cache do Python
+__pycache__/
+*.pyc
+
+# Arquivos e pastas temporárias do PyInstaller (compilação)
+build/
+dist/
+*.spec
