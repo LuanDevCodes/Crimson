@@ -1,0 +1,58 @@
+# ¤ Projeto Crimson - Interface de Download do YouTube
+
+## = Descrição do Projeto
+O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica nativa (Tkinter) criada para facilitar e automatizar o download de vídeos e áudios do YouTube. O projeto encapsula o poder da biblioteca `yt-dlp` e a capacidade de processamento de mídia do `FFmpeg` por trás de uma tela amigável e responsiva. A aplicação também lida de forma autônoma com atualizações de segurança internas, esquivando-se ativamente do erro "403: Forbidden" imposto por constantes mudanças no algoritmo do YouTube. A ideia do projeto nasceu de uma necessidade pessoal minha e da ideia de facilitar esse tipo situação.
+
+## Δ Bibliotecas e Ferramentas
+- **Python 3.x**
+- **yt-dlp**: Motor principal responsável por buscar e realizar a extração bruta das mídias.
+- **Tkinter**: Biblioteca nativa do Python utilizada para construir a janela, dropdowns e feedbacks visuais.
+- **Threading**: Módulo responsável por criar rotinas em segundo plano, evitando o congelamento da interface gráfica (mainloop) durante o demorado processo de download em alguns casos.
+- **subprocess**: Ferramenta utilizada para invocar e comandar o terminal do sistema de forma invisível (ex: executando comandos do `pip` sem o usuário ver).
+- **re (Regex)**: Empregado cirurgicamente para higienizar logs. Remove sufixos e caracteres de formatação de cor (ANSI) da saída bruta do yt-dlp e formata a exibição de velocidade dinamicamente.
+
+## § Funcionalidades
+- **Download Flexível e Descomplicado**: Escolha entre baixar apenas áudio ou vídeo (com as qualidades mescladas perfeitamente) através de dropdowns visuais (`mp3`, `mp4`, `mkv`, etc).
+- **Processamento Assíncrono (Zero-Freeze)**: As operações de download pesado e gravação de arquivos não disputam espaço com a renderização visual. Tudo ocorre em *threads* separadas, com a barra de progresso, velocidade e ETA atualizando de forma lisa e constante na thread principal.
+- **Blindagem do Auto-Update Silencioso**: No exato momento em que o aplicativo é inicializado, uma tela de loading bloqueia o uso enquanto a thread secundária verifica e aplica silenciosamente a última versão do `yt-dlp`. Isso blinda o código contra depreciação contínua.
+- **Conversão por Fator Externo (FFmpeg)**: O yt-dlp extrai nativamente os vídeos do YouTube na melhor qualidade, mas separadamente da faixa de áudio de alta resolução. O Crimson aciona o FFmpeg de maneira integrada para mesclar essas duas camadas ou convertê-las para formatos específicos.
+
+## ❏ Interface Visual
+Abaixo estão as capturas de tela demonstrando o visual responsivo da aplicação: a tela de inicialização (com verificação silenciosa de updates) e a home page pronta para receber comandos.
+
+<div align="center">
+  <img src="Capturas/Tela%20inicial%20de%20abertura%20do%20programa%20-%20V.01.png" alt="Tela de Abertura do Programa (Loading)" width="48%">
+  &nbsp;
+  <img src="Capturas/Primeira%20home%20page%20do%20programa%20-%20V.01.png" alt="Home Page do Programa" width="48%">
+</div>
+
+<br>
+
+## + Guia de Uso e Configuração de Ambiente
+Caso você venha a clonar este repositório para inspecionar, executar ou modificar o código através de uma IDE local, existem alguns pré-requisitos fundamentais para o funcionamento.
+
+O Crimson não confia na instalação global das dependências no computador do usuário. Ele exige e rastreia o **FFmpeg** em um escopo totalmente local (na mesma pasta do código):
+
+1. **Instale as Bibliotecas**: Certifique-se de instalar as bibliotecas do projeto (como o próprio `yt-dlp`), as versões usadas podem ser consultadas no arquivo de requerimentos do repositório.
+2. **Setup do FFmpeg**: Crie uma pasta chamada `ffmpeg` na raiz deste projeto (onde o arquivo `Crimson.py` está localizado).
+3. Baixe os binários de execução do FFmpeg (.exe) e aloque-os dentro dessa pasta. Dica: jogue os três arquivos dentro da pasta (ffmpeg.exe, ffplay.exe e ffprobe.exe), eles normalmente são pesados e um exemplo do download correto seria pelo nome abaixo (lembrando que tudo depende do ambiente de execução): "ffmpeg-master-latest-win64-gpl"
+**[ » Acessar Repositório do FFmpeg Builds ](https://github.com/BtbN/FFmpeg-Builds/releases)**
+
+4. Ao rodar o código pela IDE, o Python irá ler o caminho relativo dessa pasta de forma inteligente e injetar ele temporariamente nas Variáveis de Ambiente (`os.environ["PATH"]`).
+
+## • Arquitetura de Compilação (O Teste de "Releases")
+O Crimson nasce não só como uma utilidade do dia a dia, mas também com o papel de ser um **projeto de homologação para o sistema de "Releases" do GitHub**.
+
+A arquitetura final do projeto tem como objetivo compilar (via **PyInstaller**) tanto as lógicas do Python quanto os pesados binários do `FFmpeg` na construção de um único artefato: um `.exe` portátil e autossuficiente. Esse pacote encapsulado será testado nas publicações de Release do GitHub, servindo como modelo para que qualquer pessoa consiga baixar o software de forma limpa e no melhor conceito "Plug and Play".
+
+---
+
+> **Agradecimentos e mensagem final**  
+> Conforme eu for atualizando/melhorando seu funcionamento, fornecerei novas versões de acordo com a necessidade. Deixo em evidência que realizei a criação do projeto com ajuda de inteligências artifíciais (AI), buscando melhoria contínua e novos aprendizados, mas sem omitir seu uso na estruturação do projeto e ajuda na codificação. 
+>   
+> Meus mais profundos agradecimentos a todos os desenvolvedores e às comunidades *Open Source* que fornecem de forma livre as ferramentas usadas (`yt-dlp`, `FFmpeg`) que tornaram a criação deste programa possível.
+
+<br>
+
+**Desenvolvido por Luan** 
+*Primeiro projeto focado em criar um programa para facilitar o dia a dia através de automação e engenharia de software*
