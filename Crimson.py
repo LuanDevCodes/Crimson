@@ -37,10 +37,6 @@ DICIONARIO_IDIOMAS = {
         "Portuguese": "Baixar Vídeo",
         "English": "Download Video"
     },
-    "btn_config": {
-        "Portuguese": " Config",
-        "English": " Settings"
-    },
     "aba_sistema": {
         "Portuguese": "Sistema",
         "English": "System"
@@ -432,7 +428,7 @@ if __name__ == '__main__':
             # Atualiza os botões da tela principal (mãe) que estão no escopo acima
             botao_baixar_audio.config(text=DICIONARIO_IDIOMAS["btn_audio"][idioma_atual])
             botao_baixar_video.config(text=DICIONARIO_IDIOMAS["btn_video"][idioma_atual])
-            botao_config.config(text=DICIONARIO_IDIOMAS["btn_config"][idioma_atual])
+            botao_config.config()
             label_instrucao.config(text=DICIONARIO_IDIOMAS["instrucao_ready"][idioma_atual])
             
             # Atualiza os títulos e rótulos da tela de config atual
