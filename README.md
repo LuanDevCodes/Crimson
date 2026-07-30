@@ -10,12 +10,15 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica n
 - **Threading**: Módulo responsável por criar rotinas em segundo plano, evitando o congelamento da interface gráfica (mainloop) durante o demorado processo de download em alguns casos.
 - **subprocess**: Ferramenta utilizada para invocar e comandar o terminal do sistema de forma invisível (ex: executando comandos do `pip` sem o usuário ver).
 - **re (Regex)**: Empregado cirurgicamente para higienizar logs. Remove sufixos e caracteres de formatação de cor (ANSI) da saída bruta do yt-dlp e formata a exibição de velocidade dinamicamente.
+- **webbrowser**: Módulo nativo do Python usado para transformar as logos dos repositórios no Painel de Créditos em botões que redirecionam o usuário diretamente para as páginas oficiais no navegador.
 
 ## § Funcionalidades
 - **Download Flexível e Descomplicado**: Escolha entre baixar apenas áudio ou vídeo (com as qualidades mescladas perfeitamente) através de dropdowns visuais (`mp3`, `mp4`, `mkv`, etc).
 - **Processamento Assíncrono (Zero-Freeze)**: As operações de download pesado e gravação de arquivos não disputam espaço com a renderização visual. Tudo ocorre em *threads* separadas, com a barra de progresso, velocidade e ETA atualizando de forma lisa e constante na thread principal.
 - **Blindagem do Auto-Update Silencioso**: No exato momento em que o aplicativo é inicializado, uma tela de loading bloqueia o uso enquanto a thread secundária verifica e aplica silenciosamente a última versão do `yt-dlp`. Isso blinda o código contra depreciação contínua.
 - **Conversão por Fator Externo (FFmpeg)**: O yt-dlp extrai nativamente os vídeos do YouTube na melhor qualidade, mas separadamente da faixa de áudio de alta resolução. O Crimson aciona o FFmpeg de maneira integrada para mesclar essas duas camadas ou convertê-las para formatos específicos.
+- **Internacionalização em Tempo Real (PT-BR / EN)**: O sistema inteiro possui um "dicionário" de idiomas em memória. Através de um *Callback* no Painel de Configurações, o usuário pode alterar o idioma e ver todos os textos, pop-ups, barra de progresso e informações de velocidade reagirem e mudarem instantaneamente na tela mãe sem que a aplicação precise reiniciar.
+- **Painel Modular e Créditos**: Uma janela flutuante baseada em "Abas de Notebook", criada para abrigar configurações globais de sistema e um painel de honra à comunidade Open Source, detalhando as ferramentas base do software e seus respectivos repositórios oficiais.
 
 ## ❏ Interface Visual
 Abaixo estão as capturas de tela demonstrando o visual responsivo da aplicação: a tela de inicialização (com verificação silenciosa de updates) e a home page pronta para receber comandos.
