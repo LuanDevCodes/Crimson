@@ -389,6 +389,8 @@ if __name__ == '__main__':
         
         # O .subsample(x, y) é um truque nativo do tkinter para diminuir imagens
         # ele funciona de maneira inversa, quanto menor o valor, maior o tamanho
+        # isso acontece pq o subsample joga pixels fora por assim dizer, então quanto maior o valor, mais pixels serão
+        # descartados a cada linha
         img_config      = raw_config.subsample(15, 15)
         img_git         = raw_git.subsample(9, 9)
         img_community   = raw_community.subsample(10, 10)
@@ -412,6 +414,7 @@ if __name__ == '__main__':
         janela.eval(f'tk::PlaceWindow {str(jan_config)} center')
         
         # Bloqueia a interação com a janela de fundo (torna a janela 'modal')
+        # modal é quando uma janela rouba a atenção do usuário, é um termo comum no front
         jan_config.transient(janela)
         jan_config.grab_set() 
         
@@ -460,6 +463,8 @@ if __name__ == '__main__':
         opcoes_idioma = ["Portuguese", "English"]
         
         # O parâmetro 'command=atualizar_e_renderizar' atrela a função ao clique do menu
+        # o asterisco é necessário pois com ele é possível realizar o desempacotamento, como estou passando ela
+        # como uma lista inteira, preciso dele para deixar tudo devidamente separado (pelas virgulas), não permitindo que ele confunda com apenas um botão
         dropdown_idioma = tk.OptionMenu(aba_sistema, var_idioma, *opcoes_idioma, command=atualizar_e_renderizar)
         dropdown_idioma.pack(pady=5)
         
