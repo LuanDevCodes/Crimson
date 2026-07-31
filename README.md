@@ -22,9 +22,9 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica n
 - **Persistência de Dados e Roteamento Seguro**: O aplicativo memoriza as preferências do usuário (como o seu tema preferido e idioma) salvando um `.json` seguro na rota oculta do `AppData`. Além disso, para evitar confusão de arquivos na raiz do executável, as mídias baixadas não precisam mais de rota estipulada e caem nativamente na pasta de `Downloads` original do Sistema Operacional do usuário.
 - **Painel Modular e Créditos**: Uma janela flutuante baseada em "Abas de Notebook", criada para abrigar configurações globais de sistema e um painel de honra à comunidade Open Source, detalhando as ferramentas base do software e seus respectivos repositórios oficiais.
 
-## ❏ Interface Visual [Registro Histórico Beta]
+## ❏ Interface Visual
 > [!NOTE]
-> As capturas de tela abaixo retratam a evolução do Crimson. Servindo como um registro histórico de como foi o meu primeiro protótipo desenhado em Tkinter raiz e sua evolução. O software foi remodelado utilizando CustomTkinter (cantos arredondados, temas escuros, cores pasteis) e é notável como mudanças simples podem impactar na interface geral da aplicação.
+> As capturas de tela abaixo retratam a evolução do projeto. Servindo como um registro histórico de como foi o meu primeiro protótipo desenhado com o Tkinter raiz e sua evolução. O software foi remodelado utilizando CustomTkinter (cantos arredondados, temas escuros, cores pasteis) e é notável como mudanças simples podem impactar na interface geral da aplicação.
 
 Capturas de tela do protótipo da aplicação: a tela de inicialização e a home page crua
 
