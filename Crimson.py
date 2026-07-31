@@ -1,7 +1,6 @@
 # Projeto Crimson - Uma interface capaz de baixar vídeos do youtube de forma simples
-# Criei esse projeto pela necessidade d euma ferramente útil e confiável para tal, nascendo assim ele :D
+# Criei esse projeto pela necessidade de uma ferramente útil e confiável para tal, nascendo assim ele :D
 
-import yt_dlp # Biblioteca necessária para baixar os vídeos do youtube de forma crua por assim dizer
 import os # Biblioteca para interagir com o sistema operacional (ex: navegar entre pastas, verificar se um arquivo existe, criar pastas e ler variáveis)
 import sys # Necessário para identificar se está rodando como .exe
 import tkinter as tk # Biblioteca para a interface gráfica (nativa do python)
@@ -12,14 +11,61 @@ import re # Usado para limpar textos gerados pelo yt-dlp
 import subprocess # Usado para executar comandos do sistema (como atualizar o yt-dlp)
 import webbrowser # Usado para abrir links na internet (como no caso dos links dos repositório usados)
 import customtkinter as ctk # Biblioteca para conseguir estilizar melhor o aplicativo
+import json # Biblioteca nativa para salvar e ler dados configurados usando esse formato de arquivo
+import urllib.request # Biblioteca nativa para baixar arquivos da internet
+import zipfile # Biblioteca nativa para extrair arquivos compactados
+
+# -------------------------------
+# --- Setup de Diretórios do Aplicativo (AppData) e Persistência ---
+
+# garantindo que o aplicativo salva os dados na pasta oficial do Windows para programas (Local AppData)
+# Em vez de sujar o disco ou perder dados quando o usuário move a pasta
+appdata_local = os.environ.get('LOCALAPPDATA') or os.path.expanduser('~')
+crimson_dir = os.path.join(appdata_local, 'Crimson')
+lib_dir = os.path.join(crimson_dir, 'Lib')
+config_dir = os.path.join(crimson_dir, 'Config')
+config_file = os.path.join(config_dir, 'config.json')
+
+# Cria as pastas caso elas não existam no computador desse usuário
+os.makedirs(lib_dir, exist_ok=True)
+os.makedirs(config_dir, exist_ok=True)
+
+# --- Injeção de Dependência Modular ---
+# Procura se o motor do yt-dlp já foi baixado na pasta Lib
+# Se existir, forço o Python a ler as bibliotecas dessa pasta, ignorando bibliotecas nativas congeladas (PyInstaller)
+path_yt_dlp = os.path.join(lib_dir, 'yt-dlp-master')
+
+if os.path.exists(path_yt_dlp):
+    sys.path.insert(0, path_yt_dlp) # O insert 0 diz pro Python: "Olhe aqui antes de qualquer outro lugar"
+
+import yt_dlp # Agora sim ela é importada (Se a injeção existia, ele pegou a atualizada, senão, pegou a local como fallback)
 
 # -------------------------------
 # *******************************
 # -------------------------------
 
+# --- Funções de Leitura e Escrita do JSON ---
+def carregar_configuracoes():
+    if os.path.exists(config_file):
+        try:
+            with open(config_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            pass # Se o arquivo estiver corrompido, só ignora e retorna o padrão
+    return {"idioma": "Portuguese", "tema": "Dark"}
+
+def salvar_configuracoes(idioma, tema):
+    try:
+        with open(config_file, 'w', encoding='utf-8') as f:
+            json.dump({"idioma": idioma, "tema": tema}, f, indent=4)
+        return True
+    except:
+        return False
+
 # dicionário global de idiomas, uma tupla com os textos traduzidos em diferentes idiomas
-idioma_atual = "Portuguese"
-tema_atual = "Dark" # Definindo um tema padrão (Claro ou Escuro)
+config_atual = carregar_configuracoes()
+idioma_atual = config_atual.get("idioma", "Portuguese")
+tema_atual = config_atual.get("tema", "Dark") # Definindo um tema padrão (Claro ou Escuro)
 
 # Definindo cores em tons pastéis para manter a harmonia visual de forma simples
 TEMAS = {
@@ -187,8 +233,12 @@ os.environ["PATH"] = os.environ["PATH"] + os.pathsep + caminho_ffmpeg_dir
 # --------------------------------------------------------------------------------------------------------------------
 
 # função responsável por baixar áudios ou vídeos do youtube
-def baixar_midia_youtube(url, tipo, formato, hook_progresso, pasta_destino='Downloads'):
+def baixar_midia_youtube(url, tipo, formato, hook_progresso, pasta_destino=None):
     
+    # Se nenhuma pasta for definida, pega a oficial do usuário do Windows, no geral vou passar como None no momento, talvez eu mude isso depois
+    if pasta_destino is None:
+        pasta_destino = os.path.join(os.path.expanduser('~'), 'Downloads')
+        
     # validação da pasta e caso não exista, ela é criada
     if not os.path.exists(pasta_destino):
         os.makedirs(pasta_destino)
@@ -509,7 +559,7 @@ if __name__ == '__main__':
         opcoes_idioma = ["Portuguese", "English"]
         
         # O customtkinter simplifica o OptionMenu e dispensa o asterisco (*) deixando o código mais limpo
-        dropdown_idioma = ctk.CTkOptionMenu(aba_sistema, variable=var_idioma, values=opcoes_idioma, command=atualizar_e_renderizar, corner_radius=8, width=150, font=("Arial", 12, "bold"))
+        dropdown_idioma = ctk.CTkOptionMenu(aba_sistema, variable=var_idioma, values=opcoes_idioma, corner_radius=8, width=150, font=("Arial", 12, "bold"))
         dropdown_idioma.pack(pady=5)
         
         # ------------------------------------------------------------------
@@ -520,34 +570,65 @@ if __name__ == '__main__':
         var_tema = ctk.StringVar(value=tema_atual)
         opcoes_tema = ["Dark", "Egg"]
         
-        # Função para aplicar o tema em tempo real
-        def atualizar_tema(selecao):
-            
-            global tema_atual
-            tema_atual = selecao
-            aplicar_tema() # Função aonde é criada a tela principal
-            
-            nova_cor = TEMAS[tema_atual]
-            jan_config.config(bg=nova_cor["bg_janela"])
-            aba_sistema.config(bg=nova_cor["bg_janela"])
-            aba_sobre.config(bg=nova_cor["bg_janela"])
-            frame_repos.config(bg=nova_cor["bg_janela"])
-            
-            label_idioma.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-            label_tema.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-            label_versao.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-            label_disclaimer.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-            label_creditos.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-            link_crimson.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-            link_ytdlp.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-            link_ffmpeg.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-            marca_dagua.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto_magua"])
-            
-            dropdown_idioma.configure(fg_color=nova_cor["btn_audio"], button_color=nova_cor["btn_audio"], button_hover_color=nova_cor["btn_audio_hover"], text_color=nova_cor["btn_fg"], dropdown_fg_color=nova_cor["dropdown_bg"], dropdown_hover_color=nova_cor["dropdown_hover"], dropdown_text_color=nova_cor["fg_texto"])
-            dropdown_tema.configure(fg_color=nova_cor["btn_audio"], button_color=nova_cor["btn_audio"], button_hover_color=nova_cor["btn_audio_hover"], text_color=nova_cor["btn_fg"], dropdown_fg_color=nova_cor["dropdown_bg"], dropdown_hover_color=nova_cor["dropdown_hover"], dropdown_text_color=nova_cor["fg_texto"])
-            
-        dropdown_tema = ctk.CTkOptionMenu(aba_sistema, variable=var_tema, values=opcoes_tema, command=atualizar_tema, corner_radius=8, width=150, font=("Arial", 12, "bold"))
+        dropdown_tema = ctk.CTkOptionMenu(aba_sistema, variable=var_tema, values=opcoes_tema, corner_radius=8, width=150, font=("Arial", 12, "bold"))
         dropdown_tema.pack(pady=5)
+        
+        # ------------------------------------------------------------------
+        # Lógica do Botão de Salvar
+        def confirmar_e_salvar():
+            
+            # no geral as variáveis globais devvem ser declaradas no topo das funções, ajuda a evitar erros de compilação
+            # numa execução quebrada aonde ela é chamada antes de ser declarada, experiência pessoal :P
+            global idioma_atual, tema_atual
+            
+            novo_idioma = var_idioma.get()
+            novo_tema = var_tema.get()
+            
+            # Texto da caixa de diálogo dinâmico com base no idioma atual
+            titulo_msg = "Confirmar" if idioma_atual == "Portuguese" else "Confirm"
+            texto_msg = "Tem certeza que deseja salvar as configurações atuais?" if idioma_atual == "Portuguese" else "Are you sure you want to save the current settings?"
+            
+            # Exibe o popup e checa a resposta do usuário
+            if messagebox.askyesno(titulo_msg, texto_msg):
+                
+                # Atualiza as variáveis globais
+                idioma_atual = novo_idioma
+                tema_atual = novo_tema
+                
+                # Grava no arquivo .json recém criado no AppData
+                salvar_configuracoes(idioma_atual, tema_atual)
+                
+                # Só agora aplica as mudanças visualmente para a tela se adaptar à escolha
+                atualizar_e_renderizar(idioma_atual)
+                aplicar_tema()
+                
+                # Mostra que deu bom
+                texto_sucesso = "Configurações salvas com sucesso" if idioma_atual == "Portuguese" else "Settings saved successfully"
+                messagebox.showinfo(titulo_msg, texto_sucesso)
+                
+                # Para evitar erro de tela, atualizo também as cores de dentro da janelinha de config manualmente
+                nova_cor = TEMAS[tema_atual]
+                jan_config.config(bg=nova_cor["bg_janela"])
+                aba_sistema.config(bg=nova_cor["bg_janela"])
+                aba_sobre.config(bg=nova_cor["bg_janela"])
+                frame_repos.config(bg=nova_cor["bg_janela"])
+                
+                label_idioma.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
+                label_tema.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
+                label_versao.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
+                label_disclaimer.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
+                label_creditos.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
+                link_crimson.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
+                link_ytdlp.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
+                link_ffmpeg.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
+                marca_dagua.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto_magua"])
+                
+                dropdown_idioma.configure(fg_color=nova_cor["btn_audio"], button_color=nova_cor["btn_audio"], button_hover_color=nova_cor["btn_audio_hover"], text_color=nova_cor["btn_fg"], dropdown_fg_color=nova_cor["dropdown_bg"], dropdown_hover_color=nova_cor["dropdown_hover"], dropdown_text_color=nova_cor["fg_texto"])
+                dropdown_tema.configure(fg_color=nova_cor["btn_audio"], button_color=nova_cor["btn_audio"], button_hover_color=nova_cor["btn_audio_hover"], text_color=nova_cor["btn_fg"], dropdown_fg_color=nova_cor["dropdown_bg"], dropdown_hover_color=nova_cor["dropdown_hover"], dropdown_text_color=nova_cor["fg_texto"])
+                
+        texto_botao_salvar = "Salvar e Aplicar" if idioma_atual == "Portuguese" else "Save & Apply"
+        botao_salvar = ctk.CTkButton(aba_sistema, text=texto_botao_salvar, font=("Arial", 12, "bold"), command=confirmar_e_salvar, corner_radius=8, width=150)
+        botao_salvar.pack(pady=20)
         
         # Pinta os dropdowns assim que a tela abre
         dropdown_idioma.configure(fg_color=cor["btn_audio"], button_color=cor["btn_audio"], button_hover_color=cor["btn_audio_hover"], text_color=cor["btn_fg"], dropdown_fg_color=cor["dropdown_bg"], dropdown_hover_color=cor["dropdown_hover"], dropdown_text_color=cor["fg_texto"])
@@ -655,10 +736,31 @@ if __name__ == '__main__':
     # Função que roda em background para a barrinha poder animar sem travar
     def thread_atualizacao_inicial():
         try:
-            print("[*] Verificando atualizações de segurança")
-            subprocess.run([sys.executable, "-m", "pip", "install", "-U", "--pre", "yt-dlp", "--quiet"])
-            print("[*] Tudo atualizado - Interface pronta")
-        except Exception:
+            print("[*] Verificando atualizações de segurança (Motor yt-dlp)")
+            
+            # URL para baixar o código-fonte (master branch) constante e mais atualizado direto do GitHub
+            url_master = "https://github.com/yt-dlp/yt-dlp/archive/refs/heads/master.zip"
+            caminho_zip = os.path.join(lib_dir, "yt-dlp-master.zip")
+            
+            # Baixa o zip (Usando apenas as bibliotecas nativas do python)
+            urllib.request.urlretrieve(url_master, caminho_zip)
+            
+            # Extrai o zip dentro da nossa pasta 'Lib' no AppData
+            with zipfile.ZipFile(caminho_zip, 'r') as zip_ref:
+                zip_ref.extractall(lib_dir)
+                
+            # Limpa o arquivo zip que foi baixado, já que o conteúdo foi extraído
+            os.remove(caminho_zip)
+            
+            # Garante que a injeção modular esteja no sys.path para caso o app acabe de abrir pela primeira vez
+            path_extraido = os.path.join(lib_dir, "yt-dlp-master")
+            
+            if path_extraido not in sys.path:
+                sys.path.insert(0, path_extraido)
+                
+            print("[*] Motor atualizado e injetado - Interface pronta")
+        except Exception as e:
+            print(f"[*] Não foi possível atualizar o motor online: {e}")
             pass
         finally:
             janela.after(0, finalizar_loading)
