@@ -24,9 +24,9 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica n
 
 ## ❏ Interface Visual
 > [!NOTE]
-> As capturas de tela abaixo retratam a evolução do projeto. Servindo como um registro histórico de como foi o meu primeiro protótipo desenhado com o Tkinter raiz e sua evolução. O software foi remodelado utilizando CustomTkinter (cantos arredondados, temas escuros, cores pasteis) e é notável como mudanças simples podem impactar na interface geral da aplicação.
+> As capturas de tela abaixo retratam a evolução do projeto. Servindo como um registro de como foi o meu primeiro protótipo desenhado com o Tkinter raiz e sua evolução. O software foi remodelado utilizando CustomTkinter (cantos arredondados, temas escuros, cores pasteis) e é notável como mudanças simples podem impactar na interface geral da aplicação.
 
-Capturas de tela do protótipo da aplicação: a tela de inicialização e a home page crua
+Capturas de tela do protótipo da aplicação: a tela de inicialização e a home page
 
 <div align="center">
   <img src="Capturas/Tela%20inicial%20de%20abertura%20do%20programa%20-%20V.01.png" alt="Tela de Abertura do Programa (Loading)" width="48%">
@@ -49,9 +49,9 @@ O Crimson não confia na instalação global das dependências no computador do 
 4. Ao rodar o código pela IDE, o Python irá ler o caminho relativo dessa pasta de forma inteligente e injetar ele temporariamente nas Variáveis de Ambiente (`os.environ["PATH"]`).
 
 ## ° Tecnologias Avançadas de Bypass e Otimização
-O Crimson passou por uma profunda otimização no seu núcleo (core) para resolver gargalos históricos de bloqueios anti-bot, superaquecimento de CPU e falhas de bibliotecas engessadas:
-- **Bypass Anônimo (Apple Vision Pro & Android VR)**: Graças ao versionamento de segurança agressivo (`--pre` Nightly), o Crimson acessa endpoints secretos e experimentais do YouTube. Ele simula chamadas em nome dos óculos de realidade virtual da Apple e do Android, que recebem fluxos de dados sem limitação de cookies e qualidade (1080p e 4K puros).
-- **Muxing Zero-CPU**: Substituímos os conversores de vídeo tradicionais (que re-renderizam os vídeos e sobrecarregam processadores em 100%) por um sistema de *Smart Muxing*. O programa exige do YouTube apenas formatos de vídeo compatíveis com a extensão desejada (ex: H.264 para MP4). Assim, o FFmpeg apenas "cola" o vídeo e o áudio em questão de segundos e gastando **0% de processamento extra**.
+O Crimson passou por otimização no seu núcleo para resolver gargalos históricos de bloqueios anti-bot, uso excessivo de CPU e falhas de bibliotecas engessadas:
+- **Bypass Anônimo (Apple Vision Pro & Android VR)**: com o versionamento de segurança agressivo (`--pre` Nightly), o Crimson acessa endpoints experimentais do YouTube. Ele simula chamadas em nome dos óculos de realidade virtual da Apple e do Android, que recebem fluxos de dados sem limitação de cookies e qualidade (1080p e 4K puros).
+- **Uso reduzido de CPU**: Substituí os conversores de vídeo tradicionais (que re-renderizam os vídeos e sobrecarregam o processador em 100%), programa exige do YouTube apenas formatos de vídeo compatíveis com a extensão desejada (ex: H.264 para MP4). Assim, o FFmpeg apenas "cola" o vídeo e o áudio em questão de segundos e gastando muito menos recursos do computador.
 - **Injeção Modular de Motor de Download**: Para garantir que o programa poderá ser compilado em um `.exe` standalone e ainda assim consiga se atualizar (sem depender do instalador nativo do python na máquina), o Crimson faz um parse direto com a base do github. Usando apenas bibliotecas puras, ele baixa a Source Code Master e manipula o radar interno do Python (`sys.path.insert`) para forçá-lo a compilar com o novo pacote na memória.
 
 ## • Arquitetura de Compilação (O Teste de "Releases")
@@ -69,4 +69,4 @@ A arquitetura final do projeto tem como objetivo compilar (via **PyInstaller**) 
 <br>
 
 **Desenvolvido por Luan** <br>
-*Primeiro projeto focado em criar um programa para facilitar o dia a dia através de automação e engenharia de software*
+*Ad Infinitum*
