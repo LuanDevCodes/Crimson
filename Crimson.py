@@ -65,43 +65,60 @@ def salvar_configuracoes(idioma, tema):
 # dicionário global de idiomas, uma tupla com os textos traduzidos em diferentes idiomas
 config_atual = carregar_configuracoes()
 idioma_atual = config_atual.get("idioma", "Portuguese")
-tema_atual = config_atual.get("tema", "Dark") # Definindo um tema padrão (Claro ou Escuro)
+tema_atual = config_atual.get("tema", "Matcha") # Definindo um tema padrão (Claro ou Escuro)
 
 # Definindo cores em tons pastéis para manter a harmonia visual de forma simples
 TEMAS = {
     
     "Egg": {
-        "bg_janela":            "#E9E3BC",              # cor de fundo da janela
-        "fg_texto":             "#333333",              # cor do texto
-        "btn_audio":            "#F2CC8F",              # cor do botão de áudio
-        "btn_audio_hover":      "#F4D49F",              # cor de dentro do botão quando o momento do hover acontece
-        "btn_video":            "#81B29A",              # cor do botão de vídeo
-        "btn_video_hover":      "#8FC2AA",              # cor de dentro do botão quando o momento do hover acontece
-        "btn_fg":               "#333333",              # cor de fundo 
-        "bg_entrada":           "#F5F5F5",              # cor da barra de pesquisa
-        "fg_entrada":           "#333333",              # cor do texto dentro da barra de pesquisa
-        "dropdown_bg":          "#F2E9C4",              # cor de fundo dentro do dropdown
-        "dropdown_hover":       "#494949",              # cor quando o mouse passa por cima
-        "btn_border":           "#619E81",              # cor da borda do vídeo
-        "btn_border_audio":     "#EEBC6D",              # cor da borda do áudio
-        "fg_texto_magua":       "#696969"               # cor da marca d' água
+        "cor_fundo_janela":             "#E9E3BC",              # cor de fundo da janela
+        "cor_do_texto":                 "#333333",              # cor do texto
+        "cor_botao_audio":              "#F2CC8F",              # cor do botão de áudio
+        "cor_botao_audio_hover":        "#F4D49F",              # cor de dentro do botão quando o momento do hover acontece
+        "cor_botao_video":              "#EDD66F",              # cor do botão de vídeo
+        "cor_botao_video_hover":        "#EBCF6C",              # cor de dentro do botão quando o momento do hover acontece
+        "cor_fonte_botoes":             "#333333",              # cor da fonte dos botões 
+        "cor_barra_de_pesquisa":        "#FCF8E9",              # cor da barra de pesquisa
+        "cor_texto_caixa_de_pesquisa":  "#725C04",              # cor do texto dentro da barra de pesquisa
+        "cor_de_fundo_dropdown":        "#F2E9C4",              # cor de fundo dentro do dropdown
+        "cor_do_hover_dropdown":        "#61612F",              # cor quando o mouse passa por cima
+        "cor_da_borda_botao_video":     "#F5DD6E",              # cor da borda do vídeo
+        "cor_da_borda_botao_audio":     "#F8E3BF",              # cor da borda do áudio
+        "cor_do_texto_magua":           "#696969"               # cor da marca d' água
     },
     
     "Dark": {
-        "bg_janela":            "#36363F",              # cor de fundo da janela
-        "fg_texto":             "#EDF2F4",              # cor do texto
-        "btn_audio":            "#8D99AE",              # cor do botão de áudio
-        "btn_audio_hover":      "#9EA9BD",              # cor de dentro do botão quando o momento do hover acontece
-        "btn_video":            "#457B9D",              # cor do botão de vídeo
-        "btn_video_hover":      "#568CAE",              # cor de dentro do botão quando o momento do hover acontece
-        "btn_fg":               "#FFFFFF",              # cor de fundo
-        "bg_entrada":           "#797986",              # cor da barra de pesquisa
-        "fg_entrada":           "#EDF2F4",              # cor do texto dentro da barra de pesquisa
-        "dropdown_bg":          "#606071",              # cor de fundo dentro do dropdow
-        "dropdown_hover":       "#494949",              # cor quando o mouse passa por cima
-        "btn_border":           "#325971",              # cor da borda do vídeo
-        "btn_border_audio":     "#6A7A95",              # cor da borda do áudio
-        "fg_texto_magua":       "#C9C9C9"               # cor da marca d' água
+        "cor_fundo_janela":             "#36363F",              # cor de fundo da janela
+        "cor_do_texto":                 "#EDF2F4",              # cor do texto
+        "cor_botao_audio":              "#8D99AE",              # cor do botão de áudio
+        "cor_botao_audio_hover":        "#9EA9BD",              # cor de dentro do botão quando o momento do hover acontece
+        "cor_botao_video":              "#457B9D",              # cor do botão de vídeo
+        "cor_botao_video_hover":        "#568CAE",              # cor de dentro do botão quando o momento do hover acontece
+        "cor_fonte_botoes":             "#FFFFFF",              # cor da fonte dos botões
+        "cor_barra_de_pesquisa":        "#797986",              # cor da barra de pesquisa
+        "cor_texto_caixa_de_pesquisa":  "#EDF2F4",              # cor do texto dentro da barra de pesquisa
+        "cor_de_fundo_dropdown":        "#606071",              # cor de fundo dentro do dropdow
+        "cor_do_hover_dropdown":        "#494949",              # cor quando o mouse passa por cima
+        "cor_da_borda_botao_video":     "#325971",              # cor da borda do vídeo
+        "cor_da_borda_botao_audio":     "#6A7A95",              # cor da borda do áudio
+        "cor_do_texto_magua":           "#C9C9C9"               # cor da marca d' água
+    },
+
+    "Matcha": {
+        "cor_fundo_janela":             "#B2CC8E",              # cor de fundo da janela
+        "cor_do_texto":                 "#1B272C",              # cor do texto
+        "cor_botao_audio":              "#5C7341",              # cor do botão de áudio
+        "cor_botao_audio_hover":        "#6B864B",              # cor de dentro do botão quando o momento do hover acontece
+        "cor_botao_video":              "#648C24",              # cor do botão de vídeo
+        "cor_botao_video_hover":        "#77A62B",              # cor de dentro do botão quando o momento do hover acontece
+        "cor_fonte_botoes":             "#FFFFFF",              # cor da fonte dos botões
+        "cor_barra_de_pesquisa":        "#DBE6D1",              # cor da barra de pesquisa
+        "cor_texto_caixa_de_pesquisa":  "#213313",              # cor do texto dentro da barra de pesquisa
+        "cor_de_fundo_dropdown":        "#9AB086",              # cor de fundo dentro do dropdow
+        "cor_do_hover_dropdown":        "#696969",              # cor quando o mouse passa por cima
+        "cor_da_borda_botao_video":     "#5D8321",              # cor da borda do vídeo
+        "cor_da_borda_botao_audio":     "#688548",              # cor da borda do áudio
+        "cor_do_texto_magua":           "#375223"               # cor da marca d' água
     }
 }
 
@@ -114,11 +131,11 @@ DICIONARIO_IDIOMAS = {
         "Portuguese":       "Insira a URL do vídeo do YouTube:",
         "English":          "Enter the YouTube video URL:"
     },
-    "btn_audio": {
+    "cor_botao_audio": {
         "Portuguese":       "Baixar Áudio",
         "English":          "Download Audio"
     },
-    "btn_video": {
+    "cor_botao_video": {
         "Portuguese":       "Baixar Vídeo",
         "English":          "Download Video"
     },
@@ -352,8 +369,8 @@ if __name__ == '__main__':
         restaurar_botoes()
         
     def restaurar_botoes():
-        botao_baixar_audio.configure(state=tk.NORMAL, text=DICIONARIO_IDIOMAS["btn_audio"][idioma_atual])
-        botao_baixar_video.configure(state=tk.NORMAL, text=DICIONARIO_IDIOMAS["btn_video"][idioma_atual])
+        botao_baixar_audio.configure(state=tk.NORMAL, text=DICIONARIO_IDIOMAS["cor_botao_audio"][idioma_atual])
+        botao_baixar_video.configure(state=tk.NORMAL, text=DICIONARIO_IDIOMAS["cor_botao_video"][idioma_atual])
         barra_progresso.pack_forget() # Esconde a barra da tela
         label_progresso.pack_forget() # Esconde o texto da tela
 
@@ -440,7 +457,7 @@ if __name__ == '__main__':
 
     # Botão de baixar áudio usando ctk (CustomTkinter) para cantos arredondados
     # o parâmetro corner_radius controla o grau de arredondamento
-    botao_baixar_audio = ctk.CTkButton(frame_botoes, text=DICIONARIO_IDIOMAS["btn_audio"][idioma_atual], font=("Arial", 12, "bold"), command=lambda: iniciar_download('audio'), corner_radius=8)
+    botao_baixar_audio = ctk.CTkButton(frame_botoes, text=DICIONARIO_IDIOMAS["cor_botao_audio"][idioma_atual], font=("Arial", 12, "bold"), command=lambda: iniciar_download('audio'), corner_radius=8)
     botao_baixar_audio.grid(row=0, column=1, padx=5)
 
     # ------------------------------------------------------------------
@@ -455,7 +472,7 @@ if __name__ == '__main__':
     dropdown_video.grid(row=0, column=2, padx=(30, 5)) # padx maior na esquerda para afastar a seção de vídeo da seção de áudio
 
     # Botão de baixar vídeo
-    botao_baixar_video = ctk.CTkButton(frame_botoes, text=DICIONARIO_IDIOMAS["btn_video"][idioma_atual], font=("Arial", 12, "bold"), command=lambda: iniciar_download('video'), corner_radius=8)
+    botao_baixar_video = ctk.CTkButton(frame_botoes, text=DICIONARIO_IDIOMAS["cor_botao_video"][idioma_atual], font=("Arial", 12, "bold"), command=lambda: iniciar_download('video'), corner_radius=8)
     botao_baixar_video.grid(row=0, column=3, padx=5)
 
     # ------------------------------------------------------------------
@@ -522,8 +539,8 @@ if __name__ == '__main__':
             idioma_atual = selecao
             
             # Atualiza os botões da tela principal (mãe) que estão no escopo acima
-            botao_baixar_audio.configure(text=DICIONARIO_IDIOMAS["btn_audio"][idioma_atual])
-            botao_baixar_video.configure(text=DICIONARIO_IDIOMAS["btn_video"][idioma_atual])
+            botao_baixar_audio.configure(text=DICIONARIO_IDIOMAS["cor_botao_audio"][idioma_atual])
+            botao_baixar_video.configure(text=DICIONARIO_IDIOMAS["cor_botao_video"][idioma_atual])
             botao_config.config()
             label_instrucao.config(text=DICIONARIO_IDIOMAS["instrucao_ready"][idioma_atual])
             
@@ -546,13 +563,13 @@ if __name__ == '__main__':
         
         # ------------------------------------------------------------------
         # --- Aba Sistema ---
-        aba_sistema = tk.Frame(notebook, bg=cor["bg_janela"])
+        aba_sistema = tk.Frame(notebook, bg=cor["cor_fundo_janela"])
         
         # O text puxa a língua ativa ao abrir a tela
         notebook.add(aba_sistema, text=DICIONARIO_IDIOMAS["aba_sistema"][idioma_atual])
         
         # Componentes do idioma
-        label_idioma = tk.Label(aba_sistema, text=DICIONARIO_IDIOMAS["lbl_idioma"][idioma_atual], font=("Arial", 11), bg=cor["bg_janela"], fg=cor["fg_texto"])
+        label_idioma = tk.Label(aba_sistema, text=DICIONARIO_IDIOMAS["lbl_idioma"][idioma_atual], font=("Arial", 11), bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         label_idioma.pack(pady=(20, 5))
         
         var_idioma = ctk.StringVar(value=idioma_atual)
@@ -564,11 +581,11 @@ if __name__ == '__main__':
         
         # ------------------------------------------------------------------
         # --- Componentes do Tema ---
-        label_tema = tk.Label(aba_sistema, text=DICIONARIO_IDIOMAS["lbl_tema"][idioma_atual], font=("Arial", 11), bg=cor["bg_janela"], fg=cor["fg_texto"])
+        label_tema = tk.Label(aba_sistema, text=DICIONARIO_IDIOMAS["lbl_tema"][idioma_atual], font=("Arial", 11), bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         label_tema.pack(pady=(20, 5))
         
         var_tema = ctk.StringVar(value=tema_atual)
-        opcoes_tema = ["Dark", "Egg"]
+        opcoes_tema = ["Dark", "Egg", "Matcha"]
         
         dropdown_tema = ctk.CTkOptionMenu(aba_sistema, variable=var_tema, values=opcoes_tema, corner_radius=8, width=150, font=("Arial", 12, "bold"))
         dropdown_tema.pack(pady=5)
@@ -608,45 +625,45 @@ if __name__ == '__main__':
                 
                 # Para evitar erro de tela, atualizo também as cores de dentro da janelinha de config manualmente
                 nova_cor = TEMAS[tema_atual]
-                jan_config.config(bg=nova_cor["bg_janela"])
-                aba_sistema.config(bg=nova_cor["bg_janela"])
-                aba_sobre.config(bg=nova_cor["bg_janela"])
-                frame_repos.config(bg=nova_cor["bg_janela"])
+                jan_config.config(bg=nova_cor["cor_fundo_janela"])
+                aba_sistema.config(bg=nova_cor["cor_fundo_janela"])
+                aba_sobre.config(bg=nova_cor["cor_fundo_janela"])
+                frame_repos.config(bg=nova_cor["cor_fundo_janela"])
                 
-                label_idioma.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-                label_tema.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-                label_versao.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-                label_disclaimer.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-                label_creditos.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-                link_crimson.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-                link_ytdlp.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-                link_ffmpeg.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto"])
-                marca_dagua.config(bg=nova_cor["bg_janela"], fg=nova_cor["fg_texto_magua"])
+                label_idioma.config(bg=nova_cor["cor_fundo_janela"], fg=nova_cor["cor_do_texto"])
+                label_tema.config(bg=nova_cor["cor_fundo_janela"], fg=nova_cor["cor_do_texto"])
+                label_versao.config(bg=nova_cor["cor_fundo_janela"], fg=nova_cor["cor_do_texto"])
+                label_disclaimer.config(bg=nova_cor["cor_fundo_janela"], fg=nova_cor["cor_do_texto"])
+                label_creditos.config(bg=nova_cor["cor_fundo_janela"], fg=nova_cor["cor_do_texto"])
+                link_crimson.config(bg=nova_cor["cor_fundo_janela"], fg=nova_cor["cor_do_texto"])
+                link_ytdlp.config(bg=nova_cor["cor_fundo_janela"], fg=nova_cor["cor_do_texto"])
+                link_ffmpeg.config(bg=nova_cor["cor_fundo_janela"], fg=nova_cor["cor_do_texto"])
+                marca_dagua.config(bg=nova_cor["cor_fundo_janela"], fg=nova_cor["cor_do_texto_magua"])
                 
-                dropdown_idioma.configure(fg_color=nova_cor["btn_audio"], button_color=nova_cor["btn_audio"], button_hover_color=nova_cor["btn_audio_hover"], text_color=nova_cor["btn_fg"], dropdown_fg_color=nova_cor["dropdown_bg"], dropdown_hover_color=nova_cor["dropdown_hover"], dropdown_text_color=nova_cor["fg_texto"])
-                dropdown_tema.configure(fg_color=nova_cor["btn_audio"], button_color=nova_cor["btn_audio"], button_hover_color=nova_cor["btn_audio_hover"], text_color=nova_cor["btn_fg"], dropdown_fg_color=nova_cor["dropdown_bg"], dropdown_hover_color=nova_cor["dropdown_hover"], dropdown_text_color=nova_cor["fg_texto"])
+                dropdown_idioma.configure(fg_color=nova_cor["cor_botao_audio"], button_color=nova_cor["cor_botao_audio"], button_hover_color=nova_cor["cor_botao_audio_hover"], text_color=nova_cor["cor_fonte_botoes"], dropdown_fg_color=nova_cor["cor_de_fundo_dropdown"], dropdown_hover_color=nova_cor["cor_do_hover_dropdown"], dropdown_text_color=nova_cor["cor_do_texto"])
+                dropdown_tema.configure(fg_color=nova_cor["cor_botao_audio"], button_color=nova_cor["cor_botao_audio"], button_hover_color=nova_cor["cor_botao_audio_hover"], text_color=nova_cor["cor_fonte_botoes"], dropdown_fg_color=nova_cor["cor_de_fundo_dropdown"], dropdown_hover_color=nova_cor["cor_do_hover_dropdown"], dropdown_text_color=nova_cor["cor_do_texto"])
                 
         texto_botao_salvar = "Salvar e Aplicar" if idioma_atual == "Portuguese" else "Save & Apply"
         botao_salvar = ctk.CTkButton(aba_sistema, text=texto_botao_salvar, font=("Arial", 12, "bold"), command=confirmar_e_salvar, corner_radius=8, width=150)
         botao_salvar.pack(pady=20)
         
         # Pinta os dropdowns assim que a tela abre
-        dropdown_idioma.configure(fg_color=cor["btn_audio"], button_color=cor["btn_audio"], button_hover_color=cor["btn_audio_hover"], text_color=cor["btn_fg"], dropdown_fg_color=cor["dropdown_bg"], dropdown_hover_color=cor["dropdown_hover"], dropdown_text_color=cor["fg_texto"])
-        dropdown_tema.configure(fg_color=cor["btn_audio"], button_color=cor["btn_audio"], button_hover_color=cor["btn_audio_hover"], text_color=cor["btn_fg"], dropdown_fg_color=cor["dropdown_bg"], dropdown_hover_color=cor["dropdown_hover"], dropdown_text_color=cor["fg_texto"])
+        dropdown_idioma.configure(fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
+        dropdown_tema.configure(fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
         
         # ------------------------------------------------------------------
         # --- Aba Sobre ---
-        aba_sobre = tk.Frame(notebook, bg=cor["bg_janela"])
+        aba_sobre = tk.Frame(notebook, bg=cor["cor_fundo_janela"])
         notebook.add(aba_sobre, text=DICIONARIO_IDIOMAS["aba_sobre"][idioma_atual])
         
-        label_versao = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["lbl_versao"][idioma_atual], font=("Arial", 11, "bold"), bg=cor["bg_janela"], fg=cor["fg_texto"])
+        label_versao = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["lbl_versao"][idioma_atual], font=("Arial", 11, "bold"), bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         label_versao.pack(pady=(10, 5))
         
-        label_disclaimer = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["txt_disclaimer"][idioma_atual], font=("Arial", 9), justify="center", bg=cor["bg_janela"], fg=cor["fg_texto"])
+        label_disclaimer = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["txt_disclaimer"][idioma_atual], font=("Arial", 9), justify="center", bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         label_disclaimer.pack(pady=(5, 15))
         
         # O compound=tk.TOP coloca a imagem perfeitamente ACIMA do texto!
-        label_creditos = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["lbl_creditos"][idioma_atual], image=img_community, compound=tk.TOP, font=("Arial", 9, "italic"), bg=cor["bg_janela"], fg=cor["fg_texto"])
+        label_creditos = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["lbl_creditos"][idioma_atual], image=img_community, compound=tk.TOP, font=("Arial", 9, "italic"), bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         label_creditos.pack(pady=5)
         
         # Função para processar os cliques e chamar o webbrowser
@@ -654,25 +671,25 @@ if __name__ == '__main__':
             webbrowser.open(url)
 
         # Criando um Frame só para agrupar e alinhar os repositórios (isso cria um bloco invisível que prende os ícones retos)
-        frame_repos = tk.Frame(aba_sobre, bg=cor["bg_janela"])
+        frame_repos = tk.Frame(aba_sobre, bg=cor["cor_fundo_janela"])
         frame_repos.pack(pady=10)
 
         # 'cursor="hand2"' mostra o cursor de clique em formato de mãozinha (igual a uma página da internet)
         # O anchor="w" (West/Esquerda) joga os itens pra esquerda e os alinha juntos dentro do frame
-        link_crimson = tk.Label(frame_repos, text=DICIONARIO_IDIOMAS["link_crimson"][idioma_atual], image=img_git, compound=tk.LEFT, font=("Arial", 10), fg=cor["fg_texto"], bg=cor["bg_janela"], cursor="hand2", anchor="w")
+        link_crimson = tk.Label(frame_repos, text=DICIONARIO_IDIOMAS["link_crimson"][idioma_atual], image=img_git, compound=tk.LEFT, font=("Arial", 10), fg=cor["cor_do_texto"], bg=cor["cor_fundo_janela"], cursor="hand2", anchor="w")
         link_crimson.pack(pady=5, fill="x")
         link_crimson.bind("<Button-1>", lambda e: abrir_link("https://github.com/LuanDevCodes/Crimson"))
         
-        link_ytdlp = tk.Label(frame_repos, text=DICIONARIO_IDIOMAS["link_ytdlp"][idioma_atual], image=img_git, compound=tk.LEFT, font=("Arial", 10), fg=cor["fg_texto"], bg=cor["bg_janela"], cursor="hand2", anchor="w")
+        link_ytdlp = tk.Label(frame_repos, text=DICIONARIO_IDIOMAS["link_ytdlp"][idioma_atual], image=img_git, compound=tk.LEFT, font=("Arial", 10), fg=cor["cor_do_texto"], bg=cor["cor_fundo_janela"], cursor="hand2", anchor="w")
         link_ytdlp.pack(pady=5, fill="x")
         link_ytdlp.bind("<Button-1>", lambda e: abrir_link("https://github.com/yt-dlp/yt-dlp"))
         
-        link_ffmpeg = tk.Label(frame_repos, text=DICIONARIO_IDIOMAS["link_ffmpeg"][idioma_atual], image=img_git, compound=tk.LEFT, font=("Arial", 10), fg=cor["fg_texto"], bg=cor["bg_janela"], cursor="hand2", anchor="w")
+        link_ffmpeg = tk.Label(frame_repos, text=DICIONARIO_IDIOMAS["link_ffmpeg"][idioma_atual], image=img_git, compound=tk.LEFT, font=("Arial", 10), fg=cor["cor_do_texto"], bg=cor["cor_fundo_janela"], cursor="hand2", anchor="w")
         link_ffmpeg.pack(pady=5, fill="x")
         link_ffmpeg.bind("<Button-1>", lambda e: abrir_link("https://github.com/BtbN/FFmpeg-Builds"))
 
         # --- Marca d'água (Rodapé Central) ---
-        marca_dagua = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["marca_dagua"][idioma_atual], font=("Arial", 8, "italic"), fg="#C9C9C9", bg=cor["bg_janela"])
+        marca_dagua = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["marca_dagua"][idioma_atual], font=("Arial", 8, "italic"), fg=cor["cor_do_texto_magua"], bg=cor["cor_fundo_janela"])
         
         # Para centralizar, usei o relx=0.5 (50% da tela na horizontal) e rely=1.0 (100% da tela na vertical)
         # O anchor="s" (South / Sul) diz para o Tkinter alinhar usando o centro da base do texto
@@ -689,25 +706,25 @@ if __name__ == '__main__':
         cor = TEMAS[tema_atual]
         
         # Pinta a janela principal e as caixas (frames) transparentes
-        janela.config(bg=cor["bg_janela"])
-        frame_botoes.config(bg=cor["bg_janela"])
+        janela.config(bg=cor["cor_fundo_janela"])
+        frame_botoes.config(bg=cor["cor_fundo_janela"])
         
         # Pinta os textos na tela
-        label_instrucao.config(bg=cor["bg_janela"], fg=cor["fg_texto"])
-        label_progresso.config(bg=cor["bg_janela"], fg=cor["fg_texto"])
+        label_instrucao.config(bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
+        label_progresso.config(bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         
         # Estiliza o campo de digitar o link
-        entrada_url.config(bg=cor["bg_entrada"], fg=cor["fg_entrada"], insertbackground=cor["fg_texto"], relief="flat")
+        entrada_url.config(bg=cor["cor_barra_de_pesquisa"], fg=cor["cor_texto_caixa_de_pesquisa"], insertbackground=cor["cor_do_texto"], relief="flat")
         
         # Configuração para os botões e menus do CustomTkinter (agora tem hover nativo e bordas arredondadas sem complexidade)
-        botao_baixar_audio.configure(fg_color=cor["btn_audio"], hover_color=cor["btn_audio_hover"], text_color=cor["btn_fg"], border_width=2, border_color=cor["btn_border_audio"])
-        botao_baixar_video.configure(fg_color=cor["btn_video"], hover_color=cor["btn_video_hover"], text_color=cor["btn_fg"], border_width=2, border_color=cor["btn_border"])
+        botao_baixar_audio.configure(fg_color=cor["cor_botao_audio"], hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_audio"])
+        botao_baixar_video.configure(fg_color=cor["cor_botao_video"], hover_color=cor["cor_botao_video_hover"], text_color=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_video"])
         
-        dropdown_audio.configure(fg_color=cor["btn_audio"], button_color=cor["btn_audio"], button_hover_color=cor["btn_audio_hover"], text_color=cor["btn_fg"], dropdown_fg_color=cor["dropdown_bg"], dropdown_hover_color=cor["dropdown_hover"], dropdown_text_color=cor["fg_texto"])
-        dropdown_video.configure(fg_color=cor["btn_video"], button_color=cor["btn_video"], button_hover_color=cor["btn_video_hover"], text_color=cor["btn_fg"], dropdown_fg_color=cor["dropdown_bg"], dropdown_hover_color=cor["dropdown_hover"], dropdown_text_color=cor["fg_texto"])
+        dropdown_audio.configure(fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
+        dropdown_video.configure(fg_color=cor["cor_botao_video"], button_color=cor["cor_botao_video"], button_hover_color=cor["cor_botao_video_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
         
         # Botões do Tkinter nativo continuam usando config normal
-        botao_config.config(bg=cor["bg_janela"], relief="flat", borderwidth=0)
+        botao_config.config(bg=cor["cor_fundo_janela"], relief="flat", borderwidth=0)
 
     # ------------------------------------------------------------------
     # --- Lógica da Tela de Carregamento (Update Inicial) ---
