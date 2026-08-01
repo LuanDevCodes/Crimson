@@ -65,7 +65,7 @@ def salvar_configuracoes(idioma, tema):
 # dicionário global de idiomas, uma tupla com os textos traduzidos em diferentes idiomas
 config_atual = carregar_configuracoes()
 idioma_atual = config_atual.get("idioma", "Portuguese")
-tema_atual = config_atual.get("tema", "Matcha") # Definindo um tema padrão (Claro ou Escuro)
+tema_atual = config_atual.get("tema", "Dark") # Definindo um tema padrão (Claro ou Escuro)
 
 # Definindo cores em tons pastéis para manter a harmonia visual de forma simples
 TEMAS = {
