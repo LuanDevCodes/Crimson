@@ -33,6 +33,7 @@ __pycache__/
 build/
 dist/
 *.spec
+*.exe
 
 # Configurações de IDEs e Editores
 .vscode/
