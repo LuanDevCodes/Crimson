@@ -107,112 +107,112 @@ TEMAS = {
 
 DICIONARIO_IDIOMAS = {
     "instrucao_init": {
-        "Portuguese": "Procurando atualizações de segurança...",
-        "English": "Checking for security updates..."
+        "Portuguese":       "Procurando atualizações de segurança...",
+        "English":          "Checking for security updates..."
     },
     "instrucao_ready": {
-        "Portuguese": "Insira a URL do vídeo do YouTube:",
-        "English": "Enter the YouTube video URL:"
+        "Portuguese":       "Insira a URL do vídeo do YouTube:",
+        "English":          "Enter the YouTube video URL:"
     },
     "btn_audio": {
-        "Portuguese": "Baixar Áudio",
-        "English": "Download Audio"
+        "Portuguese":       "Baixar Áudio",
+        "English":          "Download Audio"
     },
     "btn_video": {
-        "Portuguese": "Baixar Vídeo",
-        "English": "Download Video"
+        "Portuguese":       "Baixar Vídeo",
+        "English":          "Download Video"
     },
     "aba_sistema": {
-        "Portuguese": "Sistema",
-        "English": "System"
+        "Portuguese":       "Sistema",
+        "English":          "System"
     },
     "aba_sobre": {
-        "Portuguese": "Sobre",
-        "English": "About"
+        "Portuguese":       "Sobre",
+        "English":          "About"
     },
     "lbl_idioma": {
-        "Portuguese": "Idioma do Aplicativo:",
-        "English": "Application Language:"
+        "Portuguese":       "Idioma do Aplicativo:",
+        "English":          "Application Language:"
     },
     "lbl_tema": {
-        "Portuguese": "Tema da Interface:",
-        "English": "Interface Theme:"
+        "Portuguese":       "Tema da Interface:",
+        "English":          "Interface Theme:"
     },
     "lbl_versao": {
-        "Portuguese": "Versão atual: V.1.0.0",
-        "English": "Current version: V.1.0.0"
+        "Portuguese":       "Versão atual: V.1.0.0",
+        "English": "        Current version: V.1.0.0"
     },
     "txt_disclaimer": {
-        "Portuguese": "Desenvolvido sem fins comerciais\nQualquer distribuição deve ser gratuita\ne livre para todos\n",
-        "English": "Developed for non-commercial purposes\nAny distribution must be free\nand available to everyone\n"
+        "Portuguese":       "Desenvolvido sem fins comerciais\nQualquer distribuição deve ser gratuita\ne livre para todos\n",
+        "English":          "Developed for non-commercial purposes\nAny distribution must be free\nand available to everyone\n"
     },
     "lbl_creditos": {
-        "Portuguese": "Créditos e agradecimentos à comunidade Open Source\n",
-        "English": "Credits and thanks to the Open Source community\n"
+        "Portuguese":       "Créditos e agradecimentos à comunidade Open Source\n",
+        "English":          "Credits and thanks to the Open Source community\n"
     },
     "link_crimson": {
-        "Portuguese": " Repositório Crimson",
-        "English": " Crimson Repository"
+        "Portuguese":       " Repositório Crimson",
+        "English":          " Crimson Repository"
     },
     "link_ytdlp": {
-        "Portuguese": " Repositório yt-dlp",
-        "English": " yt-dlp Repository"
+        "Portuguese":       " Repositório yt-dlp",
+        "English":          " yt-dlp Repository"
     },
     "link_ffmpeg": {
-        "Portuguese": " Repositório FFmpeg",
-        "English": " FFmpeg Repository"
+        "Portuguese":       " Repositório FFmpeg",
+        "English":          " FFmpeg Repository"
     },
     "marca_dagua": {
-        "Portuguese": "Desenvolvido por LuanDevCodes",
-        "English": "Developed by LuanDevCodes"
+        "Portuguese":       "Desenvolvido por LuanDevCodes",
+        "English":          "Developed by LuanDevCodes"
     },
     "msg_sucesso_titulo": {
-        "Portuguese": "Sucesso",
-        "English": "Success"
+        "Portuguese":       "Sucesso",
+        "English":          "Success"
     },
     "msg_sucesso_texto": {
-        "Portuguese": "Download e conversão concluídos com sucesso",
-        "English": "Download and conversion completed successfully"
+        "Portuguese":       "Download e conversão concluídos com sucesso",
+        "English":          "Download and conversion completed successfully"
     },
     "msg_erro_titulo": {
-        "Portuguese": "Erro",
-        "English": "Error"
+        "Portuguese":       "Erro",
+        "English":          "Error"
     },
     "msg_erro_generico": {
-        "Portuguese": "Ocorreu um erro durante o download:\n",
-        "English": "An error occurred during the download:\n"
+        "Portuguese":       "Ocorreu um erro durante o download:\n",
+        "English":          "An error occurred during the download:\n"
     },
     "msg_aviso_titulo": {
-        "Portuguese": "Aviso",
-        "English": "Warning"
+        "Portuguese":       "Aviso",
+        "English":          "Warning"
     },
     "msg_aviso_url": {
-        "Portuguese": "Por favor, insira uma URL válida do YouTube",
-        "English": "Please enter a valid YouTube URL"
+        "Portuguese":       "Por favor, insira uma URL válida do YouTube",
+        "English":          "Please enter a valid YouTube URL"
     },
     "progresso_baixando": {
-        "Portuguese": "Baixando",
-        "English": "Downloading"
+        "Portuguese":       "Baixando",
+        "English":          "Downloading"
     },
     "progresso_vel": {
-        "Portuguese": "Velocidade",
-        "English": "Speed"
+        "Portuguese":       "Velocidade",
+        "English":          "Speed"
     },
     "progresso_tempo": {
-        "Portuguese": "Tempo Restante",
-        "English": "ETA"
+        "Portuguese":       "Tempo Restante",
+        "English":          "ETA"
     },
     "progresso_init": {
-        "Portuguese": "Iniciando Download...",
-        "English": "Starting Download..."
+        "Portuguese":       "Iniciando Download...",
+        "English":          "Starting Download..."
     },
     "progresso_convertendo": {
-        "Portuguese": "Baixado - Aguarde a conversão (FFmpeg)...",
-        "English": "Downloaded - Please wait for conversion (FFmpeg)..."
+        "Portuguese":       "Baixado - Aguarde a conversão (FFmpeg)...",
+        "English":          "Downloaded - Please wait for conversion (FFmpeg)..."
     },
     "btn_baixar_inativo": {
-        "Portuguese": "Preparando...",
-        "English": "Preparing..."
+        "Portuguese":       "Preparando...",
+        "English":          "Preparing..."
     }
 }
 
