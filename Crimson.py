@@ -278,6 +278,11 @@ def baixar_midia_youtube(url, tipo, formato, hook_progresso, pasta_destino=None)
         
         # Desativa códigos de cores (ANSI) para que o texto da barra de progresso fique limpo
         'color': 'no_color',
+        
+        # Bypasses para evitar limitador de velocidade do YouTube (Throttling) e compensar o uso do módulo puro
+        # aconteceu depois que passei a usar a biblioteca de forma modular, com isso a velocidade dos meus testes iniciais volta ao normal
+        'concurrent_fragment_downloads': 5, # Usa 5 conexões simultâneas para baixar os pedaços
+        'http_chunk_size': 10485760,        # Divide em blocos de 10MB para download rápido
     }
 
     # Se o usuário escolheu áudio, configuro para extrair o áudio
@@ -492,6 +497,18 @@ if __name__ == '__main__':
     # O 'try/except' é uma trava de segurança
     # se a imagem ou a pasta não existirem ainda, ele simplesmente desiste e ignora, não quebrando a tela
     try:
+        import glob
+        
+        # Tenta carregar e aplicar o ícone do aplicativo na janela (topo da janela e barra de tarefas)
+        # usei o glob para achar a imagem que tem Crimson no nome evitando problemas com o acento por causa da minha própria renomeação :P
+        arquivos_icone = glob.glob(os.path.join(caminho_icons, "*Crimson*.png"))
+        
+        if arquivos_icone:
+            img_icone_app = tk.PhotoImage(file=arquivos_icone[0])
+            
+            # O True faz com que esse ícone seja herdado por todas as janelas secundárias (como a de config)
+            janela.iconphoto(True, img_icone_app)
+            
         # Carregando as imagens originais brutas
         raw_config    = tk.PhotoImage(file=os.path.join(caminho_icons, "configuracoes.png"))
         raw_git       = tk.PhotoImage(file=os.path.join(caminho_icons, "github.png"))
@@ -717,8 +734,8 @@ if __name__ == '__main__':
         entrada_url.config(bg=cor["cor_barra_de_pesquisa"], fg=cor["cor_texto_caixa_de_pesquisa"], insertbackground=cor["cor_do_texto"], relief="flat")
         
         # Configuração para os botões e menus do CustomTkinter (agora tem hover nativo e bordas arredondadas sem complexidade)
-        botao_baixar_audio.configure(fg_color=cor["cor_botao_audio"], hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_audio"])
-        botao_baixar_video.configure(fg_color=cor["cor_botao_video"], hover_color=cor["cor_botao_video_hover"], text_color=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_video"])
+        botao_baixar_audio.configure(fg_color=cor["cor_botao_audio"], hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], text_color_disabled=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_audio"])
+        botao_baixar_video.configure(fg_color=cor["cor_botao_video"], hover_color=cor["cor_botao_video_hover"], text_color=cor["cor_fonte_botoes"], text_color_disabled=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_video"])
         
         dropdown_audio.configure(fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
         dropdown_video.configure(fg_color=cor["cor_botao_video"], button_color=cor["cor_botao_video"], button_hover_color=cor["cor_botao_video_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
