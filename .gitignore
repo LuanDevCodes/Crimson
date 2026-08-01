@@ -7,6 +7,13 @@ downloads - Versão beta/
 Downloads/
 downloads/
 
+# O ícone já está no repositório como 'png' por isso considerei desnecessário o envio, e o bat é só os comandos 
+# do pyinstaller para me ajudar a compilar mais rapidamente sem digitar diretamente no terminal
+icone.ico
+compilar.bat
+
+
+
 # Diretório do FFmpeg (Arquivos binários pesados)
 ffmpeg/
 
