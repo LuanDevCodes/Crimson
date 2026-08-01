@@ -1,4 +1,7 @@
-# ¤ Projeto Crimson - Interface de Download do YouTube
+<h1 align="center">
+  <img src="Icons/Ícone - Crimson.png" width="40" valign="middle"> 
+  Projeto Crimson - Interface de Download do YouTube
+</h1>
 
 ## = Descrição do Projeto
 O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica nativa (Tkinter) criada para facilitar e automatizar o download de vídeos e áudios do YouTube. O projeto encapsula o poder da biblioteca `yt-dlp` e a capacidade de processamento de mídia do `FFmpeg` por trás de uma tela amigável e responsiva. A aplicação também lida de forma autônoma com atualizações de segurança internas, esquivando-se ativamente do erro "403: Forbidden" imposto por constantes mudanças no algoritmo do YouTube. A ideia do projeto nasceu de uma necessidade pessoal minha e da ideia de facilitar esse tipo situação.
@@ -16,22 +19,45 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica n
 ## § Funcionalidades
 - **Download Flexível e Descomplicado**: Escolha entre baixar apenas áudio ou vídeo (com as qualidades mescladas perfeitamente) através de dropdowns visuais (`mp3`, `mp4`, `mkv`, etc).
 - **Processamento Assíncrono (Zero-Freeze)**: As operações de download pesado e gravação de arquivos não disputam espaço com a renderização visual. Tudo ocorre em *threads* separadas, com a barra de progresso, velocidade e ETA atualizando de forma lisa e constante na thread principal.
+- **Download reformulado**: Implementação de uma divisão inteligente de rede. O sistema corta a requisição do YouTube em blocos (`http_chunk_size`) e abre 5 conexões de download simultâneas, bypassando o estrangulador de velocidade moderno do YouTube e voando nas taxas de transferência.
 - **Blindagem do Auto-Update Silencioso**: No exato momento em que o aplicativo é inicializado, uma tela de loading bloqueia o uso enquanto a thread secundária verifica e aplica silenciosamente a última versão do `yt-dlp`. Isso blinda o código contra depreciação contínua.
 - **Conversão por Fator Externo (FFmpeg)**: O yt-dlp extrai nativamente os vídeos do YouTube na melhor qualidade, mas separadamente da faixa de áudio de alta resolução. O Crimson aciona o FFmpeg de maneira integrada para mesclar essas duas camadas ou convertê-las para formatos específicos.
 - **Internacionalização em Tempo Real (PT-BR / EN)**: O sistema inteiro possui um "dicionário" de idiomas em memória. Através de um *Callback* no Painel de Configurações, o usuário pode alterar o idioma e ver todos os textos, pop-ups, barra de progresso e informações de velocidade reagirem e mudarem instantaneamente na tela mãe sem que a aplicação precise reiniciar.
+- **Identidade Visual e Temas Dinâmicos**: O aplicativo suporta variações completas de tema (Matcha, Egg e Dark) com paletas curadas em tons pastéis. A interface, os menus flutuantes e as marcas d'água são coloridos durante a troca, sem precisar recarregar a tela.
 - **Persistência de Dados e Roteamento Seguro**: O aplicativo memoriza as preferências do usuário (como o seu tema preferido e idioma) salvando um `.json` seguro na rota oculta do `AppData`. Além disso, para evitar confusão de arquivos na raiz do executável, as mídias baixadas não precisam mais de rota estipulada e caem nativamente na pasta de `Downloads` original do Sistema Operacional do usuário.
 - **Painel Modular e Créditos**: Uma janela flutuante baseada em "Abas de Notebook", criada para abrigar configurações globais de sistema e um painel de honra à comunidade Open Source, detalhando as ferramentas base do software e seus respectivos repositórios oficiais.
 
 ## ❏ Interface Visual
 > [!NOTE]
-> As capturas de tela abaixo retratam a evolução do projeto. Servindo como um registro de como foi o meu primeiro protótipo desenhado com o Tkinter raiz e sua evolução. O software foi remodelado utilizando CustomTkinter (cantos arredondados, temas escuros, cores pasteis) e é notável como mudanças simples podem impactar na interface geral da aplicação.
+> As capturas de tela abaixo retratam a evolução do projeto, servindo como um registro visual, o software evoluiu de um escopo desenhado no Tkinter raiz (Beta) e foi totalmente remodelado usando CustomTkinter com o tempo, adotando novos ícones, cantos arredondados, feedbacks visuais (hover) e novas paletas de temas.
 
-Capturas de tela do protótipo da aplicação: a tela de inicialização e a home page
-
+### → Release 1.0 (Atual)
 <div align="center">
-  <img src="Capturas/Tela%20inicial%20de%20abertura%20do%20programa%20-%20V.01.png" alt="Tela de Abertura do Programa (Loading)" width="48%">
+  <p><b>Visão Geral da Nova Interface (Modo Escuro / Temas Pastéis)</b></p>
+  <img src="Capturas/V.1.0.0/Crimson_com_janela.png" alt="Janela Principal do Crimson" width="85%">
+  
+  <br><br>
+  
+  <p><b>Download Assíncrono com Atualização em Tempo Real</b></p>
+  <img src="Capturas/V.1.0.0/Crimson_download_iniciando.png" alt="Iniciando Download" width="45%">
   &nbsp;
-  <img src="Capturas/Primeira%20home%20page%20do%20programa%20-%20V.01.png" alt="Home Page do Programa" width="48%">
+  <img src="Capturas/V.1.0.0/Crimson_download_progresso_download.png" alt="Progresso do Download" width="45%">
+
+  <br><br>
+
+  <p><b>Painel de Configurações Dinâmicas e Créditos</b></p>
+  <img src="Capturas/V.1.0.0/Crimson_aba_configurações.png" alt="Aba Configurações" width="45%">
+  &nbsp;
+  <img src="Capturas/V.1.0.0/Crimson_aba_sobre.png" alt="Aba Sobre e Repositórios" width="45%">
+</div>
+
+<br>
+
+### ← Versão Beta (Legado e Protótipo)
+<div align="center">
+  <img src="Capturas/Versão%20Beta/Tela%20inicial%20de%20abertura%20do%20programa%20-%20V.01.png" alt="Tela de Abertura do Programa (Loading) Beta" width="45%">
+  &nbsp;
+  <img src="Capturas/Versão%20Beta/Primeira%20home%20page%20do%20programa%20-%20V.01.png" alt="Home Page do Programa Beta" width="45%">
 </div>
 
 <br>
