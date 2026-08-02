@@ -159,8 +159,8 @@ DICIONARIO_IDIOMAS = {
         "English":          "Interface Theme:"
     },
     "lbl_versao": {
-        "Portuguese":       "Versão atual: V.2.0.0",
-        "English": "        Current version: V.2.0.0"
+        "Portuguese":       "Versão atual: V.2.1.1",
+        "English": "        Current version: V.2.1.1"
     },
     "txt_disclaimer": {
         "Portuguese":       "Desenvolvido sem fins comerciais\nQualquer distribuição deve ser gratuita\ne livre para todos\n",
