@@ -159,8 +159,8 @@ DICIONARIO_IDIOMAS = {
         "English":          "Interface Theme:"
     },
     "lbl_versao": {
-        "Portuguese":       "Versão atual: V.2.1.1",
-        "English": "        Current version: V.2.1.1"
+        "Portuguese":       "Versão atual: V.2.1.0",
+        "English": "        Current version: V.2.1.0"
     },
     "txt_disclaimer": {
         "Portuguese":       "Desenvolvido sem fins comerciais\nQualquer distribuição deve ser gratuita\ne livre para todos\n",
@@ -460,6 +460,7 @@ if __name__ == '__main__':
 
     # --------------------------------------------------------------------------------------
     # --- Funções de Controle (Pausar, Retomar e Excluir) ---
+    
     def acionar_pausa():
         global estado_download
         
@@ -609,6 +610,7 @@ if __name__ == '__main__':
 
     # ------------------------------------------------------------------
     # --- Menu de Contexto (Botão Direito do Mouse) ---
+    
     menu_contexto = tk.Menu(janela, tearoff=0)
     
     # Função simples para exibir o menu quando clicar com o botão direito
@@ -888,6 +890,7 @@ if __name__ == '__main__':
         
         # ------------------------------------------------------------------
         # --- Aba Sistema ---
+        
         aba_sistema = tk.Frame(notebook, bg=cor["cor_fundo_janela"])
         
         # O text puxa a língua ativa ao abrir a tela
@@ -906,6 +909,7 @@ if __name__ == '__main__':
         
         # ------------------------------------------------------------------
         # --- Componentes do Tema ---
+        
         label_tema = tk.Label(aba_sistema, text=DICIONARIO_IDIOMAS["lbl_tema"][idioma_atual], font=("Arial", 11), bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         label_tema.pack(pady=(20, 5))
         
@@ -917,6 +921,7 @@ if __name__ == '__main__':
         
         # ------------------------------------------------------------------
         # Lógica do Botão de Salvar
+        
         def confirmar_e_salvar():
             
             # no geral as variáveis globais devvem ser declaradas no topo das funções, ajuda a evitar erros de compilação
@@ -976,6 +981,7 @@ if __name__ == '__main__':
                 
         # ------------------------------------------------------------------
         # --- Botão de Limpeza de Processos ---
+        
         def limpar_processos():
             
             # Confirmação antes de prosseguir
@@ -1016,6 +1022,7 @@ if __name__ == '__main__':
         
         # ------------------------------------------------------------------
         # --- Aba Sobre ---
+        
         aba_sobre = tk.Frame(notebook, bg=cor["cor_fundo_janela"])
         notebook.add(aba_sobre, text=DICIONARIO_IDIOMAS["aba_sobre"][idioma_atual])
         
