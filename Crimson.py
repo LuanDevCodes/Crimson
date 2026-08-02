@@ -257,6 +257,34 @@ DICIONARIO_IDIOMAS = {
     "msg_salvar_como": {
         "Portuguese":       "Salvar como...",
         "English":          "Save as..."
+    },
+    "menu_colar": {
+        "Portuguese":       "Colar",
+        "English":          "Paste"
+    },
+    "menu_apagar": {
+        "Portuguese":       "Apagar",
+        "English":          "Delete"
+    },
+    "btn_limpar_processos": {
+        "Portuguese":       "Finalizar processos fantasmas",
+        "English":          "Kill ghost processes"
+    },
+    "msg_confirm_limpeza_titulo": {
+        "Portuguese":       "Limpeza de Processos",
+        "English":          "Process Cleanup"
+    },
+    "msg_confirm_limpeza_texto": {
+        "Portuguese":       "Tem certeza que deseja finalizar os processos em segundo plano da aplicação?",
+        "English":          "Are you sure you want to terminate background application processes?"
+    },
+    "msg_sucesso_limpeza_titulo": {
+        "Portuguese":       "Sucesso",
+        "English":          "Success"
+    },
+    "msg_sucesso_limpeza_texto": {
+        "Portuguese":       "Processos secundários finalizados",
+        "English":          "Secondary processes terminated"
     }
 }
 
@@ -580,6 +608,40 @@ if __name__ == '__main__':
     entrada_url.pack(pady=5)
 
     # ------------------------------------------------------------------
+    # --- Menu de Contexto (Botão Direito do Mouse) ---
+    menu_contexto = tk.Menu(janela, tearoff=0)
+    
+    # Função simples para exibir o menu quando clicar com o botão direito
+    def exibir_menu_contexto(evento):
+        
+        # Apenas exibe a opção de colar se o campo estiver habilitado e livre para digitar
+        if entrada_url["state"] == "normal":
+            
+            # limpa o menu e recriamos para ele sempre pegar o idioma certinho
+            menu_contexto.delete(0, tk.END)
+           
+            # O event_generate("<<Paste>>") é o comando nativo que simula o colar padrão do Windows
+            menu_contexto.add_command(label=DICIONARIO_IDIOMAS["menu_colar"][idioma_atual], command=lambda: entrada_url.event_generate("<<Paste>>"))
+            
+            # Função para apagar apenas a parte selecionada do texto (ou tudo se estiver tudo selecionado)
+            def apagar_selecionado():
+                try:
+                    # SEL_FIRST e SEL_LAST representam o começo e o fim do que o usuário grifou com o mouse
+                    entrada_url.delete(tk.SEL_FIRST, tk.SEL_LAST)
+                except tk.TclError:
+                    pass # Se não tiver nada selecionado, o Tkinter joga um erro que é ignorado
+                    
+            menu_contexto.add_command(label=DICIONARIO_IDIOMAS["menu_apagar"][idioma_atual], command=apagar_selecionado)
+            menu_contexto.tk_popup(evento.x_root, evento.y_root)
+            
+    # O '<Button-3>' representa o clique com o botão direito do mouse
+    entrada_url.bind("<Button-3>", exibir_menu_contexto)
+
+    # ------------------------------------------------------------------
+    # Variáveis para impedir que abram milhares de janelas ao mesmo tempo
+    instancias_janelas = {"plataformas": None, "config": None}
+
+    # ------------------------------------------------------------------
     # Criação de um Frame (uma caixa invisível) para organizar os botões lado a lado
     frame_botoes = tk.Frame(janela)
     frame_botoes.pack(pady=10)
@@ -654,6 +716,10 @@ if __name__ == '__main__':
             raw_continuar = Image.open(os.path.join(caminho_icons, "continuar.png")).convert("RGBA")
             raw_excluir   = Image.open(os.path.join(caminho_icons, "excluir.png")).convert("RGBA")
             
+            # --- Limpar Processos ---
+            raw_limpar    = Image.open(os.path.join(caminho_icons, "limpar.png")).convert("RGBA")
+            img_limpar    = ctk.CTkImage(raw_limpar, size=(22, 22))
+            
             raw_duvidas   = Image.open(os.path.join(caminho_icons, "duvidas.png")).convert("RGBA")
             img_duvidas   = ctk.CTkImage(raw_duvidas, size=(22, 22))
             
@@ -685,6 +751,7 @@ if __name__ == '__main__':
             img_pausa_inativa = None
             img_continuar_inativa = None
             img_excluir_inativa = None
+            img_limpar = None
         
         # O .subsample(x, y) é um truque nativo do tkinter para diminuir imagens
         img_git         = raw_git.subsample(9, 9)
@@ -700,6 +767,7 @@ if __name__ == '__main__':
         img_continuar_inativa = None
         img_excluir_inativa = None
         img_duvidas = None
+        img_limpar = None
         
     # Criando os 3 botões fixos de controle usando CustomTkinter para uma estética mais agradável
     botao_pausar = ctk.CTkButton(frame_controles, text="", image=img_pausa_inativa, command=acionar_pausa, state="disabled", width=40, height=40, corner_radius=8)
@@ -715,11 +783,24 @@ if __name__ == '__main__':
     # --- Painel de Plataformas Suportadas ---
     
     def abrir_plataformas():
+        
+        # Impede que a tela abra várias vezes
+        if instancias_janelas["plataformas"] and instancias_janelas["plataformas"].winfo_exists():
+            instancias_janelas["plataformas"].lift() # Traz para frente
+            instancias_janelas["plataformas"].focus_force() # Força o foco nela
+            return
+            
         jan_plat = tk.Toplevel(janela)
+        instancias_janelas["plataformas"] = jan_plat # Salva para controlar depois
+        
         jan_plat.title(DICIONARIO_IDIOMAS["plataformas_titulo"][idioma_atual])
         jan_plat.geometry("460x460")
         jan_plat.config(bg=TEMAS[tema_atual]["cor_fundo_janela"])
         janela.eval(f'tk::PlaceWindow {str(jan_plat)} center')
+        
+        # Torna a janela modal, bloqueando cliques na tela principal até que ela seja fechada
+        jan_plat.transient(janela)
+        jan_plat.grab_set()
         
         lbl_titulo = tk.Label(jan_plat, text=DICIONARIO_IDIOMAS["plataformas_titulo"][idioma_atual], font=("Arial", 14, "bold"), fg=TEMAS[tema_atual]["cor_do_texto"], bg=TEMAS[tema_atual]["cor_fundo_janela"])
         lbl_titulo.pack(pady=(20, 10))
@@ -745,8 +826,16 @@ if __name__ == '__main__':
     
     def abrir_configuracoes():
         
+        # Impede que a tela de configuração abra mais de uma vez
+        if instancias_janelas["config"] and instancias_janelas["config"].winfo_exists():
+            instancias_janelas["config"].lift()
+            instancias_janelas["config"].focus_force()
+            return
+            
         # tk.Toplevel cria uma nova janela flutuante sobre a principal
         jan_config = tk.Toplevel(janela)
+        instancias_janelas["config"] = jan_config
+        
         jan_config.title("Configurações e Sobre")
         jan_config.geometry("400x450")
         
@@ -788,6 +877,12 @@ if __name__ == '__main__':
             link_ytdlp.config(text=DICIONARIO_IDIOMAS["link_ytdlp"][idioma_atual])
             link_ffmpeg.config(text=DICIONARIO_IDIOMAS["link_ffmpeg"][idioma_atual])
             marca_dagua.config(text=DICIONARIO_IDIOMAS["marca_dagua"][idioma_atual])
+            
+            # Como esse botão é criado no final da função, usei um try para traduzir só se ele já existir
+            try:
+                botao_limpar.configure(text=DICIONARIO_IDIOMAS["btn_limpar_processos"][idioma_atual])
+            except:
+                pass
 
         cor = TEMAS[tema_atual] # Pegando a cor atual para pintar a janela
         
@@ -855,7 +950,8 @@ if __name__ == '__main__':
                 
                 # Para evitar erro de tela, atualizo também as cores de dentro da janelinha de config manualmente
                 nova_cor = TEMAS[tema_atual]
-                jan_config.config(bg=nova_cor["cor_fundo_janela"])
+                
+                # Pintamos apenas as abas, mantendo a base (jan_config) com a cor nativa do Windows para preservar a "borda"
                 aba_sistema.config(bg=nova_cor["cor_fundo_janela"])
                 aba_sobre.config(bg=nova_cor["cor_fundo_janela"])
                 frame_repos.config(bg=nova_cor["cor_fundo_janela"])
@@ -873,9 +969,46 @@ if __name__ == '__main__':
                 dropdown_idioma.configure(fg_color=nova_cor["cor_botao_audio"], button_color=nova_cor["cor_botao_audio"], button_hover_color=nova_cor["cor_botao_audio_hover"], text_color=nova_cor["cor_fonte_botoes"], dropdown_fg_color=nova_cor["cor_de_fundo_dropdown"], dropdown_hover_color=nova_cor["cor_do_hover_dropdown"], dropdown_text_color=nova_cor["cor_do_texto"])
                 dropdown_tema.configure(fg_color=nova_cor["cor_botao_audio"], button_color=nova_cor["cor_botao_audio"], button_hover_color=nova_cor["cor_botao_audio_hover"], text_color=nova_cor["cor_fonte_botoes"], dropdown_fg_color=nova_cor["cor_de_fundo_dropdown"], dropdown_hover_color=nova_cor["cor_do_hover_dropdown"], dropdown_text_color=nova_cor["cor_do_texto"])
                 
+                try:
+                    botao_limpar.configure(fg_color=nova_cor["cor_botao_audio"], hover_color=nova_cor["cor_botao_audio_hover"], text_color=nova_cor["cor_fonte_botoes"])
+                except:
+                    pass
+                
+        # ------------------------------------------------------------------
+        # --- Botão de Limpeza de Processos ---
+        def limpar_processos():
+            
+            # Confirmação antes de prosseguir
+            if messagebox.askyesno(DICIONARIO_IDIOMAS["msg_confirm_limpeza_titulo"][idioma_atual], DICIONARIO_IDIOMAS["msg_confirm_limpeza_texto"][idioma_atual]):
+                try:
+                    # Finaliza os processos ffmpeg silenciosamente
+                    # O CREATE_NO_WINDOW evita que a janela do terminal (CMD) pisque na tela
+                    subprocess.run(["taskkill", "/F", "/IM", "ffmpeg.exe"], capture_output=True, creationflags=subprocess.CREATE_NO_WINDOW)
+                    
+                    messagebox.showinfo(DICIONARIO_IDIOMAS["msg_sucesso_limpeza_titulo"][idioma_atual], DICIONARIO_IDIOMAS["msg_sucesso_limpeza_texto"][idioma_atual])
+                except Exception:
+                    pass
+                
+        # CTkButton suporta imagens facilmente e se adapta ao tema
+        botao_limpar = ctk.CTkButton(
+            aba_sistema, 
+            text=DICIONARIO_IDIOMAS["btn_limpar_processos"][idioma_atual], 
+            image=img_limpar, 
+            compound=tk.LEFT,
+            font=("Arial", 11, "bold"), 
+            command=limpar_processos, 
+            corner_radius=8, 
+            width=200,
+            fg_color=cor["cor_botao_audio"], 
+            hover_color=cor["cor_botao_audio_hover"], 
+            text_color=cor["cor_fonte_botoes"]
+        )
+        botao_limpar.pack(pady=40)
+
+        # o botão salvar fica posicionado no final da tela
         texto_botao_salvar = "Salvar e Aplicar" if idioma_atual == "Portuguese" else "Save & Apply"
         botao_salvar = ctk.CTkButton(aba_sistema, text=texto_botao_salvar, font=("Arial", 12, "bold"), command=confirmar_e_salvar, corner_radius=8, width=150)
-        botao_salvar.pack(pady=20)
+        botao_salvar.pack(pady=(0, 20))
         
         # Pinta os dropdowns assim que a tela abre
         dropdown_idioma.configure(fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
