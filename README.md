@@ -25,30 +25,33 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica n
 - **Internacionalização em Tempo Real (PT-BR / EN)**: O sistema inteiro possui um "dicionário" de idiomas em memória. Através de um *Callback* no Painel de Configurações, o usuário pode alterar o idioma e ver todos os textos, pop-ups, barra de progresso e informações de velocidade reagirem e mudarem instantaneamente na tela mãe sem que a aplicação precise reiniciar.
 - **Identidade Visual e Temas Dinâmicos**: O aplicativo suporta variações completas de tema (Matcha, Egg e Dark) com paletas curadas em tons pastéis. A interface, os menus flutuantes e as marcas d'água são coloridos durante a troca, sem precisar recarregar a tela.
 - **Persistência de Dados e Roteamento Seguro**: O aplicativo memoriza as preferências do usuário (como o seu tema preferido e idioma) salvando um `.json` seguro na rota oculta do `AppData`. Além disso, para evitar confusão de arquivos na raiz do executável, as mídias baixadas não precisam mais de rota estipulada e caem nativamente na pasta de `Downloads` original do Sistema Operacional do usuário.
+- **Gestão de Processos**: Um botão nativo no painel de configurações capaz de "varrer" e finalizar processos órfãos em segundo plano (como threads residuais do FFmpeg), garantindo que nada trave a movimentação dos arquivos ou pese na máquina sem quebrar a estabilidade do aplicativo.
+- **Controle de Instâncias (Anti-Spam)**: As janelas do sistema (como as Plataformas e Configurações) possuem um bloqueio inteligente e modal que impede a abertura simultânea de dezenas de abas ao clicar repetidas vezes, trazendo sempre a janela ativa para o foco.
+- **Menu de Contexto Intuitivo**: Interaja com a barra de pesquisa usando o botão direito do mouse para *Colar* links ou *Apagar* seleções de texto de forma rápida.
 - **Painel Modular e Créditos**: Uma janela flutuante baseada em "Abas de Notebook", criada para abrigar configurações globais de sistema e um painel de honra à comunidade Open Source, detalhando as ferramentas base do software e seus respectivos repositórios oficiais.
 
 ## ❏ Interface Visual
 > [!NOTE]
 > As capturas de tela abaixo retratam a evolução do projeto, servindo como um registro visual, o software evoluiu de um escopo desenhado no Tkinter raiz (Beta) e foi totalmente remodelado usando CustomTkinter com o tempo, adotando novos ícones, cantos arredondados, feedbacks visuais (hover) e novas paletas de temas.
 
-### → Release 2.0 (Atual)
+### → Release 2.1.0 (Atual)
 <div align="center">
   <p><b>Visão Geral da Nova Interface (Modo Escuro / Temas Pastéis)</b></p>
-  <img src="Capturas/V.2.0.0/Crimson_com_janela.png" alt="Janela Principal do Crimson" width="85%">
+  <img src="Capturas/V.2.1.0/Crimson_com_janela.png" alt="Janela Principal do Crimson" width="85%">
   
   <br><br>
   
   <p><b>Download Assíncrono com Atualização em Tempo Real</b></p>
-  <img src="Capturas/V.2.0.0/Crimson_download_iniciando.png" alt="Iniciando Download" width="45%">
+  <img src="Capturas/V.2.1.0/Crimson_download_iniciando.png" alt="Iniciando Download" width="45%">
   &nbsp;
-  <img src="Capturas/V.2.0.0/Crimson_download_progresso_download.png" alt="Progresso do Download" width="45%">
+  <img src="Capturas/V.2.1.0/Crimson_download_progresso_download.png" alt="Progresso do Download" width="45%">
 
   <br><br>
 
   <p><b>Painel de Configurações Dinâmicas e Créditos</b></p>
-  <img src="Capturas/V.2.0.0/Crimson_aba_configurações.png" alt="Aba Configurações" width="45%">
+  <img src="Capturas/V.2.1.0/Crimson_aba_configurações.png" alt="Aba Configurações" width="45%">
   &nbsp;
-  <img src="Capturas/V.2.0.0/Crimson_aba_sobre.png" alt="Aba Sobre e Repositórios" width="45%">
+  <img src="Capturas/V.2.1.0/Crimson_aba_sobre.png" alt="Aba Sobre e Repositórios" width="45%">
 </div>
 
 <br>
@@ -103,7 +106,8 @@ Os ícones utilizados na interface gráfica pertencem integralmente aos seus res
 - [Pausar - ícone criado por Slidicon - Flaticon](https://www.flaticon.com/br/icones-gratis/pausa)
 - [Configurações - ícone criado por Pixel perfect - Flaticon](https://www.flaticon.com/br/icones-gratis/configuracoes)
 - [Comunidade - ícone criado por Soremba - Flaticon](https://www.flaticon.com/br/icones-gratis/comunidade)
-- [Github - ícone criados por riajulislam - Flaticon](https://www.flaticon.com/br/icones-gratis/github)
+- [Github - ícone criado por riajulislam - Flaticon](https://www.flaticon.com/br/icones-gratis/github)
+- [Limpeza - ícone criado por Us and Up - Flaticon](https://www.flaticon.com/br/icones-gratis/vassoura)
 
 ---
 
