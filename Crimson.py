@@ -3,9 +3,11 @@
 
 import os # Biblioteca para interagir com o sistema operacional (ex: navegar entre pastas, verificar se um arquivo existe, criar pastas e ler variáveis)
 import sys # Necessário para identificar se está rodando como .exe
+import glob # Para manipulação dos caminhos dos arquivos, além de ajudar na exclusão dos arquivos residuiais
 import tkinter as tk # Biblioteca para a interface gráfica (nativa do python)
 from tkinter import ttk # Necessário para elementos mais modernos como a Barra de Progresso
 from tkinter import messagebox # Para exibir mensagens de alerta/sucesso na tela
+from tkinter import filedialog # Para usar o "Salvar Como" nativo do Windows
 import threading # Biblioteca para criar rotinas em segundo plano (evita que a tela trave)
 import re # Usado para limpar textos gerados pelo yt-dlp
 import subprocess # Usado para executar comandos do sistema (como atualizar o yt-dlp)
@@ -14,6 +16,7 @@ import customtkinter as ctk # Biblioteca para conseguir estilizar melhor o aplic
 import json # Biblioteca nativa para salvar e ler dados configurados usando esse formato de arquivo
 import urllib.request # Biblioteca nativa para baixar arquivos da internet
 import zipfile # Biblioteca nativa para extrair arquivos compactados
+from PIL import Image # Biblioteca 'Pillow', não é nativa e ajuda na manipulação de imagens
 
 # -------------------------------
 # --- Setup de Diretórios do Aplicativo (AppData) e Persistência ---
@@ -230,6 +233,18 @@ DICIONARIO_IDIOMAS = {
     "btn_baixar_inativo": {
         "Portuguese":       "Preparando...",
         "English":          "Preparing..."
+    },
+    "msg_excluir_titulo": {
+        "Portuguese":       "Excluir Download",
+        "English":          "Delete Download"
+    },
+    "msg_excluir_texto": {
+        "Portuguese":       "Tem certeza que deseja cancelar e excluir o progresso desse download?",
+        "English":          "Are you sure you want to cancel and delete the progress of this download?"
+    },
+    "msg_salvar_como": {
+        "Portuguese":       "Salvar como...",
+        "English":          "Save as..."
     }
 }
 
@@ -250,21 +265,31 @@ os.environ["PATH"] = os.environ["PATH"] + os.pathsep + caminho_ffmpeg_dir
 # --------------------------------------------------------------------------------------------------------------------
 
 # função responsável por baixar áudios ou vídeos do youtube
-def baixar_midia_youtube(url, tipo, formato, hook_progresso, pasta_destino=None):
-    
-    # Se nenhuma pasta for definida, pega a oficial do usuário do Windows, no geral vou passar como None no momento, talvez eu mude isso depois
-    if pasta_destino is None:
-        pasta_destino = os.path.join(os.path.expanduser('~'), 'Downloads')
-        
-    # validação da pasta e caso não exista, ela é criada
-    if not os.path.exists(pasta_destino):
-        os.makedirs(pasta_destino)
+# --------------------------------------------------------------------------------------------------------------------
+# --- Mecanismo de Pausa Customizado (O Truque da Exceção) ---
+# O yt-dlp é excelente, mas não possui uma função nativa de "pausa"
+# Para contornar isso, nós criamos nossa própria Classe de Erro (Exception) abaixo. A lógica funciona em 4 passos:
+# 1. O yt-dlp aciona o "espião" (a função atualizar_progresso) a cada avanço percentual do download
+# 2. Se o usuário tiver clicado no botão Pausa, o espião dispara esse erro abaixo intencionalmente (raise DownloadPausado)
+# 3. O disparo do erro corta a linha de execução do yt-dlp na mesma hora, forçando ele a parar e deixar o arquivo '.part' salvo na pasta
+# 4. A função 'thread_download' que estava rodando lá embaixo pega esse erro no bloco 'try...except' e simplesmente dá um "pass" (ignora), evitando que o aplicativo quebre ou trave
+# Quando o usuário clica em "Continuar", apenas mando ele baixar novamente. O yt-dlp é inteligente, acha o arquivo '.part' na pasta e retoma de onde o corte ocorreu
+class DownloadPausado(Exception):
+    pass
+
+estado_download = "parado" # "rodando", "pausado", "cancelado"
+url_atual = ""
+caminho_salvamento_atual = ""
+tipo_atual = ""
+formato_atual = ""
+
+def baixar_midia_youtube(url, tipo, formato, hook_progresso, caminho_completo):
 
     # Configurações base de Download (ydl_opts)
     ydl_opts = {
         
-        # Define o caminho de saída: pasta_destino / titulo_do_video.extensao
-        'outtmpl': os.path.join(pasta_destino, '%(title)s.%(ext)s'),
+        # Define o caminho exato de saída já com nome e extensão que o usuário escolheu
+        'outtmpl': caminho_completo,
         
         # Conecta a função da nossa barra de progresso no sistema do yt-dlp
         'progress_hooks': [hook_progresso],
@@ -317,7 +342,7 @@ def baixar_midia_youtube(url, tipo, formato, hook_progresso, pasta_destino=None)
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
         
-    print(f"[*] Download concluído - Verifique a pasta '{pasta_destino}'")
+    print(f"[*] Download concluído - Verifique a pasta '{caminho_salvamento_atual}'")
 
 # -------------------------------
 # *******************************
@@ -333,6 +358,13 @@ if __name__ == '__main__':
     
     # Função que lida com as informações recebidas em tempo real do yt-dlp
     def atualizar_progresso(d):
+        
+        global estado_download
+        
+        # Injeta a trava de segurança para o Pausar/Cancelar
+        if estado_download == "pausado":
+            raise DownloadPausado("Download interrompido pelo usuário.")
+            
         if d['status'] == 'downloading':
             try:
                 # O yt-dlp pode mandar caracteres de cor para o console, usarei o re (Regex) para limpar tudo e pegar só o número
@@ -378,61 +410,152 @@ if __name__ == '__main__':
         botao_baixar_video.configure(state=tk.NORMAL, text=DICIONARIO_IDIOMAS["cor_botao_video"][idioma_atual])
         barra_progresso.pack_forget() # Esconde a barra da tela
         label_progresso.pack_forget() # Esconde o texto da tela
+        
+        entrada_url.configure(state=tk.NORMAL) # Desbloqueia a URL
+        
+        # Desativa os controles e torna a imagem translúcida
+        botao_pausar.configure(state="disabled", image=img_pausa_inativa)
+        botao_continuar.configure(state="disabled", image=img_continuar_inativa)
+        botao_excluir.configure(state="disabled", image=img_excluir_inativa)
 
     # --------------------------------------------------------------------------------------
+    # --- Funções de Controle (Pausar, Retomar e Excluir) ---
+    def acionar_pausa():
+        global estado_download
+        
+        estado_download = "pausado"
+        botao_pausar.configure(state="disabled", image=img_pausa_inativa)
+        botao_continuar.configure(state="normal", image=img_continuar)
+        botao_excluir.configure(state="normal", image=img_excluir) # Só pode excluir se pausar antes, para evitar erros de arquivos abertos
 
-    # Função chamada quando qualquer um dos botões é clicado
+    def acionar_retomar():
+        global estado_download
+        
+        estado_download = "rodando"
+        botao_pausar.configure(state="normal", image=img_pausa)
+        botao_continuar.configure(state="disabled", image=img_continuar_inativa)
+        botao_excluir.configure(state="disabled", image=img_excluir_inativa)
+        
+        # Cria a thread novamente para retomar o yt-dlp
+        threading.Thread(target=thread_download, daemon=True).start()
+
+    def acionar_excluir():
+        
+        # Exibe um alerta nativo de confirmação
+        if messagebox.askyesno(DICIONARIO_IDIOMAS["msg_excluir_titulo"][idioma_atual], DICIONARIO_IDIOMAS["msg_excluir_texto"][idioma_atual]):
+            
+            global estado_download, caminho_salvamento_atual
+            estado_download = "parado"
+            
+            # Limpa interface
+            restaurar_botoes()
+            
+            # Limpa a URL
+            entrada_url.delete(0, tk.END)
+            
+            # Tenta deletar o arquivo parcial .part ou .ytdl (O Windows pode estar segurando, por isso usei o try)
+            try:
+                # Extrai apenas o nome base  para garantir que todos os arquivos '.part' sejam apagafos certinho
+                base_nome = os.path.splitext(caminho_salvamento_atual)[0] 
+                
+                # Procura todos os arquivos que começam com o nome base
+                arquivos_residuais = glob.glob(base_nome + ".*")
+                
+                for arq in arquivos_residuais:
+                    if arq.endswith(".part") or arq.endswith(".ytdl"):
+                        try:
+                            os.remove(arq)
+                        except:
+                            pass
+            except:
+                pass
+
+    # A função de thread para o download, exibindo a barra
+    def thread_download():
+        try:
+            baixar_midia_youtube(
+                url_atual, 
+                tipo_atual, 
+                formato_atual, 
+                hook_progresso=atualizar_progresso,
+                caminho_completo=caminho_salvamento_atual
+            )
+            
+            # Se não foi pausado e terminou tudo, exibe sucesso
+            if estado_download == "rodando":
+                janela.after(0, finalizar_com_sucesso, tipo_atual, formato_atual)
+                
+        except DownloadPausado:
+            # Não exibe erro, apenas interrompe a linha do tempo (a UI já foi alterada)
+            pass
+        except Exception as e:
+            janela.after(0, finalizar_com_erro, str(e))
+
+    # Função chamada quando qualquer um dos botões principais é clicado
     def iniciar_download(tipo):
+        
+        global url_atual, tipo_atual, formato_atual, caminho_salvamento_atual, estado_download
         url = entrada_url.get() # Captura o texto que o usuário digitou
         
+        if not url.strip(): 
+            messagebox.showwarning(DICIONARIO_IDIOMAS["msg_aviso_titulo"][idioma_atual], DICIONARIO_IDIOMAS["msg_aviso_url"][idioma_atual])
+            return
+
         if tipo == 'audio':
             formato = var_audio.get()
             botao_ativo = botao_baixar_audio
+            file_types = [(f"Arquivo {formato.upper()}", f"*.{formato}")]
         else:
             formato = var_video.get()
             botao_ativo = botao_baixar_video
+            file_types = [(f"Arquivo {formato.upper()}", f"*.{formato}")]
         
-        if url.strip(): 
+        # Pede ao usuário o local para salvar, definindo o tipo do arquivo
+        caminho_completo = filedialog.asksaveasfilename(
+            title=DICIONARIO_IDIOMAS["msg_salvar_como"][idioma_atual],
+            defaultextension=f".{formato}",
+            filetypes=file_types,
+            initialdir=os.path.join(os.path.expanduser('~'), 'Downloads')
+        )
+        
+        # Se o usuário clicou em cancelar no popup, aborta tudo sem avisos
+        if not caminho_completo:
+            return
             
-            # Desativa os botões para evitar duplo clique durante o download (No CTk usa-se configure)
-            botao_baixar_audio.configure(state=tk.DISABLED)
-            botao_baixar_video.configure(state=tk.DISABLED)
+        # Grava os dados globalmente para retomar depois
+        url_atual = url
+        tipo_atual = tipo
+        formato_atual = formato
+        caminho_salvamento_atual = caminho_completo
+        estado_download = "rodando"
             
-            # Muda o texto do botão clicado para dar feedback ao usuário
-            botao_ativo.configure(text=DICIONARIO_IDIOMAS["btn_baixar_inativo"][idioma_atual])
-            
-            # Exibe a barra de progresso na tela (elas estavam escondidas)
-            barra_progresso.pack(pady=(15, 0))
-            label_progresso.pack(pady=(5, 0))
-            set_progresso_ui(0, DICIONARIO_IDIOMAS["progresso_init"][idioma_atual])
-            janela.update() 
-            
-            # O Threading cria uma "linha do tempo paralela" (segundo plano)
-            # é obrigatório, pois se eu chamar a função de baixar direto aqui, 
-            # ela vai travar o "mainloop" da janela gráfica, paralisando tudo
-            def thread_download():
-                try:
-                    baixar_midia_youtube(
-                        url, 
-                        tipo, 
-                        formato, 
-                        hook_progresso=atualizar_progresso
-                    )
-                    
-                    # Quando a função acima terminar, aviso a tela principal
-                    janela.after(0, finalizar_com_sucesso, tipo, formato)
-                except Exception as e:
-                    janela.after(0, finalizar_com_erro, str(e))
-            
-            # Cria a thread e dá o "play" nela
-            threading.Thread(target=thread_download, daemon=True).start()
-            
-        else:
-            messagebox.showwarning(DICIONARIO_IDIOMAS["msg_aviso_titulo"][idioma_atual], DICIONARIO_IDIOMAS["msg_aviso_url"][idioma_atual])
+        # Desativa os botões principais
+        botao_baixar_audio.configure(state=tk.DISABLED)
+        botao_baixar_video.configure(state=tk.DISABLED)
+        botao_ativo.configure(text=DICIONARIO_IDIOMAS["btn_baixar_inativo"][idioma_atual])
+        
+        # Controla a interface para o download
+        frame_controles.pack_forget() # Dá um refresh na ordem
+        barra_progresso.pack(pady=(15, 0))
+        label_progresso.pack(pady=(5, 0))
+        frame_controles.pack(pady=(20, 0)) # Re-pack abaixo da barra
+        
+        entrada_url.configure(state="readonly") # Bloqueia a edição
+        
+        # Habilita botão de pausar e mantém os demais inativos
+        botao_pausar.configure(state="normal", image=img_pausa)
+        botao_continuar.configure(state="disabled", image=img_continuar_inativa)
+        botao_excluir.configure(state="disabled", image=img_excluir_inativa)
+        
+        set_progresso_ui(0, DICIONARIO_IDIOMAS["progresso_init"][idioma_atual])
+        janela.update() 
+        
+        # Cria a thread e dá o "play" nela
+        threading.Thread(target=thread_download, daemon=True).start()
 
     # Criação da janela principal da interface
     janela = tk.Tk()
-    janela.title("Crimson - Download Youtube") # Título da janela
+    janela.title("Crimson - Video Downloader") # Título da janela
     janela.geometry("600x300") # (Largura x Altura)
     janela.eval('tk::PlaceWindow . center') # Centraliza a janela na tela
 
@@ -487,6 +610,7 @@ if __name__ == '__main__':
     # Só vão aparecer quando o usuário clicar em baixar
     barra_progresso = ttk.Progressbar(janela, orient="horizontal", length=400, mode="determinate")
     label_progresso = tk.Label(janela, text="", font=("Arial", 10))
+    frame_controles = tk.Frame(janela)
 
     # ------------------------------------------------------------------
     # --- Carregamento dos Ícones ---
@@ -497,7 +621,6 @@ if __name__ == '__main__':
     # O 'try/except' é uma trava de segurança
     # se a imagem ou a pasta não existirem ainda, ele simplesmente desiste e ignora, não quebrando a tela
     try:
-        import glob
         
         # Tenta carregar e aplicar o ícone do aplicativo na janela (topo da janela e barra de tarefas)
         # usei o glob para achar a imagem que tem Crimson no nome evitando problemas com o acento por causa da minha própria renomeação :P
@@ -514,6 +637,38 @@ if __name__ == '__main__':
         raw_git       = tk.PhotoImage(file=os.path.join(caminho_icons, "github.png"))
         raw_community = tk.PhotoImage(file=os.path.join(caminho_icons, "comunidade.png"))
         
+        try:
+            # Carrega e converte para permitir manipulação de canais
+            raw_pausa     = Image.open(os.path.join(caminho_icons, "pausa.png")).convert("RGBA")
+            raw_continuar = Image.open(os.path.join(caminho_icons, "continuar.png")).convert("RGBA")
+            raw_excluir   = Image.open(os.path.join(caminho_icons, "excluir.png")).convert("RGBA")
+            
+            # Função para criar versão inativa (translúcida/opacidade reduzida)
+            # toda imagem com fundo transparente possuí quatro camadas, red, green, blue e alpha (que é a parte transparente em si)
+            # na função abaixo eu separo ela por camadas e justamente altero a alpha, juntando tudo no final de novo
+            def criar_inativa(img):
+                r, g, b, a = img.split()
+                
+                # Reduz a opacidade para 30%
+                a = a.point(lambda p: p * 0.3)
+                return Image.merge("RGBA", (r, g, b, a))
+            
+            # usando das propriedades de composição para deixar a imagem translucida no momento da execução e já entregando ela ao ctkimage
+            img_pausa_inativa       = ctk.CTkImage(criar_inativa(raw_pausa), size=(28, 28))
+            img_continuar_inativa   = ctk.CTkImage(criar_inativa(raw_continuar), size=(28, 28))
+            img_excluir_inativa     = ctk.CTkImage(criar_inativa(raw_excluir), size=(28, 28))
+            
+            img_pausa       = ctk.CTkImage(raw_pausa, size=(28, 28))
+            img_continuar   = ctk.CTkImage(raw_continuar, size=(28, 28))
+            img_excluir     = ctk.CTkImage(raw_excluir, size=(28, 28))
+        except:
+            img_pausa = None
+            img_continuar = None
+            img_excluir = None
+            img_pausa_inativa = None
+            img_continuar_inativa = None
+            img_excluir_inativa = None
+        
         # O .subsample(x, y) é um truque nativo do tkinter para diminuir imagens
         # ele funciona de maneira inversa, quanto menor o valor, maior o tamanho
         # isso acontece pq o subsample joga pixels fora por assim dizer, então quanto maior o valor, mais pixels serão
@@ -525,6 +680,22 @@ if __name__ == '__main__':
         img_config      = None
         img_git         = None
         img_community   = None
+        img_pausa       = None
+        img_continuar   = None
+        img_excluir     = None
+        img_pausa_inativa = None
+        img_continuar_inativa = None
+        img_excluir_inativa = None
+        
+    # Criando os 3 botões fixos de controle usando CustomTkinter para uma estética mais agradável
+    botao_pausar = ctk.CTkButton(frame_controles, text="", image=img_pausa_inativa, command=acionar_pausa, state="disabled", width=40, height=40, corner_radius=8)
+    botao_pausar.grid(row=0, column=0, padx=15)
+    
+    botao_continuar = ctk.CTkButton(frame_controles, text="", image=img_continuar_inativa, command=acionar_retomar, state="disabled", width=40, height=40, corner_radius=8)
+    botao_continuar.grid(row=0, column=1, padx=15)
+    
+    botao_excluir = ctk.CTkButton(frame_controles, text="", image=img_excluir_inativa, command=acionar_excluir, state="disabled", width=40, height=40, corner_radius=8)
+    botao_excluir.grid(row=0, column=2, padx=15)
 
     # ------------------------------------------------------------------
     # --- Configurações e Sobre (menu) ---
@@ -679,7 +850,7 @@ if __name__ == '__main__':
         label_disclaimer = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["txt_disclaimer"][idioma_atual], font=("Arial", 9), justify="center", bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         label_disclaimer.pack(pady=(5, 15))
         
-        # O compound=tk.TOP coloca a imagem perfeitamente ACIMA do texto!
+        # O compound=tk.TOP coloca a imagem cima do texto
         label_creditos = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["lbl_creditos"][idioma_atual], image=img_community, compound=tk.TOP, font=("Arial", 9, "italic"), bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         label_creditos.pack(pady=5)
         
@@ -725,13 +896,19 @@ if __name__ == '__main__':
         # Pinta a janela principal e as caixas (frames) transparentes
         janela.config(bg=cor["cor_fundo_janela"])
         frame_botoes.config(bg=cor["cor_fundo_janela"])
+        frame_controles.config(bg=cor["cor_fundo_janela"])
         
-        # Pinta os textos na tela
+        # Pinta os textos na tela e os botões de ação
         label_instrucao.config(bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         label_progresso.config(bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         
-        # Estiliza o campo de digitar o link
-        entrada_url.config(bg=cor["cor_barra_de_pesquisa"], fg=cor["cor_texto_caixa_de_pesquisa"], insertbackground=cor["cor_do_texto"], relief="flat")
+        # Estiliza o campo de digitar o link (readonlybackground garante que a cor não mude quando bloqueado)
+        entrada_url.config(bg=cor["cor_barra_de_pesquisa"], fg=cor["cor_texto_caixa_de_pesquisa"], insertbackground=cor["cor_do_texto"], relief="flat", readonlybackground=cor["cor_barra_de_pesquisa"])
+        
+        # Configuração para os botões de controle do CustomTkinter (fg_color transparent resolve a cor feia do DISABLED), usei o mesmo hover dos botões de áudio
+        botao_pausar.configure(bg_color=cor["cor_fundo_janela"], fg_color="transparent", hover_color=cor["cor_botao_audio_hover"])
+        botao_continuar.configure(bg_color=cor["cor_fundo_janela"], fg_color="transparent", hover_color=cor["cor_botao_audio_hover"])
+        botao_excluir.configure(bg_color=cor["cor_fundo_janela"], fg_color="transparent", hover_color=cor["cor_botao_audio_hover"])
         
         # Configuração para os botões e menus do CustomTkinter (agora tem hover nativo e bordas arredondadas sem complexidade)
         botao_baixar_audio.configure(fg_color=cor["cor_botao_audio"], hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], text_color_disabled=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_audio"])
@@ -763,6 +940,7 @@ if __name__ == '__main__':
         label_instrucao.config(text=DICIONARIO_IDIOMAS["instrucao_ready"][idioma_atual])
         entrada_url.pack(pady=5)
         frame_botoes.pack(pady=10)
+        frame_controles.pack(pady=(20, 0)) # Fica fixo abaixo dos outros
         
         # O botão do menu de configurações é revelado no fim do loading
         botao_config.place(x=10, y=10) 
