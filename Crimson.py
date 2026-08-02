@@ -1,4 +1,4 @@
-# Projeto Crimson - Uma interface capaz de baixar vídeos do youtube de forma simples
+# Projeto Crimson - Uma interface capaz de baixar vídeos de diversas plataformas de forma simples
 # Criei esse projeto pela necessidade de uma ferramente útil e confiável para tal, nascendo assim ele :D
 
 import os # Biblioteca para interagir com o sistema operacional (ex: navegar entre pastas, verificar se um arquivo existe, criar pastas e ler variáveis)
@@ -131,8 +131,8 @@ DICIONARIO_IDIOMAS = {
         "English":          "Checking for security updates..."
     },
     "instrucao_ready": {
-        "Portuguese":       "Insira a URL do vídeo do YouTube:",
-        "English":          "Enter the YouTube video URL:"
+        "Portuguese":       "Insira a URL do vídeo:",
+        "English":          "Enter the video URL:"
     },
     "cor_botao_audio": {
         "Portuguese":       "Baixar Áudio",
@@ -178,6 +178,18 @@ DICIONARIO_IDIOMAS = {
         "Portuguese":       " Repositório yt-dlp",
         "English":          " yt-dlp Repository"
     },
+    "plataformas_titulo": {
+        "Portuguese":       "Plataformas Suportadas",
+        "English":          "Supported Platforms"
+    },
+    "plataformas_texto": {
+        "Portuguese":       "• YouTube\n • Vimeo\n • Dailymotion\n • Facebook\n • Instagram\n • Twitter / X\n • TikTok\n • Twitch\n • SoundCloud\n • Reddit\n • LinkedIn\n • Pinterest\n • VK\n • Bilibili",
+        "English":          "• YouTube\n • Vimeo\n • Dailymotion\n • Facebook\n • Instagram\n • Twitter / X\n • TikTok\n • Twitch\n • SoundCloud\n • Reddit\n • LinkedIn\n • Pinterest\n • VK\n • Bilibili"
+    },
+    "plataformas_aviso": {
+        "Portuguese":       "Aviso: O motor que Crimson utiliza possui suporte nativo para esses sites.\nNo entanto, a disponibilidade e estabilidade podem variar segundo as regras de cada plataforma.",
+        "English":          "Warning: The Crimson engine supports this sites natively.\nHowever, availability and stability may vary according to each platform's rules."
+    },
     "link_ffmpeg": {
         "Portuguese":       " Repositório FFmpeg",
         "English":          " FFmpeg Repository"
@@ -207,8 +219,8 @@ DICIONARIO_IDIOMAS = {
         "English":          "Warning"
     },
     "msg_aviso_url": {
-        "Portuguese":       "Por favor, insira uma URL válida do YouTube",
-        "English":          "Please enter a valid YouTube URL"
+        "Portuguese":       "Por favor, insira uma URL válida",
+        "English":          "Please enter a valid URL"
     },
     "progresso_baixando": {
         "Portuguese":       "Baixando",
@@ -264,7 +276,7 @@ os.environ["PATH"] = os.environ["PATH"] + os.pathsep + caminho_ffmpeg_dir
 # ********************************************************************************************************************
 # --------------------------------------------------------------------------------------------------------------------
 
-# função responsável por baixar áudios ou vídeos do youtube
+# função responsável por baixar áudios ou vídeos
 # --------------------------------------------------------------------------------------------------------------------
 # --- Mecanismo de Pausa Customizado (O Truque da Exceção) ---
 # O yt-dlp é excelente, mas não possui uma função nativa de "pausa"
@@ -398,8 +410,8 @@ if __name__ == '__main__':
     # Função chamada quando a conversão e o download terminam
     def finalizar_com_sucesso(tipo, formato):
         messagebox.showinfo(DICIONARIO_IDIOMAS["msg_sucesso_titulo"][idioma_atual], DICIONARIO_IDIOMAS["msg_sucesso_texto"][idioma_atual])
-        entrada_url.delete(0, tk.END)
         restaurar_botoes()
+        entrada_url.delete(0, tk.END) # preciso destravar os botões para que seja possível apagar o preenchimento, senão não funciona
         
     def finalizar_com_erro(mensagem_erro):
         messagebox.showerror(DICIONARIO_IDIOMAS["msg_erro_titulo"][idioma_atual], f"{DICIONARIO_IDIOMAS['msg_erro_generico'][idioma_atual]}{mensagem_erro}")
@@ -632,8 +644,7 @@ if __name__ == '__main__':
             # O True faz com que esse ícone seja herdado por todas as janelas secundárias (como a de config)
             janela.iconphoto(True, img_icone_app)
             
-        # Carregando as imagens originais brutas
-        raw_config    = tk.PhotoImage(file=os.path.join(caminho_icons, "configuracoes.png"))
+        # Carregando as imagens originais brutas que serão usadas nos Labels nativos (CTk não aceita PhotoImage muito bem)
         raw_git       = tk.PhotoImage(file=os.path.join(caminho_icons, "github.png"))
         raw_community = tk.PhotoImage(file=os.path.join(caminho_icons, "comunidade.png"))
         
@@ -642,6 +653,12 @@ if __name__ == '__main__':
             raw_pausa     = Image.open(os.path.join(caminho_icons, "pausa.png")).convert("RGBA")
             raw_continuar = Image.open(os.path.join(caminho_icons, "continuar.png")).convert("RGBA")
             raw_excluir   = Image.open(os.path.join(caminho_icons, "excluir.png")).convert("RGBA")
+            
+            raw_duvidas   = Image.open(os.path.join(caminho_icons, "duvidas.png")).convert("RGBA")
+            img_duvidas   = ctk.CTkImage(raw_duvidas, size=(22, 22))
+            
+            raw_config_pil = Image.open(os.path.join(caminho_icons, "configuracoes.png")).convert("RGBA")
+            img_config = ctk.CTkImage(raw_config_pil, size=(22, 22))
             
             # Função para criar versão inativa (translúcida/opacidade reduzida)
             # toda imagem com fundo transparente possuí quatro camadas, red, green, blue e alpha (que é a parte transparente em si)
@@ -670,10 +687,6 @@ if __name__ == '__main__':
             img_excluir_inativa = None
         
         # O .subsample(x, y) é um truque nativo do tkinter para diminuir imagens
-        # ele funciona de maneira inversa, quanto menor o valor, maior o tamanho
-        # isso acontece pq o subsample joga pixels fora por assim dizer, então quanto maior o valor, mais pixels serão
-        # descartados a cada linha
-        img_config      = raw_config.subsample(15, 15)
         img_git         = raw_git.subsample(9, 9)
         img_community   = raw_community.subsample(10, 10)
     except:
@@ -686,6 +699,7 @@ if __name__ == '__main__':
         img_pausa_inativa = None
         img_continuar_inativa = None
         img_excluir_inativa = None
+        img_duvidas = None
         
     # Criando os 3 botões fixos de controle usando CustomTkinter para uma estética mais agradável
     botao_pausar = ctk.CTkButton(frame_controles, text="", image=img_pausa_inativa, command=acionar_pausa, state="disabled", width=40, height=40, corner_radius=8)
@@ -696,6 +710,35 @@ if __name__ == '__main__':
     
     botao_excluir = ctk.CTkButton(frame_controles, text="", image=img_excluir_inativa, command=acionar_excluir, state="disabled", width=40, height=40, corner_radius=8)
     botao_excluir.grid(row=0, column=2, padx=15)
+
+    # ------------------------------------------------------------------
+    # --- Painel de Plataformas Suportadas ---
+    
+    def abrir_plataformas():
+        jan_plat = tk.Toplevel(janela)
+        jan_plat.title(DICIONARIO_IDIOMAS["plataformas_titulo"][idioma_atual])
+        jan_plat.geometry("460x460")
+        jan_plat.config(bg=TEMAS[tema_atual]["cor_fundo_janela"])
+        janela.eval(f'tk::PlaceWindow {str(jan_plat)} center')
+        
+        lbl_titulo = tk.Label(jan_plat, text=DICIONARIO_IDIOMAS["plataformas_titulo"][idioma_atual], font=("Arial", 14, "bold"), fg=TEMAS[tema_atual]["cor_do_texto"], bg=TEMAS[tema_atual]["cor_fundo_janela"])
+        lbl_titulo.pack(pady=(20, 10))
+        
+        lbl_texto = tk.Label(jan_plat, text=DICIONARIO_IDIOMAS["plataformas_texto"][idioma_atual], font=("Arial", 11), fg=TEMAS[tema_atual]["cor_do_texto"], bg=TEMAS[tema_atual]["cor_fundo_janela"], wraplength=400, justify="center")
+        lbl_texto.pack(pady=10)
+        
+        lbl_aviso = tk.Label(jan_plat, text=DICIONARIO_IDIOMAS["plataformas_aviso"][idioma_atual], font=("Arial", 9, "italic"), fg=TEMAS[tema_atual]["cor_do_texto"], bg=TEMAS[tema_atual]["cor_fundo_janela"], wraplength=400, justify="center")
+        lbl_aviso.pack(side=tk.BOTTOM, pady=15)
+        
+    # Botão de plataformas que ficará no canto superior direito
+    botao_plataformas = ctk.CTkButton(
+        janela, text="", image=img_duvidas, 
+        command=abrir_plataformas, 
+        width=30, height=30, corner_radius=8,
+        bg_color=TEMAS[tema_atual]["cor_fundo_janela"], 
+        fg_color="transparent", 
+        hover_color=TEMAS[tema_atual]["cor_botao_audio_hover"]
+    )
 
     # ------------------------------------------------------------------
     # --- Configurações e Sobre (menu) ---
@@ -729,7 +772,6 @@ if __name__ == '__main__':
             # Atualiza os botões da tela principal (mãe) que estão no escopo acima
             botao_baixar_audio.configure(text=DICIONARIO_IDIOMAS["cor_botao_audio"][idioma_atual])
             botao_baixar_video.configure(text=DICIONARIO_IDIOMAS["cor_botao_video"][idioma_atual])
-            botao_config.config()
             label_instrucao.config(text=DICIONARIO_IDIOMAS["instrucao_ready"][idioma_atual])
             
             # Atualiza os títulos e rótulos da tela de config atual
@@ -884,8 +926,13 @@ if __name__ == '__main__':
         # y=-10 deixa margem de respiro pro fundo da janela
         marca_dagua.place(relx=0.5, rely=1.0, anchor="s", y=-10)
 
-    # Criando o Botão de Configurações
-    botao_config = tk.Button(janela, image=img_config, compound=tk.LEFT, font=("Arial", 9, "bold"), bg="#f0f0f0", command=abrir_configuracoes)
+    # Criando o Botão de Configurações usando CustomTkinter (suporte a hover animado)
+    botao_config = ctk.CTkButton(
+        janela, text="", image=img_config, 
+        command=abrir_configuracoes, 
+        width=30, height=30, corner_radius=8,
+        fg_color="transparent"
+    )
 
     # ------------------------------------------------------------------
     # --- Sistema de Temas e Animações ---
@@ -917,8 +964,9 @@ if __name__ == '__main__':
         dropdown_audio.configure(fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
         dropdown_video.configure(fg_color=cor["cor_botao_video"], button_color=cor["cor_botao_video"], button_hover_color=cor["cor_botao_video_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
         
-        # Botões do Tkinter nativo continuam usando config normal
-        botao_config.config(bg=cor["cor_fundo_janela"], relief="flat", borderwidth=0)
+        # Botões CTk isolados e soltos na interface
+        botao_config.configure(bg_color=cor["cor_fundo_janela"], hover_color=cor["cor_botao_audio_hover"])
+        botao_plataformas.configure(bg_color=cor["cor_fundo_janela"], hover_color=cor["cor_botao_audio_hover"])
 
     # ------------------------------------------------------------------
     # --- Lógica da Tela de Carregamento (Update Inicial) ---
@@ -942,8 +990,9 @@ if __name__ == '__main__':
         frame_botoes.pack(pady=10)
         frame_controles.pack(pady=(20, 0)) # Fica fixo abaixo dos outros
         
-        # O botão do menu de configurações é revelado no fim do loading
+        # O botão do menu de configurações e o de plataformas são revelados no fim do loading
         botao_config.place(x=10, y=10) 
+        botao_plataformas.place(relx=1.0, y=10, x=-10, anchor="ne")
 
     # Função que roda em background para a barrinha poder animar sem travar
     def thread_atualizacao_inicial():
