@@ -11,8 +11,7 @@ downloads/
 # do pyinstaller para me ajudar a compilar mais rapidamente sem digitar diretamente no terminal
 icone.ico
 compilar.bat
-
-
+Linux/
 
 # Diretório do FFmpeg (Arquivos binários pesados)
 ffmpeg/
