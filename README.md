@@ -11,7 +11,7 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica n
 - **yt-dlp**: Motor principal responsável por buscar e realizar a extração bruta das mídias.
 - **Tkinter & CustomTkinter**: Base nativa somada à extensão moderna para construir uma interface, dropdowns responsivos, cantos arredondados e design Frontend "Flat".
 - **Threading**: Módulo responsável por criar rotinas em segundo plano, evitando o congelamento da interface gráfica (mainloop) durante o demorado processo de download em alguns casos.
-- **json & os**: Orquestradas em conjunto para lidar com a pasta oficial de configurações do usuário (`%LOCALAPPDATA%`) e salvar o estado da aplicação via memória persistente.
+- **json & os & platform**: Orquestradas em conjunto para lidar com a pasta oficial de configurações do usuário (adaptada por sistema operacional) e salvar o estado da aplicação via memória persistente.
 - **urllib.request & zipfile**: Usados para orquestrar o motor modular, dispensando o uso do instalador de pacotes global do sistema e agindo como ponte de download direto com a source master do `yt-dlp`.
 - **subprocess & re**: Utilizados para operar ferramentas (como invocar a barra inicial) e limpar os logs poluídos da CLI bruta em tempo real via Expressões Regulares (Regex).
 - **webbrowser**: Módulo nativo do Python usado para transformar as logos dos repositórios no Painel de Créditos em botões clicáveis de redirecionamento.
@@ -22,36 +22,68 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica n
 - **Download reformulado**: Implementação de uma divisão inteligente de rede. O sistema corta a requisição da mídia em blocos (`http_chunk_size`) e abre 5 conexões de download simultâneas, bypassando o estrangulamento de velocidade imposto por alguns sites e voando nas taxas de transferência.
 - **Blindagem do Auto-Update Silencioso**: No exato momento em que o aplicativo é inicializado, uma tela de loading bloqueia o uso enquanto a thread secundária verifica e aplica silenciosamente a última versão do `yt-dlp`. Isso blinda o código contra depreciação contínua.
 - **Conversão por Fator Externo (FFmpeg)**: O motor de extração puxa nativamente os vídeos na melhor qualidade, mas geralmente separadamente da faixa de áudio de alta resolução. O Crimson aciona o FFmpeg de maneira integrada para mesclar essas duas camadas ou convertê-las para formatos específicos.
-- **Internacionalização em Tempo Real (PT-BR / EN)**: O sistema inteiro possui um "dicionário" de idiomas em memória. Através de um *Callback* no Painel de Configurações, o usuário pode alterar o idioma e ver todos os textos, pop-ups, barra de progresso e informações de velocidade reagirem e mudarem instantaneamente na tela mãe sem que a aplicação precise reiniciar.
+- **Internacionalização em Tempo Real (PT-BR / EN / ZH)**: O sistema inteiro possui um "dicionário" de idiomas em memória. Através de um *Callback* no Painel de Configurações, o usuário pode alterar o idioma e ver todos os textos, pop-ups, barra de progresso e informações de velocidade reagirem e mudarem instantaneamente na tela mãe sem que a aplicação precise reiniciar.
 - **Identidade Visual e Temas Dinâmicos**: O aplicativo suporta variações completas de tema (Matcha, Egg e Dark) com paletas curadas em tons pastéis. A interface, os menus flutuantes e as marcas d'água são coloridos durante a troca, sem precisar recarregar a tela.
-- **Persistência de Dados e Roteamento Seguro**: O aplicativo memoriza as preferências do usuário (como o seu tema preferido e idioma) salvando um `.json` seguro na rota oculta do `AppData`. Além disso, para evitar confusão de arquivos na raiz do executável, as mídias baixadas não precisam mais de rota estipulada e caem nativamente na pasta de `Downloads` original do Sistema Operacional do usuário.
-- **Gestão de Processos**: Um botão nativo no painel de configurações capaz de "varrer" e finalizar processos órfãos em segundo plano (como threads residuais do FFmpeg), garantindo que nada trave a movimentação dos arquivos ou pese na máquina sem quebrar a estabilidade do aplicativo.
+- **Persistência de Dados e Roteamento Seguro**: O aplicativo memoriza as preferências do usuário (como o seu tema preferido e idioma) salvando um `.json` seguro na pasta de configurações do sistema. No Windows usa `%LOCALAPPDATA%`, no Linux segue o padrão XDG (`~/.local/share`). As mídias baixadas caem nativamente na pasta de `Downloads` original do Sistema Operacional do usuário.
+- **Janela Centralizada no Monitor Principal**: A posição de abertura da janela (e das subjanelas) é calculada matematicamente com base nas dimensões reais da tela, garantindo centralização no monitor principal mesmo em setups multi-monitor.
+- **Gestão de Processos**: Um botão nativo no painel de configurações capaz de "varrer" e finalizar processos órfãos em segundo plano (como threads residuais do FFmpeg), adaptado por sistema operacional (`taskkill` no Windows, `pkill` no Linux).
 - **Controle de Instâncias (Anti-Spam)**: As janelas do sistema (como as Plataformas e Configurações) possuem um bloqueio inteligente e modal que impede a abertura simultânea de dezenas de abas ao clicar repetidas vezes, trazendo sempre a janela ativa para o foco.
 - **Menu de Contexto Intuitivo**: Interaja com a barra de pesquisa usando o botão direito do mouse para *Colar* links ou *Apagar* seleções de texto de forma rápida.
 - **Painel Modular e Créditos**: Uma janela flutuante baseada em "Abas de Notebook", criada para abrigar configurações globais de sistema e um painel de honra à comunidade Open Source, detalhando as ferramentas base do software e seus respectivos repositórios oficiais.
+
+## 🌐 Idiomas Suportados
+
+| Idioma | Código | Status |
+|---|---|---|
+| Português (Brasil) | `Portuguese` | ✅ Completo |
+| English | `English` | ✅ Completo |
+| 中文 (Mandarim Simplificado) | `Chinese` | ✅ Completo |
+
+A troca de idioma é feita em tempo real pelo Painel de Configurações, sem necessidade de reiniciar o aplicativo.
+
+## 💻 Sistemas Operacionais Suportados
+
+O Crimson detecta automaticamente o sistema operacional em execução e adapta seu comportamento (caminhos de pasta, localização do FFmpeg, comandos de processo, etc.)
+
+### Windows
+| Versão | Status |
+|---|---|
+| Windows 10 / 11 | ✅ Suporte completo |
+
+### Linux
+> [!NOTE]
+> No Linux, o `ffmpeg` e o `python3-tk` precisam estar instalados via gerenciador de pacotes antes de rodar o Crimson. Consulte o [Guia Linux](Linux/GUIA_LINUX.md) para instruções detalhadas.
+
+| Família | Exemplos de Distros | Status |
+|---|---|---|
+| **Arch Linux** | CachyOS *(testado)*, Manjaro, EndeavourOS, Arch puro | ✅ Suporte completo |
+| **Debian / Ubuntu** | Ubuntu, Linux Mint, Pop!\_OS, Zorin OS | ✅ Suporte completo |
+| **Fedora / RHEL** | Fedora, AlmaLinux, Rocky Linux | ✅ Suporte completo |
+| **openSUSE** | Tumbleweed, Leap | ✅ Suporte completo |
+| **Alpine Linux** | Alpine puro | ⚠️ Limitado (`python3-tk` não vem por padrão) |
 
 ## ❏ Interface Visual
 > [!NOTE]
 > As capturas de tela abaixo retratam a evolução do projeto, servindo como um registro visual, o software evoluiu de um escopo desenhado no Tkinter raiz (Beta) e foi totalmente remodelado usando CustomTkinter com o tempo, adotando novos ícones, cantos arredondados, feedbacks visuais (hover) e novas paletas de temas.
 
-### → Release 2.1.0 (Atual)
+### → Release 2.2.0 (Atual)
 <div align="center">
   <p><b>Visão Geral da Nova Interface (Modo Escuro / Temas Pastéis)</b></p>
-  <img src="Capturas/V.2.1.0/Crimson_com_janela.png" alt="Janela Principal do Crimson" width="85%">
+  <img src="Capturas/V.2.2.0/Crimson_com_janela.png" alt="Janela Principal do Crimson" width="85%">
   
   <br><br>
   
   <p><b>Download Assíncrono com Atualização em Tempo Real</b></p>
-  <img src="Capturas/V.2.1.0/Crimson_download_iniciando.png" alt="Iniciando Download" width="45%">
+  <img src="Capturas/V.2.2.0/Crimson_download_iniciando.png" alt="Iniciando Download" width="45%">
   &nbsp;
-  <img src="Capturas/V.2.1.0/Crimson_download_progresso_download.png" alt="Progresso do Download" width="45%">
+  <img src="Capturas/V.2.2.0/Crimson_download_progresso_download.png" alt="Progresso do Download" width="45%">
 
   <br><br>
 
   <p><b>Painel de Configurações Dinâmicas e Créditos</b></p>
-  <img src="Capturas/V.2.1.0/Crimson_aba_configurações.png" alt="Aba Configurações" width="45%">
+  <img src="Capturas/V.2.2.0/Crimson_aba_configurações.png" alt="Aba Configurações" width="45%">
   &nbsp;
-  <img src="Capturas/V.2.1.0/Crimson_aba_sobre.png" alt="Aba Sobre e Repositórios" width="45%">
+  <img src="Capturas/V.2.2.0/Crimson_aba_sobre.png" alt="Aba Sobre e Repositórios" width="45%">
 </div>
 
 <br>
@@ -68,6 +100,7 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica n
 ## + Guia de Uso e Configuração de Ambiente
 Caso você venha a clonar este repositório para inspecionar, executar ou modificar o código através de uma IDE local, existem alguns pré-requisitos fundamentais para o funcionamento.
 
+### Windows
 O Crimson não confia na instalação global das dependências no computador do usuário. Ele exige e rastreia o **FFmpeg** em um escopo totalmente local (na mesma pasta do código):
 
 1. **Instale as Bibliotecas**: Certifique-se de instalar as bibliotecas do projeto, as versões usadas podem ser consultadas no arquivo de requerimentos do repositório.
@@ -76,6 +109,9 @@ O Crimson não confia na instalação global das dependências no computador do 
 **[ » Acessar Repositório do FFmpeg Builds ](https://github.com/BtbN/FFmpeg-Builds/releases)**
 
 4. Ao rodar o código pela IDE, o Python irá ler o caminho relativo dessa pasta de forma inteligente e injetar ele temporariamente nas Variáveis de Ambiente (`os.environ["PATH"]`).
+
+### Linux
+No Linux, o FFmpeg já é instalado no sistema, não é necessária pasta local. Consulte o **[Guia Linux completo](Linux/GUIA_LINUX.md)** para o passo a passo de instalação de dependências, execução e compilação do executável.
 
 ## ° Tecnologias Avançadas de Bypass e Otimização
 O Crimson passou por otimização no seu núcleo para resolver gargalos históricos de bloqueios anti-bot, uso excessivo de CPU e falhas de bibliotecas engessadas:
@@ -86,7 +122,7 @@ O Crimson passou por otimização no seu núcleo para resolver gargalos históri
 ## • Arquitetura de Compilação (O Teste de "Releases")
 O Crimson nasce não só como uma utilidade do dia a dia, mas também com o papel de ser um **projeto de homologação para o sistema de "Releases" do GitHub**.
 
-A arquitetura final do projeto tem como objetivo compilar (via **PyInstaller**) tanto as lógicas do Python quanto os pesados binários do `FFmpeg` na construção de um único artefato: um `.exe` portátil e autossuficiente. Esse pacote encapsulado será testado nas publicações de Release do GitHub, servindo como modelo para que qualquer pessoa consiga baixar o software de forma limpa e no melhor conceito "Plug and Play".
+A arquitetura final do projeto tem como objetivo compilar (via **PyInstaller**) tanto as lógicas do Python quanto os pesados binários do `FFmpeg` na construção de um único artefato autossuficiente. No Windows, esse artefato é um `.exe` portátil; no Linux, um binário ELF compilado. Esse pacote encapsulado será testado nas publicações de Release do GitHub, servindo como modelo para que qualquer pessoa consiga baixar o software de forma limpa e no melhor conceito "Plug and Play".
 
 ---
 
