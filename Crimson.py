@@ -654,20 +654,37 @@ if __name__ == '__main__':
     if SISTEMA == 'Windows':
         larg_janela, alt_janela = 600, 300
     else:
-        larg_janela, alt_janela = 700, 360
+        larg_janela, alt_janela = 700, 400
         # o 'set_widget_scaling' deve ser chamado antes de criar qualquer widget
         # Se chamado depois, os widgets já criados não são afetados
         ctk.set_widget_scaling(1.1)
     
     # Centraliza manualmente no monitor principal
-    # O tk::PlaceWindow pode jogar em monitor errado em setups multi-monitor, experiência própria
-    # Aqui calculo a posição X = (largura da tela - largura da janela) / 2
     # update_idletasks() força o Tkinter a calcular as dimensões reais antes de posicionar
     janela.update_idletasks()
     larg_tela = janela.winfo_screenwidth()
     alt_tela  = janela.winfo_screenheight()
-    pos_x = (larg_tela  - larg_janela) // 2
-    pos_y = (alt_tela   - alt_janela)  // 2
+    
+    # No Linux com múltiplos monitores, o X11 retorna a soma de todas as telas juntas (ex: 3840 em 2 telas de 1080p)
+    # Aqui detecto a tela primária para centralizar no monitor principal em vez de jogar na borda da tela
+    larg_monitor = larg_tela
+    alt_monitor  = alt_tela
+    
+    if SISTEMA != 'Windows':
+        try:
+            saida_xrandr = subprocess.check_output(["xrandr", "--current"], text=True, stderr=subprocess.DEVNULL)
+            match = re.search(r'(\d+)x(\d+)\+0\+0', saida_xrandr)
+            if match:
+                larg_monitor = int(match.group(1))
+                alt_monitor  = int(match.group(2))
+            elif larg_tela >= 3000:
+                larg_monitor = larg_tela // 2
+        except:
+            if larg_tela >= 3000:
+                larg_monitor = larg_tela // 2
+                
+    pos_x = (larg_monitor - larg_janela) // 2
+    pos_y = (alt_monitor  - alt_janela)  // 2
     janela.geometry(f"{larg_janela}x{alt_janela}+{pos_x}+{pos_y}")
 
     # Texto de instrução principal na tela (Label puxando do dicionário)
@@ -675,9 +692,9 @@ if __name__ == '__main__':
     label_instrucao.pack(pady=(20, 5)) # pady=(topo, baixo) aplica margens diferentes
 
     # Campo onde o usuário vai digitar a URL (Entry)
-    # O ipady adiciona padding interno vertical, necessário no Linux onde o Entry fica muito fino por padrão
+    # O ipady adiciona padding interno vertical, necessário no Windows, mas com o scaling do Linux fica enorme
     entrada_url = tk.Entry(janela, width=50, font=("Arial", 12))
-    entrada_url.pack(pady=5, ipady=6)
+    entrada_url.pack(pady=5)
 
     # ------------------------------------------------------------------
     # --- Menu de Contexto (Botão Direito do Mouse) ---
@@ -909,7 +926,7 @@ if __name__ == '__main__':
         command=abrir_plataformas, 
         width=30, height=30, corner_radius=8,
         bg_color=TEMAS[tema_atual]["cor_fundo_janela"], 
-        fg_color="transparent", 
+        fg_color=TEMAS[tema_atual]["cor_fundo_janela"], 
         hover_color=TEMAS[tema_atual]["cor_botao_audio_hover"]
     )
 
@@ -1078,11 +1095,12 @@ if __name__ == '__main__':
                 link_ffmpeg.config(bg=nova_cor["cor_fundo_janela"], fg=nova_cor["cor_do_texto"])
                 marca_dagua.config(bg=nova_cor["cor_fundo_janela"], fg=nova_cor["cor_do_texto_magua"])
                 
-                dropdown_idioma.configure(fg_color=nova_cor["cor_botao_audio"], button_color=nova_cor["cor_botao_audio"], button_hover_color=nova_cor["cor_botao_audio_hover"], text_color=nova_cor["cor_fonte_botoes"], dropdown_fg_color=nova_cor["cor_de_fundo_dropdown"], dropdown_hover_color=nova_cor["cor_do_hover_dropdown"], dropdown_text_color=nova_cor["cor_do_texto"])
-                dropdown_tema.configure(fg_color=nova_cor["cor_botao_audio"], button_color=nova_cor["cor_botao_audio"], button_hover_color=nova_cor["cor_botao_audio_hover"], text_color=nova_cor["cor_fonte_botoes"], dropdown_fg_color=nova_cor["cor_de_fundo_dropdown"], dropdown_hover_color=nova_cor["cor_do_hover_dropdown"], dropdown_text_color=nova_cor["cor_do_texto"])
+                dropdown_idioma.configure(bg_color=nova_cor["cor_fundo_janela"], fg_color=nova_cor["cor_botao_audio"], button_color=nova_cor["cor_botao_audio"], button_hover_color=nova_cor["cor_botao_audio_hover"], text_color=nova_cor["cor_fonte_botoes"], dropdown_fg_color=nova_cor["cor_de_fundo_dropdown"], dropdown_hover_color=nova_cor["cor_do_hover_dropdown"], dropdown_text_color=nova_cor["cor_do_texto"])
+                dropdown_tema.configure(bg_color=nova_cor["cor_fundo_janela"], fg_color=nova_cor["cor_botao_audio"], button_color=nova_cor["cor_botao_audio"], button_hover_color=nova_cor["cor_botao_audio_hover"], text_color=nova_cor["cor_fonte_botoes"], dropdown_fg_color=nova_cor["cor_de_fundo_dropdown"], dropdown_hover_color=nova_cor["cor_do_hover_dropdown"], dropdown_text_color=nova_cor["cor_do_texto"])
                 
                 try:
-                    botao_limpar.configure(fg_color=nova_cor["cor_botao_audio"], hover_color=nova_cor["cor_botao_audio_hover"], text_color=nova_cor["cor_fonte_botoes"])
+                    botao_limpar.configure(bg_color=nova_cor["cor_fundo_janela"], fg_color=nova_cor["cor_botao_audio"], hover_color=nova_cor["cor_botao_audio_hover"], text_color=nova_cor["cor_fonte_botoes"])
+                    botao_salvar.configure(bg_color=nova_cor["cor_fundo_janela"], fg_color=nova_cor["cor_botao_video"], hover_color=nova_cor["cor_botao_video_hover"], text_color=nova_cor["cor_fonte_botoes"])
                 except:
                     pass
                 
@@ -1116,6 +1134,7 @@ if __name__ == '__main__':
             command=limpar_processos, 
             corner_radius=8, 
             width=200,
+            bg_color=cor["cor_fundo_janela"],
             fg_color=cor["cor_botao_audio"], 
             hover_color=cor["cor_botao_audio_hover"], 
             text_color=cor["cor_fonte_botoes"]
@@ -1130,12 +1149,23 @@ if __name__ == '__main__':
         else:
             texto_botao_salvar = "保存并应用"
 
-        botao_salvar = ctk.CTkButton(aba_sistema, text=texto_botao_salvar, font=("Arial", 12, "bold"), command=confirmar_e_salvar, corner_radius=8, width=150)
+        botao_salvar = ctk.CTkButton(
+            aba_sistema, 
+            text=texto_botao_salvar, 
+            font=("Arial", 12, "bold"), 
+            command=confirmar_e_salvar, 
+            corner_radius=8, 
+            width=150,
+            bg_color=cor["cor_fundo_janela"],
+            fg_color=cor["cor_botao_video"],
+            hover_color=cor["cor_botao_video_hover"],
+            text_color=cor["cor_fonte_botoes"]
+        )
         botao_salvar.pack(pady=(0, 20))
         
         # Pinta os dropdowns assim que a tela abre
-        dropdown_idioma.configure(fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
-        dropdown_tema.configure(fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
+        dropdown_idioma.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
+        dropdown_tema.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
         
         # ------------------------------------------------------------------
         # --- Aba Sobre ---
@@ -1188,7 +1218,8 @@ if __name__ == '__main__':
         janela, text="", image=img_config, 
         command=abrir_configuracoes, 
         width=30, height=30, corner_radius=8,
-        fg_color="transparent"
+        bg_color=TEMAS[tema_atual]["cor_fundo_janela"], 
+        fg_color=TEMAS[tema_atual]["cor_fundo_janela"]
     )
 
     # ------------------------------------------------------------------
@@ -1209,10 +1240,10 @@ if __name__ == '__main__':
         # Estiliza o campo de digitar o link (readonlybackground garante que a cor não mude quando bloqueado)
         entrada_url.config(bg=cor["cor_barra_de_pesquisa"], fg=cor["cor_texto_caixa_de_pesquisa"], insertbackground=cor["cor_do_texto"], relief="flat", readonlybackground=cor["cor_barra_de_pesquisa"])
         
-        # Configuração para os botões de controle do CustomTkinter (fg_color transparent resolve a cor feia do DISABLED), usei o mesmo hover dos botões de áudio
-        botao_pausar.configure(bg_color=cor["cor_fundo_janela"], fg_color="transparent", hover_color=cor["cor_botao_audio_hover"])
-        botao_continuar.configure(bg_color=cor["cor_fundo_janela"], fg_color="transparent", hover_color=cor["cor_botao_audio_hover"])
-        botao_excluir.configure(bg_color=cor["cor_fundo_janela"], fg_color="transparent", hover_color=cor["cor_botao_audio_hover"])
+        # Configuração para os botões de controle do CustomTkinter (fg_color igual ao fundo evita o canvas cinza no Linux)
+        botao_pausar.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_fundo_janela"], hover_color=cor["cor_botao_audio_hover"])
+        botao_continuar.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_fundo_janela"], hover_color=cor["cor_botao_audio_hover"])
+        botao_excluir.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_fundo_janela"], hover_color=cor["cor_botao_audio_hover"])
         
         # Configuração para os botões e menus do CustomTkinter (bg_color elimina os cantos claros no Linux)
         botao_baixar_audio.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_botao_audio"], hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], text_color_disabled=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_audio"])
@@ -1243,7 +1274,7 @@ if __name__ == '__main__':
         barra_loading.stop()
         barra_loading.pack_forget()
         label_instrucao.config(text=DICIONARIO_IDIOMAS["instrucao_ready"][idioma_atual])
-        entrada_url.pack(pady=5, ipady=6)
+        entrada_url.pack(pady=5)
         frame_botoes.pack(pady=10)
         frame_controles.pack(pady=(20, 0)) # Fica fixo abaixo dos outros
         
