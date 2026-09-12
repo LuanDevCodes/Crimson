@@ -654,7 +654,7 @@ if __name__ == '__main__':
     if SISTEMA == 'Windows':
         larg_janela, alt_janela = 600, 300
     else:
-        larg_janela, alt_janela = 700, 400
+        larg_janela, alt_janela = 800, 410
         # o 'set_widget_scaling' deve ser chamado antes de criar qualquer widget
         # Se chamado depois, os widgets já criados não são afetados
         ctk.set_widget_scaling(1.1)
@@ -899,7 +899,7 @@ if __name__ == '__main__':
         jan_plat.config(bg=TEMAS[tema_atual]["cor_fundo_janela"])
         
         # Tamanho adaptado por OS (no Linux precisa de um pouco mais de altura para não cortar o rodapé)
-        larg_plat, alt_plat = (520, 590) if SISTEMA != 'Windows' else (460, 460)
+        larg_plat, alt_plat = (540, 630) if SISTEMA != 'Windows' else (460, 460)
         
         # Centraliza relativo à janela mãe usando winfo_rootx/y (coordenadas reais da tela no Linux/Windows)
         jan_plat.update_idletasks()
@@ -948,7 +948,7 @@ if __name__ == '__main__':
         jan_config.title("Configurações e Sobre")
         
         # Tamanho adaptado por OS, igual à lógica da janela principal
-        larg_cfg, alt_cfg = (470, 530) if SISTEMA != 'Windows' else (400, 450)
+        larg_cfg, alt_cfg = (480, 550) if SISTEMA != 'Windows' else (400, 450)
         
         # Centraliza relativo à janela mãe usando winfo_rootx/y (coordenadas reais da tela no Linux/Windows)
         jan_config.update_idletasks()
