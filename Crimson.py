@@ -136,163 +136,203 @@ TEMAS = {
 DICIONARIO_IDIOMAS = {
     "instrucao_init": {
         "Portuguese":       "Procurando atualizações de segurança...",
-        "English":          "Checking for security updates..."
+        "English":          "Checking for security updates...",
+        "Chinese":          "正在检查安全更新..."
     },
     "instrucao_ready": {
         "Portuguese":       "Insira a URL do vídeo:",
-        "English":          "Enter the video URL:"
+        "English":          "Enter the video URL:",
+        "Chinese":          "请输入视频链接："
     },
     "cor_botao_audio": {
         "Portuguese":       "Baixar Áudio",
-        "English":          "Download Audio"
+        "English":          "Download Audio",
+        "Chinese":          "下载音频"
     },
     "cor_botao_video": {
         "Portuguese":       "Baixar Vídeo",
-        "English":          "Download Video"
+        "English":          "Download Video",
+        "Chinese":          "下载视频"
     },
     "aba_sistema": {
         "Portuguese":       "Sistema",
-        "English":          "System"
+        "English":          "System",
+        "Chinese":          "系统"
     },
     "aba_sobre": {
         "Portuguese":       "Sobre",
-        "English":          "About"
+        "English":          "About",
+        "Chinese":          "关于"
     },
     "lbl_idioma": {
         "Portuguese":       "Idioma do Aplicativo:",
-        "English":          "Application Language:"
+        "English":          "Application Language:",
+        "Chinese":          "应用语言："
     },
     "lbl_tema": {
         "Portuguese":       "Tema da Interface:",
-        "English":          "Interface Theme:"
+        "English":          "Interface Theme:",
+        "Chinese":          "界面主题："
     },
     "lbl_versao": {
-        "Portuguese":       "Versão atual: V.2.1.0",
-        "English": "        Current version: V.2.1.0"
+        "Portuguese":       "Versão atual: V.2.2.0",
+        "English": "        Current version: V.2.2.0",
+        "Chinese":          "当前版本：V.2.2.0"
     },
     "txt_disclaimer": {
         "Portuguese":       "Desenvolvido sem fins comerciais\nQualquer distribuição deve ser gratuita\ne livre para todos\n",
-        "English":          "Developed for non-commercial purposes\nAny distribution must be free\nand available to everyone\n"
+        "English":          "Developed for non-commercial purposes\nAny distribution must be free\nand available to everyone\n",
+        "Chinese":          "非商业目的开发\n任何分发必须免费\n并对所有人开放\n"
     },
     "lbl_creditos": {
         "Portuguese":       "Créditos e agradecimentos à comunidade Open Source\n",
-        "English":          "Credits and thanks to the Open Source community\n"
+        "English":          "Credits and thanks to the Open Source community\n",
+        "Chinese":          "致谢开源社区\n"
     },
     "link_crimson": {
         "Portuguese":       " Repositório Crimson",
-        "English":          " Crimson Repository"
+        "English":          " Crimson Repository",
+        "Chinese":          " Crimson 仓库"
     },
     "link_ytdlp": {
         "Portuguese":       " Repositório yt-dlp",
-        "English":          " yt-dlp Repository"
+        "English":          " yt-dlp Repository",
+        "Chinese":          " yt-dlp 仓库"
     },
     "plataformas_titulo": {
         "Portuguese":       "Plataformas Suportadas",
-        "English":          "Supported Platforms"
+        "English":          "Supported Platforms",
+        "Chinese":          "支持的平台"
     },
     "plataformas_texto": {
         "Portuguese":       "• YouTube\n • Vimeo\n • Dailymotion\n • Facebook\n • Instagram\n • Twitter / X\n • TikTok\n • Twitch\n • SoundCloud\n • Reddit\n • LinkedIn\n • Pinterest\n • VK\n • Bilibili",
-        "English":          "• YouTube\n • Vimeo\n • Dailymotion\n • Facebook\n • Instagram\n • Twitter / X\n • TikTok\n • Twitch\n • SoundCloud\n • Reddit\n • LinkedIn\n • Pinterest\n • VK\n • Bilibili"
+        "English":          "• YouTube\n • Vimeo\n • Dailymotion\n • Facebook\n • Instagram\n • Twitter / X\n • TikTok\n • Twitch\n • SoundCloud\n • Reddit\n • LinkedIn\n • Pinterest\n • VK\n • Bilibili",
+        "Chinese":          "• YouTube\n • Vimeo\n • Dailymotion\n • Facebook\n • Instagram\n • Twitter / X\n • TikTok\n • Twitch\n • SoundCloud\n • Reddit\n • LinkedIn\n • Pinterest\n • VK\n • Bilibili"
     },
     "plataformas_aviso": {
         "Portuguese":       "Aviso: O motor que Crimson utiliza possui suporte nativo para esses sites.\nNo entanto, a disponibilidade e estabilidade podem variar segundo as regras de cada plataforma.",
-        "English":          "Warning: The Crimson engine supports this sites natively.\nHowever, availability and stability may vary according to each platform's rules."
+        "English":          "Warning: The Crimson engine supports this sites natively.\nHowever, availability and stability may vary according to each platform's rules.",
+        "Chinese":          "提示：Crimson 使用的引擎原生支持这些网站。\n但可用性和稳定性可能因各平台规则而有所不同。"
     },
     "link_ffmpeg": {
         "Portuguese":       " Repositório FFmpeg",
-        "English":          " FFmpeg Repository"
+        "English":          " FFmpeg Repository",
+        "Chinese":          " FFmpeg 仓库"
     },
     "marca_dagua": {
         "Portuguese":       "Desenvolvido por LuanDevCodes",
-        "English":          "Developed by LuanDevCodes"
+        "English":          "Developed by LuanDevCodes",
+        "Chinese":          "由 LuanDevCodes 开发"
     },
     "msg_sucesso_titulo": {
         "Portuguese":       "Sucesso",
-        "English":          "Success"
+        "English":          "Success",
+        "Chinese":          "成功"
     },
     "msg_sucesso_texto": {
         "Portuguese":       "Download e conversão concluídos com sucesso",
-        "English":          "Download and conversion completed successfully"
+        "English":          "Download and conversion completed successfully",
+        "Chinese":          "下载和转换已成功完成"
     },
     "msg_erro_titulo": {
         "Portuguese":       "Erro",
-        "English":          "Error"
+        "English":          "Error",
+        "Chinese":          "错误"
     },
     "msg_erro_generico": {
         "Portuguese":       "Ocorreu um erro durante o download:\n",
-        "English":          "An error occurred during the download:\n"
+        "English":          "An error occurred during the download:\n",
+        "Chinese":          "下载时发生错误：\n"
     },
     "msg_aviso_titulo": {
         "Portuguese":       "Aviso",
-        "English":          "Warning"
+        "English":          "Warning",
+        "Chinese":          "警告"
     },
     "msg_aviso_url": {
         "Portuguese":       "Por favor, insira uma URL válida",
-        "English":          "Please enter a valid URL"
+        "English":          "Please enter a valid URL",
+        "Chinese":          "请输入有效的链接"
     },
     "progresso_baixando": {
         "Portuguese":       "Baixando",
-        "English":          "Downloading"
+        "English":          "Downloading",
+        "Chinese":          "下载中"
     },
     "progresso_vel": {
         "Portuguese":       "Velocidade",
-        "English":          "Speed"
+        "English":          "Speed",
+        "Chinese":          "速度"
     },
     "progresso_tempo": {
         "Portuguese":       "Tempo Restante",
-        "English":          "ETA"
+        "English":          "ETA",
+        "Chinese":          "剩余时间"
     },
     "progresso_init": {
         "Portuguese":       "Iniciando Download...",
-        "English":          "Starting Download..."
+        "English":          "Starting Download...",
+        "Chinese":          "正在启动下载..."
     },
     "progresso_convertendo": {
         "Portuguese":       "Baixado - Aguarde a conversão (FFmpeg)...",
-        "English":          "Downloaded - Please wait for conversion (FFmpeg)..."
+        "English":          "Downloaded - Please wait for conversion (FFmpeg)...",
+        "Chinese":          "已下载 - 请等待转换 (FFmpeg)..."
     },
     "btn_baixar_inativo": {
         "Portuguese":       "Preparando...",
-        "English":          "Preparing..."
+        "English":          "Preparing...",
+        "Chinese":          "准备中..."
     },
     "msg_excluir_titulo": {
         "Portuguese":       "Excluir Download",
-        "English":          "Delete Download"
+        "English":          "Delete Download",
+        "Chinese":          "删除下载"
     },
     "msg_excluir_texto": {
         "Portuguese":       "Tem certeza que deseja cancelar e excluir o progresso desse download?",
-        "English":          "Are you sure you want to cancel and delete the progress of this download?"
+        "English":          "Are you sure you want to cancel and delete the progress of this download?",
+        "Chinese":          "确定要取消并删除此下载的进度吗？"
     },
     "msg_salvar_como": {
         "Portuguese":       "Salvar como...",
-        "English":          "Save as..."
+        "English":          "Save as...",
+        "Chinese":          "另存为..."
     },
     "menu_colar": {
         "Portuguese":       "Colar",
-        "English":          "Paste"
+        "English":          "Paste",
+        "Chinese":          "粘贴"
     },
     "menu_apagar": {
         "Portuguese":       "Apagar",
-        "English":          "Delete"
+        "English":          "Delete",
+        "Chinese":          "删除"
     },
     "btn_limpar_processos": {
         "Portuguese":       "Finalizar processos fantasmas",
-        "English":          "Kill ghost processes"
+        "English":          "Kill ghost processes",
+        "Chinese":          "结束幽灵进程"
     },
     "msg_confirm_limpeza_titulo": {
         "Portuguese":       "Limpeza de Processos",
-        "English":          "Process Cleanup"
+        "English":          "Process Cleanup",
+        "Chinese":          "进程清理"
     },
     "msg_confirm_limpeza_texto": {
         "Portuguese":       "Tem certeza que deseja finalizar os processos em segundo plano da aplicação?",
-        "English":          "Are you sure you want to terminate background application processes?"
+        "English":          "Are you sure you want to terminate background application processes?",
+        "Chinese":          "确定要终止应用程序的后台进程吗？"
     },
     "msg_sucesso_limpeza_titulo": {
         "Portuguese":       "Sucesso",
-        "English":          "Success"
+        "English":          "Success",
+        "Chinese":          "成功"
     },
     "msg_sucesso_limpeza_texto": {
         "Portuguese":       "Processos secundários finalizados",
-        "English":          "Secondary processes terminated"
+        "English":          "Secondary processes terminated",
+        "Chinese":          "后台进程已终止"
     }
 }
 
@@ -608,8 +648,23 @@ if __name__ == '__main__':
     # Criação da janela principal da interface
     janela = tk.Tk()
     janela.title("Crimson - Video Downloader") # Título da janela
-    janela.geometry("600x300") # (Largura x Altura)
-    janela.eval('tk::PlaceWindow . center') # Centraliza a janela na tela
+    
+    # No Linux o DPI e o scaling padrão do Tkinter são diferentes do Windows
+    # por isso a janela precisa ser um pouco maior para não ficar espremida
+    if SISTEMA == 'Windows':
+        larg_janela, alt_janela = 600, 300
+    else:
+        larg_janela, alt_janela = 700, 360
+        ctk.set_widget_scaling(1.1) # Aumenta levemente o tamanho dos widgets CTk no Linux
+    
+    # Centraliza manualmente no monitor principal
+    # O tk::PlaceWindow pode jogar em monitor errado em setups multi-monitor, experiência própria
+    # Aqui calculo a posição X = (largura da tela - largura da janela) / 2
+    larg_tela = janela.winfo_screenwidth()
+    alt_tela  = janela.winfo_screenheight()
+    pos_x = (larg_tela  - larg_janela) // 2
+    pos_y = (alt_tela   - alt_janela)  // 2
+    janela.geometry(f"{larg_janela}x{alt_janela}+{pos_x}+{pos_y}")
 
     # Texto de instrução principal na tela (Label puxando do dicionário)
     label_instrucao = tk.Label(janela, text=DICIONARIO_IDIOMAS["instrucao_ready"][idioma_atual], font=("Arial", 12))
@@ -666,13 +721,16 @@ if __name__ == '__main__':
     var_audio = ctk.StringVar(value="mp3") 
     opcoes_audio = ["mp3", "m4a", "wav", "flac"] # Lista de formatos de áudio
     
+    # No Linux, corner_radius maior deixa os botões com visual mais arredondado (X11 renderiza diferente)
+    raio_botoes = 18 if SISTEMA != 'Windows' else 8
+    
     # Cria o dropdown usando customtkinter (estilo frontend moderno, bordas arredondadas)
-    dropdown_audio = ctk.CTkOptionMenu(frame_botoes, variable=var_audio, values=opcoes_audio, font=("Arial", 12, "bold"), corner_radius=8, width=90)
+    dropdown_audio = ctk.CTkOptionMenu(frame_botoes, variable=var_audio, values=opcoes_audio, font=("Arial", 12, "bold"), corner_radius=raio_botoes, width=90)
     dropdown_audio.grid(row=0, column=0, padx=5) # grid organiza os itens em forma de tabela (linha/coluna)
 
     # Botão de baixar áudio usando ctk (CustomTkinter) para cantos arredondados
     # o parâmetro corner_radius controla o grau de arredondamento
-    botao_baixar_audio = ctk.CTkButton(frame_botoes, text=DICIONARIO_IDIOMAS["cor_botao_audio"][idioma_atual], font=("Arial", 12, "bold"), command=lambda: iniciar_download('audio'), corner_radius=8)
+    botao_baixar_audio = ctk.CTkButton(frame_botoes, text=DICIONARIO_IDIOMAS["cor_botao_audio"][idioma_atual], font=("Arial", 12, "bold"), command=lambda: iniciar_download('audio'), corner_radius=raio_botoes)
     botao_baixar_audio.grid(row=0, column=1, padx=5)
 
     # ------------------------------------------------------------------
@@ -683,11 +741,11 @@ if __name__ == '__main__':
     opcoes_video = ["mp4", "mkv", "webm"] # Lista de formatos de vídeo
     
     # Cria o dropdown de vídeo
-    dropdown_video = ctk.CTkOptionMenu(frame_botoes, variable=var_video, values=opcoes_video, font=("Arial", 12, "bold"), corner_radius=8, width=90)
+    dropdown_video = ctk.CTkOptionMenu(frame_botoes, variable=var_video, values=opcoes_video, font=("Arial", 12, "bold"), corner_radius=raio_botoes, width=90)
     dropdown_video.grid(row=0, column=2, padx=(30, 5)) # padx maior na esquerda para afastar a seção de vídeo da seção de áudio
 
     # Botão de baixar vídeo
-    botao_baixar_video = ctk.CTkButton(frame_botoes, text=DICIONARIO_IDIOMAS["cor_botao_video"][idioma_atual], font=("Arial", 12, "bold"), command=lambda: iniciar_download('video'), corner_radius=8)
+    botao_baixar_video = ctk.CTkButton(frame_botoes, text=DICIONARIO_IDIOMAS["cor_botao_video"][idioma_atual], font=("Arial", 12, "bold"), command=lambda: iniciar_download('video'), corner_radius=raio_botoes)
     botao_baixar_video.grid(row=0, column=3, padx=5)
 
     # ------------------------------------------------------------------
@@ -715,6 +773,12 @@ if __name__ == '__main__':
         
         if arquivos_icone:
             img_icone_app = tk.PhotoImage(file=arquivos_icone[0])
+            
+            # No Linux, o wm_iconphoto é mais confiável para aparecer no app/taskbar
+            # O 'False' significa que só se aplica à janela principal (não herda)
+            # Em seguida, o iconphoto(True, ...) herda para todas as janelas filhas
+            if SISTEMA != 'Windows':
+                janela.wm_iconphoto(False, img_icone_app)
             
             # O True faz com que esse ícone seja herdado por todas as janelas secundárias (como a de config)
             janela.iconphoto(True, img_icone_app)
@@ -782,14 +846,17 @@ if __name__ == '__main__':
         img_duvidas = None
         img_limpar = None
         
+    # No Linux, corner_radius maior melhora a aparência dos botões no backend X11
+    raio_controles = 20 if SISTEMA != 'Windows' else 8
+    
     # Criando os 3 botões fixos de controle usando CustomTkinter para uma estética mais agradável
-    botao_pausar = ctk.CTkButton(frame_controles, text="", image=img_pausa_inativa, command=acionar_pausa, state="disabled", width=40, height=40, corner_radius=8)
+    botao_pausar = ctk.CTkButton(frame_controles, text="", image=img_pausa_inativa, command=acionar_pausa, state="disabled", width=40, height=40, corner_radius=raio_controles)
     botao_pausar.grid(row=0, column=0, padx=15)
     
-    botao_continuar = ctk.CTkButton(frame_controles, text="", image=img_continuar_inativa, command=acionar_retomar, state="disabled", width=40, height=40, corner_radius=8)
+    botao_continuar = ctk.CTkButton(frame_controles, text="", image=img_continuar_inativa, command=acionar_retomar, state="disabled", width=40, height=40, corner_radius=raio_controles)
     botao_continuar.grid(row=0, column=1, padx=15)
     
-    botao_excluir = ctk.CTkButton(frame_controles, text="", image=img_excluir_inativa, command=acionar_excluir, state="disabled", width=40, height=40, corner_radius=8)
+    botao_excluir = ctk.CTkButton(frame_controles, text="", image=img_excluir_inativa, command=acionar_excluir, state="disabled", width=40, height=40, corner_radius=raio_controles)
     botao_excluir.grid(row=0, column=2, padx=15)
 
     # ------------------------------------------------------------------
@@ -807,9 +874,17 @@ if __name__ == '__main__':
         instancias_janelas["plataformas"] = jan_plat # Salva para controlar depois
         
         jan_plat.title(DICIONARIO_IDIOMAS["plataformas_titulo"][idioma_atual])
-        jan_plat.geometry("460x460")
         jan_plat.config(bg=TEMAS[tema_atual]["cor_fundo_janela"])
-        janela.eval(f'tk::PlaceWindow {str(jan_plat)} center')
+        
+        # Tamanho adaptado por OS, igual à lógica da janela principal
+        larg_plat, alt_plat = (540, 540) if SISTEMA != 'Windows' else (460, 460)
+        
+        # Centraliza no monitor principal com o mesmo cálculo manual
+        larg_tela = janela.winfo_screenwidth()
+        alt_tela  = janela.winfo_screenheight()
+        pos_x = (larg_tela - larg_plat) // 2
+        pos_y = (alt_tela  - alt_plat)  // 2
+        jan_plat.geometry(f"{larg_plat}x{alt_plat}+{pos_x}+{pos_y}")
         
         # Torna a janela modal, bloqueando cliques na tela principal até que ela seja fechada
         jan_plat.transient(janela)
@@ -850,11 +925,16 @@ if __name__ == '__main__':
         instancias_janelas["config"] = jan_config
         
         jan_config.title("Configurações e Sobre")
-        jan_config.geometry("400x450")
         
-        # Forçando a abertura no meio da tela (o comando Tcl/Tk PlaceWindow centraliza na tela principal)
-        # Atenção: O método 'eval' pertence à 'janela' mãe (Tk) e não ao 'jan_config' (Toplevel)
-        janela.eval(f'tk::PlaceWindow {str(jan_config)} center')
+        # Tamanho adaptado por OS, igual à lógica da janela principal
+        larg_cfg, alt_cfg = (470, 530) if SISTEMA != 'Windows' else (400, 450)
+        
+        # Centraliza no monitor principal com o mesmo cálculo manual
+        larg_tela = janela.winfo_screenwidth()
+        alt_tela  = janela.winfo_screenheight()
+        pos_x = (larg_tela - larg_cfg) // 2
+        pos_y = (alt_tela  - alt_cfg)  // 2
+        jan_config.geometry(f"{larg_cfg}x{alt_cfg}+{pos_x}+{pos_y}")
         
         # Bloqueia a interação com a janela de fundo (torna a janela 'modal')
         # modal é quando uma janela rouba a atenção do usuário, é um termo comum no front
@@ -912,7 +992,7 @@ if __name__ == '__main__':
         label_idioma.pack(pady=(20, 5))
         
         var_idioma = ctk.StringVar(value=idioma_atual)
-        opcoes_idioma = ["Portuguese", "English"]
+        opcoes_idioma = ["Portuguese", "English", "Chinese"]
         
         # O customtkinter simplifica o OptionMenu e dispensa o asterisco (*) deixando o código mais limpo
         dropdown_idioma = ctk.CTkOptionMenu(aba_sistema, variable=var_idioma, values=opcoes_idioma, corner_radius=8, width=150, font=("Arial", 12, "bold"))
@@ -943,8 +1023,16 @@ if __name__ == '__main__':
             novo_tema = var_tema.get()
             
             # Texto da caixa de diálogo dinâmico com base no idioma atual
-            titulo_msg = "Confirmar" if idioma_atual == "Portuguese" else "Confirm"
-            texto_msg = "Tem certeza que deseja salvar as configurações atuais?" if idioma_atual == "Portuguese" else "Are you sure you want to save the current settings?"
+            # Usa ternário encadeado: se PT → texto PT, senão se EN → texto EN, senão → texto ZH
+            if idioma_atual == "Portuguese":
+                titulo_msg = "Confirmar"
+                texto_msg  = "Tem certeza que deseja salvar as configurações atuais?"
+            elif idioma_atual == "English":
+                titulo_msg = "Confirm"
+                texto_msg  = "Are you sure you want to save the current settings?"
+            else:
+                titulo_msg = "确认"
+                texto_msg  = "确定要保存当前设置吗？"
             
             # Exibe o popup e checa a resposta do usuário
             if messagebox.askyesno(titulo_msg, texto_msg):
@@ -961,7 +1049,12 @@ if __name__ == '__main__':
                 aplicar_tema()
                 
                 # Mostra que deu bom
-                texto_sucesso = "Configurações salvas com sucesso" if idioma_atual == "Portuguese" else "Settings saved successfully"
+                if idioma_atual == "Portuguese":
+                    texto_sucesso = "Configurações salvas com sucesso"
+                elif idioma_atual == "English":
+                    texto_sucesso = "Settings saved successfully"
+                else:
+                    texto_sucesso = "设置已成功保存"
                 messagebox.showinfo(titulo_msg, texto_sucesso)
                 
                 # Para evitar erro de tela, atualizo também as cores de dentro da janelinha de config manualmente
@@ -1027,7 +1120,13 @@ if __name__ == '__main__':
         botao_limpar.pack(pady=40)
 
         # o botão salvar fica posicionado no final da tela
-        texto_botao_salvar = "Salvar e Aplicar" if idioma_atual == "Portuguese" else "Save & Apply"
+        if idioma_atual == "Portuguese":
+            texto_botao_salvar = "Salvar e Aplicar"
+        elif idioma_atual == "English":
+            texto_botao_salvar = "Save & Apply"
+        else:
+            texto_botao_salvar = "保存并应用"
+
         botao_salvar = ctk.CTkButton(aba_sistema, text=texto_botao_salvar, font=("Arial", 12, "bold"), command=confirmar_e_salvar, corner_radius=8, width=150)
         botao_salvar.pack(pady=(0, 20))
         
