@@ -655,11 +655,15 @@ if __name__ == '__main__':
         larg_janela, alt_janela = 600, 300
     else:
         larg_janela, alt_janela = 700, 360
-        ctk.set_widget_scaling(1.1) # Aumenta levemente o tamanho dos widgets CTk no Linux
+        # o 'set_widget_scaling' deve ser chamado antes de criar qualquer widget
+        # Se chamado depois, os widgets já criados não são afetados
+        ctk.set_widget_scaling(1.1)
     
     # Centraliza manualmente no monitor principal
     # O tk::PlaceWindow pode jogar em monitor errado em setups multi-monitor, experiência própria
     # Aqui calculo a posição X = (largura da tela - largura da janela) / 2
+    # update_idletasks() força o Tkinter a calcular as dimensões reais antes de posicionar
+    janela.update_idletasks()
     larg_tela = janela.winfo_screenwidth()
     alt_tela  = janela.winfo_screenheight()
     pos_x = (larg_tela  - larg_janela) // 2
@@ -671,8 +675,9 @@ if __name__ == '__main__':
     label_instrucao.pack(pady=(20, 5)) # pady=(topo, baixo) aplica margens diferentes
 
     # Campo onde o usuário vai digitar a URL (Entry)
+    # O ipady adiciona padding interno vertical, necessário no Linux onde o Entry fica muito fino por padrão
     entrada_url = tk.Entry(janela, width=50, font=("Arial", 12))
-    entrada_url.pack(pady=5)
+    entrada_url.pack(pady=5, ipady=6)
 
     # ------------------------------------------------------------------
     # --- Menu de Contexto (Botão Direito do Mouse) ---
@@ -721,8 +726,8 @@ if __name__ == '__main__':
     var_audio = ctk.StringVar(value="mp3") 
     opcoes_audio = ["mp3", "m4a", "wav", "flac"] # Lista de formatos de áudio
     
-    # No Linux, corner_radius maior deixa os botões com visual mais arredondado (X11 renderiza diferente)
-    raio_botoes = 18 if SISTEMA != 'Windows' else 8
+    # Mantém raio padronizado de 8 para evitar artefatos de canvas no X11/Linux
+    raio_botoes = 8
     
     # Cria o dropdown usando customtkinter (estilo frontend moderno, bordas arredondadas)
     dropdown_audio = ctk.CTkOptionMenu(frame_botoes, variable=var_audio, values=opcoes_audio, font=("Arial", 12, "bold"), corner_radius=raio_botoes, width=90)
@@ -846,8 +851,8 @@ if __name__ == '__main__':
         img_duvidas = None
         img_limpar = None
         
-    # No Linux, corner_radius maior melhora a aparência dos botões no backend X11
-    raio_controles = 20 if SISTEMA != 'Windows' else 8
+    # Mantém raio padronizado de 8 para evitar bordas com artefatos no Linux
+    raio_controles = 8
     
     # Criando os 3 botões fixos de controle usando CustomTkinter para uma estética mais agradável
     botao_pausar = ctk.CTkButton(frame_controles, text="", image=img_pausa_inativa, command=acionar_pausa, state="disabled", width=40, height=40, corner_radius=raio_controles)
@@ -876,14 +881,13 @@ if __name__ == '__main__':
         jan_plat.title(DICIONARIO_IDIOMAS["plataformas_titulo"][idioma_atual])
         jan_plat.config(bg=TEMAS[tema_atual]["cor_fundo_janela"])
         
-        # Tamanho adaptado por OS, igual à lógica da janela principal
-        larg_plat, alt_plat = (540, 540) if SISTEMA != 'Windows' else (460, 460)
+        # Tamanho adaptado por OS (no Linux precisa de um pouco mais de altura para não cortar o rodapé)
+        larg_plat, alt_plat = (520, 590) if SISTEMA != 'Windows' else (460, 460)
         
-        # Centraliza no monitor principal com o mesmo cálculo manual
-        larg_tela = janela.winfo_screenwidth()
-        alt_tela  = janela.winfo_screenheight()
-        pos_x = (larg_tela - larg_plat) // 2
-        pos_y = (alt_tela  - alt_plat)  // 2
+        # Centraliza relativo à janela mãe usando winfo_rootx/y (coordenadas reais da tela no Linux/Windows)
+        jan_plat.update_idletasks()
+        pos_x = max(10, janela.winfo_rootx() + (janela.winfo_width()  - larg_plat) // 2)
+        pos_y = max(10, janela.winfo_rooty() + (janela.winfo_height() - alt_plat)  // 2)
         jan_plat.geometry(f"{larg_plat}x{alt_plat}+{pos_x}+{pos_y}")
         
         # Torna a janela modal, bloqueando cliques na tela principal até que ela seja fechada
@@ -929,11 +933,10 @@ if __name__ == '__main__':
         # Tamanho adaptado por OS, igual à lógica da janela principal
         larg_cfg, alt_cfg = (470, 530) if SISTEMA != 'Windows' else (400, 450)
         
-        # Centraliza no monitor principal com o mesmo cálculo manual
-        larg_tela = janela.winfo_screenwidth()
-        alt_tela  = janela.winfo_screenheight()
-        pos_x = (larg_tela - larg_cfg) // 2
-        pos_y = (alt_tela  - alt_cfg)  // 2
+        # Centraliza relativo à janela mãe usando winfo_rootx/y (coordenadas reais da tela no Linux/Windows)
+        jan_config.update_idletasks()
+        pos_x = max(10, janela.winfo_rootx() + (janela.winfo_width()  - larg_cfg) // 2)
+        pos_y = max(10, janela.winfo_rooty() + (janela.winfo_height() - alt_cfg)  // 2)
         jan_config.geometry(f"{larg_cfg}x{alt_cfg}+{pos_x}+{pos_y}")
         
         # Bloqueia a interação com a janela de fundo (torna a janela 'modal')
@@ -1146,8 +1149,8 @@ if __name__ == '__main__':
         label_disclaimer = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["txt_disclaimer"][idioma_atual], font=("Arial", 9), justify="center", bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
         label_disclaimer.pack(pady=(5, 15))
         
-        # O compound=tk.TOP coloca a imagem cima do texto
-        label_creditos = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["lbl_creditos"][idioma_atual], image=img_community, compound=tk.TOP, font=("Arial", 9, "italic"), bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"])
+        # O compound=tk.TOP coloca a imagem em cima do texto, wraplength evita cortar nas laterais
+        label_creditos = tk.Label(aba_sobre, text=DICIONARIO_IDIOMAS["lbl_creditos"][idioma_atual], image=img_community, compound=tk.TOP, font=("Arial", 9, "italic"), bg=cor["cor_fundo_janela"], fg=cor["cor_do_texto"], wraplength=420, justify="center")
         label_creditos.pack(pady=5)
         
         # Função para processar os cliques e chamar o webbrowser
@@ -1211,16 +1214,16 @@ if __name__ == '__main__':
         botao_continuar.configure(bg_color=cor["cor_fundo_janela"], fg_color="transparent", hover_color=cor["cor_botao_audio_hover"])
         botao_excluir.configure(bg_color=cor["cor_fundo_janela"], fg_color="transparent", hover_color=cor["cor_botao_audio_hover"])
         
-        # Configuração para os botões e menus do CustomTkinter (agora tem hover nativo e bordas arredondadas sem complexidade)
-        botao_baixar_audio.configure(fg_color=cor["cor_botao_audio"], hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], text_color_disabled=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_audio"])
-        botao_baixar_video.configure(fg_color=cor["cor_botao_video"], hover_color=cor["cor_botao_video_hover"], text_color=cor["cor_fonte_botoes"], text_color_disabled=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_video"])
+        # Configuração para os botões e menus do CustomTkinter (bg_color elimina os cantos claros no Linux)
+        botao_baixar_audio.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_botao_audio"], hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], text_color_disabled=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_audio"])
+        botao_baixar_video.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_botao_video"], hover_color=cor["cor_botao_video_hover"], text_color=cor["cor_fonte_botoes"], text_color_disabled=cor["cor_fonte_botoes"], border_width=2, border_color=cor["cor_da_borda_botao_video"])
         
-        dropdown_audio.configure(fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
-        dropdown_video.configure(fg_color=cor["cor_botao_video"], button_color=cor["cor_botao_video"], button_hover_color=cor["cor_botao_video_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
+        dropdown_audio.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_botao_audio"], button_color=cor["cor_botao_audio"], button_hover_color=cor["cor_botao_audio_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
+        dropdown_video.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_botao_video"], button_color=cor["cor_botao_video"], button_hover_color=cor["cor_botao_video_hover"], text_color=cor["cor_fonte_botoes"], dropdown_fg_color=cor["cor_de_fundo_dropdown"], dropdown_hover_color=cor["cor_do_hover_dropdown"], dropdown_text_color=cor["cor_do_texto"])
         
-        # Botões CTk isolados e soltos na interface
-        botao_config.configure(bg_color=cor["cor_fundo_janela"], hover_color=cor["cor_botao_audio_hover"])
-        botao_plataformas.configure(bg_color=cor["cor_fundo_janela"], hover_color=cor["cor_botao_audio_hover"])
+        # Botões CTk isolados: fg_color igual ao fundo evita o quadrado cinza do canvas no Linux
+        botao_config.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_fundo_janela"], hover_color=cor["cor_botao_audio_hover"])
+        botao_plataformas.configure(bg_color=cor["cor_fundo_janela"], fg_color=cor["cor_fundo_janela"], hover_color=cor["cor_botao_audio_hover"])
 
     # ------------------------------------------------------------------
     # --- Lógica da Tela de Carregamento (Update Inicial) ---
@@ -1240,7 +1243,7 @@ if __name__ == '__main__':
         barra_loading.stop()
         barra_loading.pack_forget()
         label_instrucao.config(text=DICIONARIO_IDIOMAS["instrucao_ready"][idioma_atual])
-        entrada_url.pack(pady=5)
+        entrada_url.pack(pady=5, ipady=6)
         frame_botoes.pack(pady=10)
         frame_controles.pack(pady=(20, 0)) # Fica fixo abaixo dos outros
         
