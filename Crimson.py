@@ -21,9 +21,17 @@ from PIL import Image # Biblioteca 'Pillow', não é nativa e ajuda na manipula�
 # -------------------------------
 # --- Setup de Diretórios do Aplicativo (AppData) e Persistência ---
 
-# garantindo que o aplicativo salva os dados na pasta oficial do Windows para programas (Local AppData)
-# Em vez de sujar o disco ou perder dados quando o usuário move a pasta
-appdata_local = os.environ.get('LOCALAPPDATA') or os.path.expanduser('~')
+# Detecta o sistema operacional para adaptar os caminhos
+import platform
+SISTEMA = platform.system() # Retorna 'Windows', 'Linux' ou 'Darwin' (macOS)
+
+# No Windows: usa a pasta oficial LocalAppData (ex: C:\Users\Luan\AppData\Local\Crimson)
+# No Linux:   segue o padrão XDG, que é ~/.local/share/Crimson
+if SISTEMA == 'Windows':
+    appdata_local = os.environ.get('LOCALAPPDATA') or os.path.expanduser('~')
+else:
+    appdata_local = os.path.join(os.path.expanduser('~'), '.local', 'share')
+
 crimson_dir = os.path.join(appdata_local, 'Crimson')
 lib_dir = os.path.join(crimson_dir, 'Lib')
 config_dir = os.path.join(crimson_dir, 'Config')
@@ -293,12 +301,15 @@ DICIONARIO_IDIOMAS = {
 # -------------------------------
 
 caminho_base = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-caminho_ffmpeg_dir = os.path.join(caminho_base, 'ffmpeg') # Pasta do ffmpeg
 
-# Adiciona a pasta do ffmpeg ao PATH do sistema apenas durante a execução do código
-# é o método mais garantido para o yt-dlp (e qualquer outra lib) achar o ffmpeg no Windows
-# é uma trava de segurança, funcionaria sem essa camada mas por via das dúvidas
-os.environ["PATH"] = os.environ["PATH"] + os.pathsep + caminho_ffmpeg_dir
+# No Windows, uso o ffmpeg local que fica na pasta 'ffmpeg/' do projeto
+# No Linux, o ffmpeg já fica instalado no sistema (/usr/bin/ffmpeg), então não precisamos de pasta local
+if SISTEMA == 'Windows':
+    caminho_ffmpeg_dir = os.path.join(caminho_base, 'ffmpeg')
+    os.environ["PATH"] = os.environ["PATH"] + os.pathsep + caminho_ffmpeg_dir
+else:
+    # No Linux o ffmpeg fica em /usr/bin — o yt-dlp vai achá-lo automaticamente pelo PATH do sistema
+    caminho_ffmpeg_dir = '' # String vazia: o yt-dlp vai usar o ffmpeg do sistema
 
 # --------------------------------------------------------------------------------------------------------------------
 # ********************************************************************************************************************
@@ -987,9 +998,13 @@ if __name__ == '__main__':
             # Confirmação antes de prosseguir
             if messagebox.askyesno(DICIONARIO_IDIOMAS["msg_confirm_limpeza_titulo"][idioma_atual], DICIONARIO_IDIOMAS["msg_confirm_limpeza_texto"][idioma_atual]):
                 try:
-                    # Finaliza os processos ffmpeg silenciosamente
-                    # O CREATE_NO_WINDOW evita que a janela do terminal (CMD) pisque na tela
-                    subprocess.run(["taskkill", "/F", "/IM", "ffmpeg.exe"], capture_output=True, creationflags=subprocess.CREATE_NO_WINDOW)
+                    if SISTEMA == 'Windows':
+                        # No Windows, taskkill finaliza o processo pelo nome do '.exe'
+                        # CREATE_NO_WINDOW evita que a janela do terminal (CMD) pisque na tela
+                        subprocess.run(["taskkill", "/F", "/IM", "ffmpeg.exe"], capture_output=True, creationflags=subprocess.CREATE_NO_WINDOW)
+                    else:
+                        # No Linux, pkill é o equivalente ao taskkill, finaliza pelo nome do processo
+                        subprocess.run(["pkill", "-f", "ffmpeg"], capture_output=True)
                     
                     messagebox.showinfo(DICIONARIO_IDIOMAS["msg_sucesso_limpeza_titulo"][idioma_atual], DICIONARIO_IDIOMAS["msg_sucesso_limpeza_texto"][idioma_atual])
                 except Exception:
