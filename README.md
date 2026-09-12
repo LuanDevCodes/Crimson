@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="Icons/Ícone - Crimson.png" width="40" valign="middle"> 
+  <img src="Icons/Crimson.png" width="40" valign="middle"> 
   Projeto Crimson - Interface de Download Multi-Plataforma
 </h1>
 
