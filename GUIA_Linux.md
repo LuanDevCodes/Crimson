@@ -46,7 +46,7 @@ source venv/bin/activate        # Bash / Zsh
 source venv/bin/activate.fish   # Fish Shell (padrão CachyOS)
 
 # 3. Instale as dependências
-pip install -r Linux/requirements_linux.txt
+pip install -r requirements_linux.txt
 
 # 4. Execute o aplicativo
 python Crimson.py
@@ -70,7 +70,7 @@ pyinstaller --noconsole --onefile \
 Ou use o script pronto (mais simples):
 
 ```bash
-bash Linux/compilar.sh
+bash Compilar_Linux.sh
 ```
 
 ### Testar o executável gerado
@@ -82,35 +82,41 @@ bash Linux/compilar.sh
 
 ---
 
-## 🎨 3. Criar o Atalho com Ícone (Opcional)
+## 🎨 3. Criar o Atalho com Ícone (Menu do Sistema)
 
-No Linux, ícones de aplicativos funcionam via arquivos `.desktop`. Isso coloca o Crimson no menu de aplicativos do sistema com o ícone oficial.
+> 💡 **Por que o arquivo executável compilado (`dist/Crimson`) não tem ícone?**
+> No Windows, executáveis `.exe` embutem o arquivo `.ico` internamente no binário.
+> No Linux, os binários (formato **ELF**) **não possuem ícones embutidos**. Nenhum aplicativo no Linux (nem navegadores, nem jogos) exibe ícone no arquivo binário cru no gerenciador de arquivos (Dolphin/Nautilus).
+> O ícone oficial do aplicativo no Linux é exibido através de um atalho `.desktop` no menu de aplicativos do sistema ou na barra de tarefas (dock).
+
+Para criar o atalho com o ícone oficial no menu de aplicativos:
 
 ```bash
 # 1. Permissão de execução ao executável
 chmod +x dist/Crimson
 
-# 2. Cria a pasta de atalhos (se não existir)
+# 2. Cria a pasta de atalhos do usuário (se ainda não existir)
 mkdir -p ~/.local/share/applications
 
-# 3. Cria o atalho
+# 3. Cria o atalho apontando para o executável e o ícone
 cat <<EOF > ~/.local/share/applications/Crimson.desktop
 [Desktop Entry]
 Type=Application
 Name=Crimson
 Comment=Video and Audio Downloader
-Exec=$(pwd)/dist/Crimson
+Exec="$(pwd)/dist/Crimson"
 Icon=$(pwd)/Icons/Crimson.png
 Terminal=false
 Categories=AudioVideo;Utility;Network;
 StartupNotify=true
 EOF
 
-# 4. Permissão ao atalho
+# 4. Dá permissão ao atalho e atualiza o banco de dados de atalhos
 chmod +x ~/.local/share/applications/Crimson.desktop
+update-desktop-database ~/.local/share/applications 2>/dev/null
 ```
 
-Pronto! Busque por **Crimson** no menu do sistema para encontrar o atalho com ícone.
+Pronto! Agora o **Crimson** aparecerá no menu do sistema (KDE/GNOME) com o seu ícone oficial e poderá ser fixado na barra de tarefas ou na Área de Trabalho.
 
 ---
 
@@ -125,4 +131,4 @@ O mesmo `Crimson.py` funciona nos dois sistemas. A detecção é feita via `plat
 | **Matar processos** | `taskkill /F /IM ffmpeg.exe` | `pkill -f ffmpeg` |
 | **Tamanho da janela** | `600×300` | `700×360` (compensar DPI) |
 | **Ícone do lançador** | `iconphoto()` | `wm_iconphoto()` |
-| **Corner radius dos botões** | `8` | `18–20` (X11 renderiza diferente) |
+| **Corner radius dos botões** | `8` | `8` (padronizado para evitar artefatos no Canvas) |
