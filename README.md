@@ -31,7 +31,7 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica n
 - **Menu de Contexto Intuitivo**: Interaja com a barra de pesquisa usando o botão direito do mouse para *Colar* links ou *Apagar* seleções de texto de forma rápida.
 - **Painel Modular e Créditos**: Uma janela flutuante baseada em "Abas de Notebook", criada para abrigar configurações globais de sistema e um painel de honra à comunidade Open Source, detalhando as ferramentas base do software e seus respectivos repositórios oficiais.
 
-## 🌐 Idiomas Suportados
+## ಄ Idiomas Suportados
 
 | Idioma | Código | Status |
 |---|---|---|
@@ -41,7 +41,7 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica n
 
 A troca de idioma é feita em tempo real pelo Painel de Configurações, sem necessidade de reiniciar o aplicativo.
 
-## 💻 Sistemas Operacionais Suportados
+## ദ്ദി( • ᴗ - ) ✧ Sistemas Operacionais Suportados
 
 O Crimson detecta automaticamente o sistema operacional em execução e adapta seu comportamento (caminhos de pasta, localização do FFmpeg, comandos de processo, etc.)
 
