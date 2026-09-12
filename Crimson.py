@@ -309,7 +309,7 @@ if SISTEMA == 'Windows':
     os.environ["PATH"] = os.environ["PATH"] + os.pathsep + caminho_ffmpeg_dir
 else:
     # No Linux o ffmpeg fica em /usr/bin — o yt-dlp vai achá-lo automaticamente pelo PATH do sistema
-    caminho_ffmpeg_dir = '' # String vazia: o yt-dlp vai usar o ffmpeg do sistema
+    caminho_ffmpeg_dir = '/usr/bin' # o yt-dlp vai usar o ffmpeg do sistema
 
 # --------------------------------------------------------------------------------------------------------------------
 # ********************************************************************************************************************
