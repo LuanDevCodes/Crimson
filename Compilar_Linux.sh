@@ -17,7 +17,6 @@ rm -rf build dist Crimson.spec
 
 echo "📦 [2/3] Empacotando dependências com PyInstaller..."
 ./venv/bin/pyinstaller --noconsole --onefile \
-  --collect-all customtkinter \
   --collect-all PIL \
   --add-data "Icons:Icons" \
   Crimson.py
