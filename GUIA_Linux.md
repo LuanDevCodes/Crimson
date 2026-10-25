@@ -9,33 +9,33 @@
 
 ## ⚙️ 0. Pré-requisitos do Sistema
 
-Antes de qualquer coisa, instale as dependências necessárias via gerenciador de pacotes.
+Antes de qualquer coisa, instale o FFmpeg via gerenciador de pacotes da sua distribuição (usado para processar e converter mídias baixadas).
 
 **Arch Linux / CachyOS / Manjaro:**
 ```bash
-sudo pacman -S ffmpeg python-tkinter
+sudo pacman -S ffmpeg
 ```
 
 **Ubuntu / Linux Mint / Pop!_OS / Zorin OS:**
 ```bash
-sudo apt install ffmpeg python3-tk
+sudo apt install ffmpeg
 ```
 
 **Fedora / AlmaLinux / Rocky Linux:**
 ```bash
-sudo dnf install ffmpeg python3-tkinter
+sudo dnf install ffmpeg
 ```
 
 **openSUSE:**
 ```bash
-sudo zypper install ffmpeg python3-tk
+sudo zypper install ffmpeg
 ```
 
-> ⚠️ O `python3-tk` é obrigatório. Em muitas distros ele não vem junto com o Python padrão e precisa ser instalado separadamente.
+> 💡 O Crimson utiliza **PySide6 (Qt6)** para a interface gráfica moderna com anti-aliasing nativo, que é instalado automaticamente no ambiente virtual via `pip`.
 
 ---
 
-## ⚡ 1. Rodar o Crimson pelo Terminal (caso queria rodar o código em si ao invés da aplicação)
+## ⚡ 1. Rodar o Crimson pelo Terminal (caso queira rodar o código em si ao invés do executável)
 
 ```bash
 # 1. Crie o ambiente virtual (só na primeira vez que for rodar o código)
@@ -56,12 +56,11 @@ python Crimson.py
 
 ## 📦 2. Compilar o Executável Linux
 
-O motivo do executável abrir e fechar rapidamente é que o **CustomTkinter** precisa ter seus arquivos internos de tema empacotados explicitamente com a flag `--collect-all customtkinter`. Sofri bastante com isso então segue como resolvi a compilação de maneira limpa:
+O Crimson utiliza PyInstaller para empacotar a aplicação em um único binário com interface Qt6 e suporte gráfico completo:
 
 ```bash
 # Com o venv ativado, na pasta raiz do projeto:
 pyinstaller --noconsole --onefile \
-  --collect-all customtkinter \
   --collect-all PIL \
   --add-data "Icons:Icons" \
   Crimson.py
