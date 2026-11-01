@@ -187,15 +187,15 @@ The icons used in the graphical interface belong entirely to their respective cr
 
 ---
 
-## ⚠️ Legal Disclaimer
+## ! Legal Disclaimer
 
-- **No Affiliation**: Project Crimson is an independent personal open-source tool and is not affiliated with, endorsed by, or in any way associated with any other media hosting service or platform.
+- **No Affiliation**: Project Crimson is an independent personal open-source tool and is not affiliated with, endorsed by, or in any way associated with any media hosting service or platform.
 - **Trademarks**: All product names, logos, trademarks, and registered trademarks mentioned or referenced in this project belong to their respective owners.
 - **Fair Use & User Responsibility**: Crimson is provided as a general-purpose offline media archiving and format conversion client. Users are solely responsible for ensuring that their downloads comply with applicable local copyright laws, intellectual property rights, and the terms of service of each content provider.
 
 ---
 
-## ⚖️ License
+## ◈ License
 
 Project **Crimson** is licensed under the **[GNU General Public License v3.0 (GPLv3)](LICENSE)**.
 
@@ -204,8 +204,6 @@ This software is distributed in the hope that it will be useful, but WITHOUT ANY
 For third-party dependencies, licenses, and icon attributions, see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ---
-
-<br>
 
 **Developed by LuanDevCodes** <br>
 *Ad Infinitum*

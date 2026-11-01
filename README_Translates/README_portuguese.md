@@ -180,15 +180,15 @@ Os ícones utilizados na interface gráfica pertencem integralmente aos seus res
 
 ---
 
-## ⚠️ Aviso Legal (Disclaimer)
+## ! Aviso Legal (Disclaimer)
 
-- **Sem Vínculo Institucional**: O projeto Crimson é uma ferramenta independente de código aberto e não possui qualquer tipo de afiliação, parceria, patrocínio ou endosso por parte de qualquer outra plataforma ou serviço de mídia.
+- **Sem Vínculo Institucional**: O projeto Crimson é uma ferramenta independente de código aberto e não possui qualquer tipo de afiliação, parceria, patrocínio ou endosso por parte de qualquer plataforma ou serviço de mídia.
 - **Marcas Registradas**: Todos os nomes de produtos, logotipos, marcas e marcas registradas citados neste projeto pertencem exclusivamente aos seus respectivos proprietários.
 - **Responsabilidade do Usuário**: O Crimson é disponibilizado como um cliente de uso geral para arquivamento offline e conversão de mídia. Cabe única e exclusivamente ao usuário certificar-se de que os downloads realizados estão em conformidade com as leis de direitos autorais vigentes em sua jurisdição e com os termos de uso de cada provedor de conteúdo.
 
 ---
 
-## ⚖️ Licença
+## ◈ Licença
 
 O projeto **Crimson** é distribuído e licenciado sob os termos da **[GNU General Public License v3.0 (GPLv3)](../LICENSE)**.
 
@@ -197,8 +197,6 @@ Este software é disponibilizado na esperança de que seja útil, mas SEM QUALQU
 Para consultar as licenças dos componentes e ferramentas de terceiros (FFmpeg, yt-dlp, PySide6, Pillow e Flaticon), veja [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
 
 ---
-
-<br>
 
 **Desenvolvido por Luan** <br>
 *Ad Infinitum*
