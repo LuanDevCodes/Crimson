@@ -21,8 +21,12 @@ Project **Crimson** relies on open-source software and graphical assets created 
 
 ## 2. Graphical Icons (Flaticon)
 
-All interface icons are used under the Flaticon Free License with attribution to their original authors:
+All interface icons located in the `Icons/` directory are third-party assets used under the Flaticon Free License with author attribution.
 
+> **Important License Clarification on Icons:**  
+> These graphical icon assets are **not** licensed under the GNU General Public License v3.0 (GPLv3). They remain the intellectual property of their respective creators on Flaticon. Any redistribution, modification, or reuse of these icon files must comply with Flaticon's licensing terms and author attribution requirements.
+
+Author attributions:
 - **Question mark** — created by [Magnific - Flaticon](https://www.flaticon.com/br/icones-gratis/ponto-de-interrogacao)
 - **Trash** — created by [Mayor Icons - Flaticon](https://www.flaticon.com/br/icones-gratis/desperdicio)
 - **Resume / Play** — created by [sonnycandra - Flaticon](https://www.flaticon.com/br/icones-gratis/botao-play)

@@ -36,7 +36,7 @@ The software autonomously manages its underlying extraction engine, performing a
 - **Flexible Stream Extraction**: Seamless separation and extraction of audio and video with format multiplexing (`mp3`, `mp4`, `mkv`, `webm`, etc.) via visual dropdown menus.
 - **Asynchronous Architecture (Zero-Freeze)**: Network and disk operations execute on secondary threads, communicating progress, transfer speed, and ETA to the main UI thread via Qt Signals and Slots without stuttering.
 - **Chunked Network Division**: Streams are split into manageable chunks (`http_chunk_size`) utilizing concurrent connection pools to maximize transfer stability.
-- **Protected Auto-Updater**: On startup, Crimson verifies and fetches updates for the extraction engine with ZIP checksum validation and a 5-second timeout safeguard for offline or low-connectivity environments.
+- **Protected Auto-Updater**: On startup, Crimson verifies and fetches updates for the extraction engine with automated ZIP integrity checks, path traversal safeguards, and a 5-second timeout for offline or low-connectivity environments.
 - **Direct Stream Multiplexing (FFmpeg)**: Video and audio channels are merged without re-encoding overhead whenever possible, preserving CPU cycles and completing conversions in seconds.
 - **Real-Time Internationalization (25 Native Languages)**: Full native support for 25 languages sorted alphabetically, including Arabic, Bambara, Bengali, Chinese, Dutch, English, Filipino, French, German, Hausa, Hindi, Indonesian, Italian, Japanese, Korean, Latin, Norwegian, Persian, Polish, Portuguese, Russian, Spanish, Turkish, Ukrainian, and Vietnamese. Languages can be switched on the fly without restarting.
 - **Visual Identity & 6 Dynamic Themes**: Curated aesthetic options including the signature **Frutiger Aero** (featuring animated bubbles, sky gradients, and glossy Aqua glassmorphism), **Dark**, **Egg**, **Matcha**, **Savage**, and **Platinum Disc**, with a built-in animation toggle switch for zero-CPU static mode.
@@ -184,6 +184,14 @@ The icons used in the graphical interface belong entirely to their respective cr
 - [Community - icon created by Soremba - Flaticon](https://www.flaticon.com/br/icones-gratis/comunidade)
 - [Github - icon created by riajulislam - Flaticon](https://www.flaticon.com/br/icones-gratis/github)
 - [Clean / Broom - icon created by Us and Up - Flaticon](https://www.flaticon.com/br/icones-gratis/vassoura)
+
+---
+
+## ⚠️ Legal Disclaimer
+
+- **No Affiliation**: Project Crimson is an independent personal open-source tool and is not affiliated with, endorsed by, or in any way associated with any other media hosting service or platform.
+- **Trademarks**: All product names, logos, trademarks, and registered trademarks mentioned or referenced in this project belong to their respective owners.
+- **Fair Use & User Responsibility**: Crimson is provided as a general-purpose offline media archiving and format conversion client. Users are solely responsible for ensuring that their downloads comply with applicable local copyright laws, intellectual property rights, and the terms of service of each content provider.
 
 ---
 

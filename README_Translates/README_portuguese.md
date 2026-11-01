@@ -34,7 +34,7 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 - **Download Flexível e Descomplicado**: Escolha entre baixar apenas áudio ou vídeo (com as qualidades mescladas perfeitamente) através de dropdowns visuais (`mp3`, `mp4`, `mkv`, `webm`, etc).
 - **Processamento Assíncrono (Zero-Freeze)**: As operações de download pesado e gravação de arquivos não disputam espaço com a renderização visual. Tudo ocorre em *threads* separadas, com a barra de progresso, velocidade e ETA atualizando de forma lisa e constante na thread principal.
 - **Download reformulado**: Implementação de uma divisão inteligente de rede. O sistema divide a requisição da mídia em blocos (`http_chunk_size`) com 5 conexões simultâneas, garantindo estabilidade e alto desempenho nas taxas de transferência.
-- **Blindagem do Auto-Update Silencioso**: Na inicialização, a thread secundária verifica, valida a integridade (checksum CRC-32) e aplica silenciosamente a versão mais recente do `yt-dlp` com timeout de proteção para conexões lentas ou offline.
+- **Blindagem do Auto-Update Silencioso**: Na inicialização, a thread secundária verifica, valida a integridade estrutural do arquivo ZIP (com proteção contra *path traversal*) e aplica silenciosamente o motor `yt-dlp` com timeout de proteção para conexões lentas ou offline.
 - **Conversão por Fator Externo (FFmpeg)**: O motor de extração puxa nativamente os vídeos na melhor qualidade, mas geralmente separadamente da faixa de áudio de alta resolução. O Crimson aciona o FFmpeg de maneira integrada para mesclar essas duas camadas ou convertê-las para formatos específicos.
 - **Internacionalização Completa em Tempo Real (25 Idiomas Nativos)**: Suporte integral a 25 idiomas organizados em ordem alfabética (Árabe, Bambara, Bengali, Chinês, Holandês, Inglês, Filipino, Francês, Alemão, Hauçá, Hindi, Indonésio, Italiano, Japonês, Coreano, Latim, Norueguês, Persa, Polonês, Português, Russo, Espanhol, Turco, Ucraniano e Vietnamita). A troca é instantânea pelo Painel de Configurações, sem necessidade de reiniciar.
 - **Identidade Visual e 6 Temas Dinâmicos**: O aplicativo suporta variações completas de tema com paletas harmoniosas: `Frutiger Aero` (tema principal com bolhas animadas e vidro Aqua 3D), `Dark` (escuro moderno), `Egg` (creme aconchegante), `Matcha` (verde suave), `Savage` (vermelho vivo e carmesim puro) e `Platinum Disc` (cinza titânio metálico), além de contar com um interruptor (switch) dedicado para desativar animações quando desejado.
@@ -177,6 +177,14 @@ Os ícones utilizados na interface gráfica pertencem integralmente aos seus res
 - [Comunidade - ícone criado por Soremba - Flaticon](https://www.flaticon.com/br/icones-gratis/comunidade)
 - [Github - ícone criado por riajulislam - Flaticon](https://www.flaticon.com/br/icones-gratis/github)
 - [Limpeza - ícone criado por Us and Up - Flaticon](https://www.flaticon.com/br/icones-gratis/vassoura)
+
+---
+
+## ⚠️ Aviso Legal (Disclaimer)
+
+- **Sem Vínculo Institucional**: O projeto Crimson é uma ferramenta independente de código aberto e não possui qualquer tipo de afiliação, parceria, patrocínio ou endosso por parte de qualquer outra plataforma ou serviço de mídia.
+- **Marcas Registradas**: Todos os nomes de produtos, logotipos, marcas e marcas registradas citados neste projeto pertencem exclusivamente aos seus respectivos proprietários.
+- **Responsabilidade do Usuário**: O Crimson é disponibilizado como um cliente de uso geral para arquivamento offline e conversão de mídia. Cabe única e exclusivamente ao usuário certificar-se de que os downloads realizados estão em conformidade com as leis de direitos autorais vigentes em sua jurisdição e com os termos de uso de cada provedor de conteúdo.
 
 ---
 
