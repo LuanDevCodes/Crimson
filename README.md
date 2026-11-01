@@ -4,16 +4,16 @@
 </h1>
 
 <p align="center">
-  <a href="README_Translates/README_portuguese.md"><b>[ Versao em Portugues (Brasil) ]</b></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue" alt="License: GPLv3"></a>
+  <img src="https://img.shields.io/badge/Release-v3.0.0-brightgreen" alt="Release: v3.0.0">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/GUI-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
+  <img src="https://img.shields.io/badge/Engine-yt--dlp%20%7C%20FFmpeg-E50914" alt="Engine: yt-dlp & FFmpeg">
+  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux-555555" alt="Platforms">
 </p>
 
 <p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue?style=flat-square" alt="License: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Release-v3.0.0-brightgreen?style=flat-square" alt="Release: v3.0.0">
-  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+">
-  <img src="https://img.shields.io/badge/GUI-PySide6%20(Qt6)-41CD52?style=flat-square&logo=qt&logoColor=white" alt="PySide6 Qt6">
-  <img src="https://img.shields.io/badge/Engine-yt--dlp%20%7C%20FFmpeg-E50914?style=flat-square" alt="Engine: yt-dlp & FFmpeg">
-  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux-555555?style=flat-square" alt="Platforms">
+  <sub>English &nbsp;|&nbsp; <a href="README_Translates/README_portuguese.md">Português (Brasil)</a></sub>
 </p>
 
 ## = Project Description
@@ -39,7 +39,7 @@ The software autonomously manages its underlying extraction engine, performing a
 - **Protected Auto-Updater**: On startup, Crimson verifies and fetches updates for the extraction engine with ZIP checksum validation and a 5-second timeout safeguard for offline or low-connectivity environments.
 - **Direct Stream Multiplexing (FFmpeg)**: Video and audio channels are merged without re-encoding overhead whenever possible, preserving CPU cycles and completing conversions in seconds.
 - **Real-Time Internationalization (25 Native Languages)**: Full native support for 25 languages sorted alphabetically, including Arabic, Bambara, Bengali, Chinese, Dutch, English, Filipino, French, German, Hausa, Hindi, Indonesian, Italian, Japanese, Korean, Latin, Norwegian, Persian, Polish, Portuguese, Russian, Spanish, Turkish, Ukrainian, and Vietnamese. Languages can be switched on the fly without restarting.
-- **Visual Identity & 6 Dynamic Themes**: Curated aesthetic options including the signature **Fruit Aero** (featuring animated bubbles, sky gradients, and glossy Aqua glassmorphism), **Dark**, **Egg**, **Matcha**, **Savage**, and **Platinum Disc**, with a built-in animation toggle switch for zero-CPU static mode.
+- **Visual Identity & 6 Dynamic Themes**: Curated aesthetic options including the signature **Frutiger Aero** (featuring animated bubbles, sky gradients, and glossy Aqua glassmorphism), **Dark**, **Egg**, **Matcha**, **Savage**, and **Platinum Disc**, with a built-in animation toggle switch for zero-CPU static mode.
 - **Hardware Optimization for Low-End PCs**:
   - *In-Memory Icon Cache*: Image assets are read from disk only once; subsequent lookups take microseconds directly from RAM.
   - *Progress Throttling (~16 FPS / 60ms)*: Eliminates ~85% of redundant UI repaint overhead during high-speed downloads.
@@ -109,7 +109,7 @@ Crimson automatically detects the host operating system (`platform.system()`) an
 
 ### → Release 3.0.0 (Current)
 <div align="center">
-  <p><b>Main Window Overview (Fruit Aero Theme - PySide6)</b></p>
+  <p><b>Main Window Overview (Frutiger Aero Theme - PySide6)</b></p>
   <img src="Screenshots/Crimson_main_window.png" alt="Crimson Main Window" width="85%">
   
   <br><br>

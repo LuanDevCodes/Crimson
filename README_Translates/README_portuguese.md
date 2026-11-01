@@ -4,16 +4,16 @@
 </h1>
 
 <p align="center">
-  <a href="../README.md"><b>[ English Version (Default) ]</b></a>
+  <a href="../LICENSE"><img src="https://img.shields.io/badge/Licença-GPLv3-blue" alt="Licença: GPLv3"></a>
+  <img src="https://img.shields.io/badge/Versão-v3.0.0-brightgreen" alt="Versão: v3.0.0">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/Interface-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
+  <img src="https://img.shields.io/badge/Motor-yt--dlp%20%7C%20FFmpeg-E50914" alt="Motor: yt-dlp & FFmpeg">
+  <img src="https://img.shields.io/badge/Plataformas-Windows%20%7C%20Linux-555555" alt="Plataformas">
 </p>
 
 <p align="center">
-  <a href="../LICENSE"><img src="https://img.shields.io/badge/Licença-GPLv3-blue?style=flat-square" alt="Licença: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Versão-v3.0.0-brightgreen?style=flat-square" alt="Versão: v3.0.0">
-  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+">
-  <img src="https://img.shields.io/badge/Interface-PySide6%20(Qt6)-41CD52?style=flat-square&logo=qt&logoColor=white" alt="PySide6 Qt6">
-  <img src="https://img.shields.io/badge/Motor-yt--dlp%20%7C%20FFmpeg-E50914?style=flat-square" alt="Motor: yt-dlp & FFmpeg">
-  <img src="https://img.shields.io/badge/Plataformas-Windows%20%7C%20Linux-555555?style=flat-square" alt="Plataformas">
+  <sub><a href="../README.md">English</a> &nbsp;|&nbsp; Português (Brasil)</sub>
 </p>
 
 ## = Descrição do Projeto
@@ -37,7 +37,7 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 - **Blindagem do Auto-Update Silencioso**: Na inicialização, a thread secundária verifica, valida a integridade (checksum CRC-32) e aplica silenciosamente a versão mais recente do `yt-dlp` com timeout de proteção para conexões lentas ou offline.
 - **Conversão por Fator Externo (FFmpeg)**: O motor de extração puxa nativamente os vídeos na melhor qualidade, mas geralmente separadamente da faixa de áudio de alta resolução. O Crimson aciona o FFmpeg de maneira integrada para mesclar essas duas camadas ou convertê-las para formatos específicos.
 - **Internacionalização Completa em Tempo Real (25 Idiomas Nativos)**: Suporte integral a 25 idiomas organizados em ordem alfabética (Árabe, Bambara, Bengali, Chinês, Holandês, Inglês, Filipino, Francês, Alemão, Hauçá, Hindi, Indonésio, Italiano, Japonês, Coreano, Latim, Norueguês, Persa, Polonês, Português, Russo, Espanhol, Turco, Ucraniano e Vietnamita). A troca é instantânea pelo Painel de Configurações, sem necessidade de reiniciar.
-- **Identidade Visual e 6 Temas Dinâmicos**: O aplicativo suporta variações completas de tema com paletas harmoniosas: `Fruit Aero` (tema principal inspirado em Frutiger Aero com bolhas animadas e vidro Aqua 3D), `Dark` (escuro moderno), `Egg` (creme aconchegante), `Matcha` (verde suave), `Savage` (vermelho vivo e carmesim puro) e `Platinum Disc` (cinza titânio metálico), além de contar com um interruptor (switch) dedicado para desativar animações quando desejado.
+- **Identidade Visual e 6 Temas Dinâmicos**: O aplicativo suporta variações completas de tema com paletas harmoniosas: `Frutiger Aero` (tema principal com bolhas animadas e vidro Aqua 3D), `Dark` (escuro moderno), `Egg` (creme aconchegante), `Matcha` (verde suave), `Savage` (vermelho vivo e carmesim puro) e `Platinum Disc` (cinza titânio metálico), além de contar com um interruptor (switch) dedicado para desativar animações quando desejado.
 - **Eficiência Extrema para Computadores Modestos**:
   - *Cache em RAM de Ícones*: O disco só é lido uma única vez; acessos subsequentes ocorrem em microssegundos direto da memória.
   - *Throttling de Progresso (~16 FPS / 60ms)*: Reduz em ~85% a sobrecarga de repaints na thread de interface durante conexões velozes.
@@ -105,7 +105,7 @@ O Crimson detecta automaticamente o sistema operacional em execução e adapta s
 
 ### → Release 3.0.0 (Atual)
 <div align="center">
-  <p><b>Visão Geral da Nova Interface (Tema Fruit Aero - PySide6)</b></p>
+  <p><b>Visão Geral da Nova Interface (Tema Frutiger Aero - PySide6)</b></p>
   <img src="../Screenshots/Crimson_main_window.png" alt="Janela Principal do Crimson" width="85%">
   
   <br><br>
