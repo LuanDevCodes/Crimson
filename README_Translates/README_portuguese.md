@@ -7,6 +7,15 @@
   <a href="../README.md"><b>[ English Version (Default) ]</b></a>
 </p>
 
+<p align="center">
+  <a href="../LICENSE"><img src="https://img.shields.io/badge/Licença-GPLv3-blue?style=flat-square" alt="Licença: GPLv3"></a>
+  <img src="https://img.shields.io/badge/Versão-v3.0.0-brightgreen?style=flat-square" alt="Versão: v3.0.0">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/Interface-PySide6%20(Qt6)-41CD52?style=flat-square&logo=qt&logoColor=white" alt="PySide6 Qt6">
+  <img src="https://img.shields.io/badge/Motor-yt--dlp%20%7C%20FFmpeg-E50914?style=flat-square" alt="Motor: yt-dlp & FFmpeg">
+  <img src="https://img.shields.io/badge/Plataformas-Windows%20%7C%20Linux-555555?style=flat-square" alt="Plataformas">
+</p>
+
 ## = Descrição do Projeto
 O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica moderna (PySide6 / Qt6) criada para facilitar e automatizar o arquivamento e download de vídeos e áudios em múltiplos ambientes de desktop. O projeto encapsula o poder da biblioteca `yt-dlp` e a capacidade de processamento de mídia do `FFmpeg` por trás de uma tela amigável, elegante e com anti-aliasing nativo no Windows e Linux. A aplicação também gerencia de forma autônoma as atualizações e integridade do seu motor interno para manter compatibilidade contínua com protocolos modernos de mídia. A ideia do projeto nasceu de uma necessidade pessoal de estudo e preservação offline de conteúdo.
 

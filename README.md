@@ -7,6 +7,15 @@
   <a href="README_Translates/README_portuguese.md"><b>[ Versao em Portugues (Brasil) ]</b></a>
 </p>
 
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue?style=flat-square" alt="License: GPLv3"></a>
+  <img src="https://img.shields.io/badge/Release-v3.0.0-brightgreen?style=flat-square" alt="Release: v3.0.0">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/GUI-PySide6%20(Qt6)-41CD52?style=flat-square&logo=qt&logoColor=white" alt="PySide6 Qt6">
+  <img src="https://img.shields.io/badge/Engine-yt--dlp%20%7C%20FFmpeg-E50914?style=flat-square" alt="Engine: yt-dlp & FFmpeg">
+  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux-555555?style=flat-square" alt="Platforms">
+</p>
+
 ## = Project Description
 Crimson is a cross-platform desktop application developed in Python with modern graphical rendering (PySide6 / Qt6), engineered to simplify and automate local media archiving and audio/video stream extraction across multiple desktop environments. The project brings together the extraction engine of `yt-dlp` and the multimedia processing pipeline of `FFmpeg` behind an elegant, responsive, and hardware-efficient graphical interface with native vector anti-aliasing on both Windows and Linux. 
 
