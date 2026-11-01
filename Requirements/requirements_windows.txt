@@ -1,0 +1,35 @@
+# Project Crimson - Windows Requirements
+# Usage: pip install -r Requirements\requirements_windows.txt
+# Includes all GUI (PySide6), extraction (yt-dlp), imaging (Pillow),
+# and Windows-specific executable (.exe) packaging dependencies:
+#   - pywin32-ctypes  (Native Windows API integration)
+#   - pefile          (Windows '.exe' PE header parser)
+#   - altgraph        (Internal PyInstaller dependency on Windows)
+
+altgraph==0.17.5
+brotli==1.2.0
+certifi==2026.7.22
+cffi==2.1.0
+charset-normalizer==3.4.9
+curl_cffi==0.15.0
+idna==3.18
+markdown-it-py==4.2.0
+mdurl==0.1.2
+mutagen==1.48.1
+packaging==26.2
+pefile==2024.8.26
+pillow==12.3.0
+pycparser==3.0
+pycryptodomex==3.23.0
+Pygments==2.20.0
+pyinstaller-hooks-contrib==2026.6
+pyinstaller==6.21.0
+PySide6==6.12.0
+pywin32-ctypes==0.2.3
+requests==2.34.2
+rich==15.0.0
+setuptools==83.0.0
+urllib3==2.7.0
+websockets==16.1.1
+yt-dlp-ejs==0.8.0
+yt-dlp==2026.7.23.234303.dev0
