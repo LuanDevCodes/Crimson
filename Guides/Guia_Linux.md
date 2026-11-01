@@ -46,7 +46,7 @@ source venv/bin/activate        # Bash / Zsh
 source venv/bin/activate.fish   # Fish Shell (padrão CachyOS)
 
 # 3. Instale as dependências
-pip install -r requirements_linux.txt
+pip install -r Requirements/requirements_linux.txt
 
 # 4. Execute o aplicativo
 python Crimson.py
@@ -69,7 +69,7 @@ pyinstaller --noconsole --onefile \
 Ou use o script pronto (mais simples):
 
 ```bash
-bash Compilar_Linux.sh
+bash Compile_project/Linux.sh
 ```
 
 ### Testar o executável gerado
@@ -119,15 +119,14 @@ Pronto! Agora o **Crimson** aparecerá no menu do sistema (KDE/GNOME) com o seu 
 
 ---
 
-## 🔍 5. O que o Crimson adapta automaticamente no Linux
+## 🔍 4. O que o Crimson adapta automaticamente no Linux
 
 O mesmo `Crimson.py` funciona nos dois sistemas. A detecção é feita via `platform.system()` logo na inicialização.
 
 | Ponto | Windows | Linux |
 |---|---|---|
 | **Pasta de configuração** | `%LOCALAPPDATA%\Crimson` | `~/.local/share/Crimson` |
-| **FFmpeg** | Pasta local `ffmpeg/` do projeto | Instalado no sistema (`/usr/bin/ffmpeg`) |
-| **Matar processos** | `taskkill /F /IM ffmpeg.exe` | `pkill -f ffmpeg` |
-| **Tamanho da janela** | `600×300` | `700×360` (compensar DPI) |
-| **Ícone do lançador** | `iconphoto()` | `wm_iconphoto()` |
-| **Corner radius dos botões** | `8` | `8` (padronizado para evitar artefatos no Canvas) |
+| **FFmpeg** | Pasta local `ffmpeg/` do projeto ou `PATH` | Descoberto automaticamente no `PATH` (`shutil.which`) |
+| **Limpar processos filhos** | Escopo restrito por PID pai (`Win32_Process`) | Escopo restrito por PID pai (`pkill -P <PID> -x ffmpeg`) |
+| **Interface Gráfica** | `PySide6 (Qt6 - Estilo Fusion)` | `PySide6 (Qt6 - Estilo Fusion)` |
+| **Ícone do lançador** | `QMainWindow.setWindowIcon()` | `QMainWindow.setWindowIcon()` + `.desktop` |

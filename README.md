@@ -1,175 +1,194 @@
 <h1 align="center">
   <img src="Icons/Crimson.png" width="40" valign="middle"> 
-  Projeto Crimson - Interface de Download Multi-Plataforma
+  Project Crimson - Cross-Platform Media Archiving Client
 </h1>
 
-## = Descrição do Projeto
-O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica moderna (PySide6 / Qt6) criada para facilitar e automatizar o download de vídeos e áudios de diversas plataformas na internet. O projeto encapsula o poder da biblioteca `yt-dlp` e a capacidade de processamento de mídia do `FFmpeg` por trás de uma tela amigável, elegante e com anti-aliasing nativo no Windows e Linux. A aplicação também lida de forma autônoma com atualizações de segurança internas, esquivando-se ativamente do erro "403: Forbidden" imposto por constantes mudanças nos algoritmos dos sites suportados. A ideia do projeto nasceu de uma necessidade pessoal minha e da ideia de facilitar esse tipo de situação.
+<p align="center">
+  <a href="README_Translates/README_portuguese.md"><b>[ Versao em Portugues (Brasil) ]</b></a>
+</p>
 
-## Δ Bibliotecas e Ferramentas
+## = Project Description
+Crimson is a cross-platform desktop application developed in Python with modern graphical rendering (PySide6 / Qt6), engineered to simplify and automate local media archiving and audio/video stream extraction across multiple desktop environments. The project brings together the extraction engine of `yt-dlp` and the multimedia processing pipeline of `FFmpeg` behind an elegant, responsive, and hardware-efficient graphical interface with native vector anti-aliasing on both Windows and Linux. 
+
+The software autonomously manages its underlying extraction engine, performing automated integrity checks and updates to maintain compatibility with modern streaming protocols and format standards. Created as an open-source educational utility, Crimson provides the community with a safe, accessible, and lightweight desktop alternative for offline media backup and educational content preservation.
+
+## Δ Libraries & Core Technologies
 - **Python 3.x**
-- **yt-dlp**: Motor principal responsável por buscar e realizar a extração bruta das mídias.
-- **PySide6 (Qt6)**: Interface gráfica com anti-aliasing nativo vetorial, visual uniforme em todas as distribuições Linux e no Windows, estilo Fusion e cards modulares responsivos.
-- **Threading**: Módulo responsável por criar rotinas em segundo plano, evitando o congelamento da interface gráfica durante o processo de download.
-- **json & os & platform**: Orquestradas em conjunto para lidar com a pasta oficial de configurações do usuário (adaptada por sistema operacional) e salvar o estado da aplicação via memória persistente.
-- **urllib.request & zipfile**: Usados para orquestrar o motor modular com streaming em blocos e timeout de segurança, agindo como ponte de download direto com a source master do `yt-dlp`.
-- **subprocess & re**: Utilizados para operar ferramentas (como limpar processos fantasmas) e tratar os dados de progresso e velocidade com expressões regulares pré-compiladas.
-- **webbrowser**: Módulo nativo do Python usado para transformar os links dos repositórios no Painel de Créditos em botões clicáveis de redirecionamento.
-- **Pillow (PIL)**: Manipulação avançada de canais RGBA com cache inteligente em memória RAM para desempenho instantâneo.
+- **yt-dlp**: Core extraction engine handling raw multimedia streams.
+- **PySide6 (Qt6)**: Graphical user interface powered by Qt 6 with native anti-aliasing, uniform cross-platform styling (Fusion), modular action cards, and dynamic theme rendering.
+- **Threading**: Asynchronous task scheduling ensuring a zero-freeze experience, decoupling heavy download pipelines from the graphical event loop.
+- **json & os & platform**: Native system persistence adapting user configuration paths per platform (`%LOCALAPPDATA%` on Windows, XDG on Linux).
+- **urllib.request & zipfile**: In-memory modular updater with streaming chunking and network protection timeouts.
+- **subprocess & re**: Native process supervision (terminating orphaned background tasks) and precompiled regex cleaning for progress parsing.
+- **webbrowser**: Standard redirection module for repository and credits navigation.
+- **Pillow (PIL)**: High-definition RGBA color processing with in-memory RAM caching for instant response.
 
-## § Funcionalidades
-- **Download Flexível e Descomplicado**: Escolha entre baixar apenas áudio ou vídeo (com as qualidades mescladas perfeitamente) através de dropdowns visuais (`mp3`, `mp4`, `mkv`, `webm`, etc).
-- **Processamento Assíncrono (Zero-Freeze)**: As operações de download pesado e gravação de arquivos não disputam espaço com a renderização visual. Tudo ocorre em *threads* separadas, com a barra de progresso, velocidade e ETA atualizando de forma lisa e constante na thread principal.
-- **Download reformulado**: Implementação de uma divisão inteligente de rede. O sistema corta a requisição da mídia em blocos (`http_chunk_size`) e abre 5 conexões de download simultâneas, contornando o estrangulamento de velocidade imposto por alguns sites e voando nas taxas de transferência.
-- **Blindagem do Auto-Update Silencioso**: No exato momento em que o aplicativo é inicializado, uma tela de loading bloqueia o uso enquanto a thread secundária verifica e aplica silenciosamente a última versão do `yt-dlp` com timeout de proteção para conexões lentas ou offline.
-- **Conversão por Fator Externo (FFmpeg)**: O motor de extração puxa nativamente os vídeos na melhor qualidade, mas geralmente separadamente da faixa de áudio de alta resolução. O Crimson aciona o FFmpeg de maneira integrada para mesclar essas duas camadas ou convertê-las para formatos específicos.
-- **Internacionalização Completa em Tempo Real (15 Idiomas Nativos)**: Suporte integral a Português, Inglês, Espanhol, Chinês, Japonês, Sul Coreano, Russo, Ucraniano, Indonésio, Filipino, Vietnamita, Norueguês, Hauçá, Bambara e Latim. A troca é instantânea pelo Painel de Configurações, sem necessidade de reiniciar.
-- **Identidade Visual e 5 Temas Dinâmicos**: O aplicativo suporta variações completas de tema com paletas harmoniosas: `Dark` (escuro moderno), `Egg` (creme aconchegante), `Matcha` (verde suave), `Savage` (vermelho vivo e carmesim puro) e `Platinum Disc` (cinza titânio metálico).
-- **Eficiência Extrema para Computadores Modestos**:
-  - *Cache em RAM de Ícones*: O disco só é lido uma única vez; acessos subsequentes ocorrem em microssegundos direto da memória.
-  - *Throttling de Progresso (~16 FPS / 60ms)*: Reduz em ~85% a sobrecarga de repaints na thread de interface durante conexões velozes.
-  - *Coleta Ativa de Memória*: Chamadas explícitas de liberação de memória (`gc.collect`) ao pausar, cancelar, finalizar downloads e na limpeza de processos.
-- **Persistência de Dados e Roteamento Seguro**: O aplicativo memoriza as preferências do usuário salvando um `.json` seguro na pasta de configurações do sistema. No Windows usa `%LOCALAPPDATA%`, no Linux segue o padrão XDG (`~/.local/share/Crimson`).
-- **Janela Centralizada no Monitor Principal**: A posição de abertura da janela é calculada matematicamente com base nas dimensões reais da tela, garantindo centralização mesmo em setups multi-monitor.
-- **Gestão de Processos**: Um botão nativo no painel de configurações capaz de "varrer" e finalizar processos órfãos em segundo plano (como threads residuais do FFmpeg), adaptado por sistema operacional (`taskkill` no Windows, `pkill` no Linux).
-- **Controle de Instâncias (Anti-Spam)**: As janelas do sistema (como as Plataformas e Configurações) possuem um bloqueio inteligente e modal que impede a abertura simultânea de dezenas de abas ao clicar repetidas vezes.
-- **Menu de Contexto Intuitivo**: Interaja com a barra de pesquisa usando o botão direito do mouse para *Colar* links ou *Apagar* seleções de texto de forma rápida.
+## § Features
+- **Flexible Stream Extraction**: Seamless separation and extraction of audio and video with format multiplexing (`mp3`, `mp4`, `mkv`, `webm`, etc.) via visual dropdown menus.
+- **Asynchronous Architecture (Zero-Freeze)**: Network and disk operations execute on secondary threads, communicating progress, transfer speed, and ETA to the main UI thread via Qt Signals and Slots without stuttering.
+- **Chunked Network Division**: Streams are split into manageable chunks (`http_chunk_size`) utilizing concurrent connection pools to maximize transfer stability.
+- **Protected Auto-Updater**: On startup, Crimson verifies and fetches updates for the extraction engine with ZIP checksum validation and a 5-second timeout safeguard for offline or low-connectivity environments.
+- **Direct Stream Multiplexing (FFmpeg)**: Video and audio channels are merged without re-encoding overhead whenever possible, preserving CPU cycles and completing conversions in seconds.
+- **Real-Time Internationalization (25 Native Languages)**: Full native support for 25 languages sorted alphabetically, including Arabic, Bambara, Bengali, Chinese, Dutch, English, Filipino, French, German, Hausa, Hindi, Indonesian, Italian, Japanese, Korean, Latin, Norwegian, Persian, Polish, Portuguese, Russian, Spanish, Turkish, Ukrainian, and Vietnamese. Languages can be switched on the fly without restarting.
+- **Visual Identity & 6 Dynamic Themes**: Curated aesthetic options including the signature **Fruit Aero** (featuring animated bubbles, sky gradients, and glossy Aqua glassmorphism), **Dark**, **Egg**, **Matcha**, **Savage**, and **Platinum Disc**, with a built-in animation toggle switch for zero-CPU static mode.
+- **Hardware Optimization for Low-End PCs**:
+  - *In-Memory Icon Cache*: Image assets are read from disk only once; subsequent lookups take microseconds directly from RAM.
+  - *Progress Throttling (~16 FPS / 60ms)*: Eliminates ~85% of redundant UI repaint overhead during high-speed downloads.
+  - *Active Garbage Collection*: Explicit memory reclamation (`gc.collect`) when pausing, canceling, or completing transfers.
+  - *Precompiled Regex*: Regular expressions compiled at launch to conserve CPU cycles per iteration.
+- **Cross-Platform Path Resolution**: User preferences persist in standard system locations (`~/.local/share/Crimson` on Linux, `%LOCALAPPDATA%\Crimson` on Windows). Downloaded files are routed to the user's native OS Downloads folder.
+- **Centered Window Logic**: Window coordinates are calculated against the active primary display geometry, ensuring proper centering across multi-monitor setups.
+- **Process Cleanup Utility**: Built-in control panel action to terminate orphaned background processes (`pkill` on Linux, `taskkill` on Windows).
+- **Modal Instance Guarding**: Sub-dialogs (Platforms and Settings) prevent redundant duplicate windows when repeatedly clicked.
+- **Context Menus**: Right-click actions for quick Paste and Clear operations on the URL input bar.
+- **Customized Scrollbars**: Discreet, slim vertical scrollbars styled to match the active theme across extensive dropdown lists.
 
-## ಄ Idiomas Suportados
+## ಄ Supported Languages (25 Native Languages)
 
-| Idioma | Código | Status |
+| Language | Code | Status |
 |---|---|---|
-| Português (Brasil) | `Portuguese` | ✅ Completo |
-| English | `English` | ✅ Completo |
-| Español | `Spanish` | ✅ Completo |
-| 中文 (Mandarim Simplificado) | `Chinese` | ✅ Completo |
-| 日本語 (Japonês) | `Japanese` | ✅ Completo |
-| 한국어 (Sul Coreano) | `Korean` | ✅ Completo |
-| Русский (Russo) | `Russian` | ✅ Completo |
-| Українська (Ucraniano) | `Ukrainian` | ✅ Completo |
-| Bahasa Indonesia | `Indonesian` | ✅ Completo |
-| Filipino / Tagalog | `Filipino` | ✅ Completo |
-| Tiếng Việt (Vietnamita) | `Vietnamese` | ✅ Completo |
-| Norsk (Norueguês) | `Norwegian` | ✅ Completo |
-| Harshen Hausa (Hauçá) | `Hausa` | ✅ Completo |
-| Bamanankan (Bambara) | `Bambara` | ✅ Completo |
-| Latina (Latim) | `Latin` | ✅ Completo |
+| العربية (Arabic) | `Arabic` | [✓] Complete |
+| Bamanankan (Bambara) | `Bambara` | [✓] Complete |
+| বাংলা (Bengali) | `Bengali` | [✓] Complete |
+| 中文 (Simplified Mandarin) | `Chinese` | [✓] Complete |
+| Nederlands (Dutch) | `Dutch` | [✓] Complete |
+| English | `English` | [✓] Complete |
+| Filipino / Tagalog | `Filipino` | [✓] Complete |
+| Français (French) | `French` | [✓] Complete |
+| Deutsch (German) | `German` | [✓] Complete |
+| Harshen Hausa (Hausa) | `Hausa` | [✓] Complete |
+| हिन्दी (Hindi) | `Hindi` | [✓] Complete |
+| Bahasa Indonesia | `Indonesian` | [✓] Complete |
+| Italiano (Italian) | `Italian` | [✓] Complete |
+| 日本語 (Japanese) | `Japanese` | [✓] Complete |
+| 한국어 (Korean) | `Korean` | [✓] Complete |
+| Latina (Latin) | `Latin` | [✓] Complete |
+| Norsk (Norwegian) | `Norwegian` | [✓] Complete |
+| فارسی (Persian) | `Persian` | [✓] Complete |
+| Polski (Polish) | `Polish` | [✓] Complete |
+| Português (Brasil) | `Portuguese` | [✓] Complete |
+| Русский (Russian) | `Russian` | [✓] Complete |
+| Español | `Spanish` | [✓] Complete |
+| Türkçe (Turkish) | `Turkish` | [✓] Complete |
+| Українська (Ukrainian) | `Ukrainian` | [✓] Complete |
+| Tiếng Việt (Vietnamese) | `Vietnamese` | [✓] Complete |
 
-A troca de idioma é feita em tempo real pelo Painel de Configurações, sem necessidade de reiniciar o aplicativo.
+Language selection takes effect immediately from the Settings Panel without restarting the application.
 
-## ദ്ദി( • ᴗ - ) ✧ Sistemas Operacionais Suportados
+## ദ്ദി( • ᴗ - ) ✧ Supported Operating Systems
 
-O Crimson detecta automaticamente o sistema operacional em execução e adapta seu comportamento (caminhos de pasta, localização do FFmpeg, comandos de processo, etc.)
+Crimson automatically detects the host operating system (`platform.system()`) and configures system paths, FFmpeg discovery, and command executors accordingly.
 
 ### Windows
-| Versão | Status |
+| Edition | Status |
 |---|---|
-| Windows 10 / 11 | ✅ Suporte completo |
+| Windows 10 / 11 (x64) | [✓] Full Support |
 
 ### Linux
 > [!NOTE]
-> No Linux, o `ffmpeg` precisa estar instalado via gerenciador de pacotes da sua distribuição. O PySide6 e demais dependências são instalados no ambiente virtual Python. Consulte o [Guia Linux](GUIA_Linux.md) para instruções detalhadas.
+> On Linux, `ffmpeg` should be installed through your distribution package manager. PySide6 and remaining dependencies are installed in the Python virtual environment. See the [Linux Guide](Guides/Guide_Linux.md) for full instructions.
 
-| Família | Exemplos de Distros | Status |
+| Family | Example Distributions | Status |
 |---|---|---|
-| **Arch Linux** | CachyOS *(testado)*, Manjaro, EndeavourOS, Arch puro | ✅ Suporte completo |
-| **Debian / Ubuntu** | Ubuntu, Linux Mint, Pop!\_OS, Zorin OS | ✅ Suporte completo |
-| **Fedora / RHEL** | Fedora, AlmaLinux, Rocky Linux | ✅ Suporte completo |
-| **openSUSE** | Tumbleweed, Leap | ✅ Suporte completo |
-| **Alpine Linux** | Alpine puro | ✅ Suporte completo |
+| **Arch Linux** | CachyOS, Manjaro, EndeavourOS, Arch | [✓] Full Support |
+| **Debian / Ubuntu** | Ubuntu, Linux Mint, Pop!_OS, Zorin OS | [✓] Full Support |
+| **Fedora / RHEL** | Fedora, AlmaLinux, Rocky Linux | [✓] Full Support |
+| **openSUSE** | Tumbleweed, Leap | [✓] Full Support |
+| **Alpine Linux** | Alpine Linux | [✓] Full Support |
 
-## ❏ Interface Visual
+## ❏ Graphical Interface & Themes
 
-### → Release 2.3.0 (Atual)
+### → Release 3.0.0 (Current)
 <div align="center">
-  <p><b>Visão Geral da Nova Interface (PySide6 / Tema Dark)</b></p>
-  <img src="Capturas/V.2.3.0/Crimson_com_janela.png" alt="Janela Principal do Crimson" width="85%">
+  <p><b>Main Window Overview (Fruit Aero Theme - PySide6)</b></p>
+  <img src="Screenshots/Crimson_main_window.png" alt="Crimson Main Window" width="85%">
   
   <br><br>
   
-  <p><b>Download Assíncrono com Atualização em Tempo Real</b></p>
-  <img src="Capturas/V.2.3.0/Crimson_download_iniciando.png" alt="Iniciando Download" width="45%">
+  <p><b>Real-Time Asynchronous Download & Transfer Progress</b></p>
+  <img src="Screenshots/Crimson_download_starting.png" alt="Starting Download" width="45%">
   &nbsp;
-  <img src="Capturas/V.2.3.0/Crimson_download_progresso_download.png" alt="Progresso do Download" width="45%">
+  <img src="Screenshots/Crimson_download_progress.png" alt="Download Progress" width="45%">
 
   <br><br>
 
-  <p><b>Painel de Configurações Dinâmicas e Créditos</b></p>
-  <img src="Capturas/V.2.3.0/Crimson_aba_configurações.png" alt="Aba Configurações" width="45%">
+  <p><b>Dynamic Configuration & Credits Panels</b></p>
+  <img src="Screenshots/Crimson_settings_tab.png" alt="Settings Tab" width="45%">
   &nbsp;
-  <img src="Capturas/V.2.3.0/Crimson_aba_sobre.png" alt="Aba Sobre e Repositórios" width="45%">
+  <img src="Screenshots/Crimson_about_tab.png" alt="About & Repositories Tab" width="45%">
+
+  <br><br>
+
+  <p><b>Supported Platforms Dialog & Legal Notice</b></p>
+  <img src="Screenshots/Crimson_supported_platforms.png" alt="Supported Platforms Dialog" width="60%">
 </div>
 
 <br>
 
-### ← Versões Anteriores (Histórico de Evolução)
-<div align="center">
-  <p><b>Release 2.2.0</b></p>
-  <img src="Capturas/V.2.2.0/Crimson_com_janela.png" alt="Janela Principal V.2.2.0" width="45%">
-  &nbsp;
-  <img src="Capturas/V.2.2.0/Crimson_download_progresso_download.png" alt="Progresso V.2.2.0" width="45%">
-
-  <br><br>
-
-  <p><b>Versão Beta (Protótipo Inicial em Tkinter)</b></p>
-  <img src="Capturas/Versão%20Beta/Tela%20inicial%20de%20abertura%20do%20programa%20-%20V.01.png" alt="Tela de Abertura do Programa (Loading) Beta" width="45%">
-  &nbsp;
-  <img src="Capturas/Versão%20Beta/Primeira%20home%20page%20do%20programa%20-%20V.01.png" alt="Home Page do Programa Beta" width="45%">
-</div>
-
-<br>
-
-## + Guia de Uso e Configuração de Ambiente
-Caso você venha a clonar este repositório para inspecionar, executar ou modificar o código através de uma IDE local, existem alguns pré-requisitos fundamentais para o funcionamento.
+## + Usage Guide & Environment Setup
 
 ### Windows
-O Crimson não confia na instalação global das dependências no computador do usuário. Ele exige e rastreia o **FFmpeg** em um escopo totalmente local (na mesma pasta do código):
-
-1. **Instale as Bibliotecas**: Instale as bibliotecas com `pip install -r requirements.txt`.
-2. **Setup do FFmpeg**: Crie uma pasta chamada `ffmpeg` na raiz deste projeto (onde o arquivo `Crimson.py` está localizado).
-3. Baixe os binários de execução do FFmpeg (.exe) e aloque-os dentro dessa pasta (ffmpeg.exe, ffplay.exe e ffprobe.exe):
-**[ » Acessar Repositório do FFmpeg Builds ](https://github.com/BtbN/FFmpeg-Builds/releases)**
-
-4. Ao rodar o código pela IDE, o Python irá ler o caminho relativo dessa pasta de forma inteligente e injetar temporariamente nas Variáveis de Ambiente (`os.environ["PATH"]`).
+1. **Dependencies**: Install required packages using `pip install -r Requirements/requirements_windows.txt`.
+2. **Local FFmpeg**: Create an `ffmpeg` folder in the project root containing `ffmpeg.exe`, `ffplay.exe`, and `ffprobe.exe`:
+**[ » Access FFmpeg Builds Repository ](https://github.com/BtbN/FFmpeg-Builds/releases)**
+3. The application automatically appends the local `ffmpeg` folder to the runtime `os.environ["PATH"]`.
+4. **Compile**: Run `Compile_project\Windows.bat` to generate the standalone portable executable inside `dist/`.
 
 ### Linux
-No Linux, o FFmpeg é instalado pelo sistema, não sendo necessária pasta local. Consulte o **[Guia Linux completo](GUIA_Linux.md)** para o passo a passo de instalação de dependências, execução e compilação do executável.
+1. **System FFmpeg**: Install FFmpeg via your package manager (e.g., `sudo pacman -S ffmpeg` or `sudo apt install ffmpeg`).
+2. **Virtual Environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r Requirements/requirements_linux.txt
+   python Crimson.py
+   ```
+3. **Compile**: Run `bash Compile_project/Linux.sh` to produce the standalone binary `dist/Crimson`.
+4. Consult the full **[Linux Guide](Guides/Guide_Linux.md)** for desktop launcher integration (`.desktop`).
 
-## ° Tecnologias Avançadas de Bypass e Otimização
-O Crimson passou por otimizações no seu núcleo para resolver gargalos históricos de bloqueios anti-bot, uso excessivo de CPU e falhas de bibliotecas engessadas:
-- **Bypass Anônimo (Apple Vision Pro & Android VR)**: com o versionamento de segurança agressivo (`--pre` Nightly), o Crimson acessa endpoints experimentais de alguns servidores restritos. Ele simula chamadas em nome dos óculos de realidade virtual da Apple e do Android, que recebem fluxos de dados sem limitação de cookies e qualidade (1080p e 4K puros).
-- **Uso reduzido de CPU e GPU**: Adoção de PySide6 (Qt6) com renderização nativa Fusion, cache de ícones em RAM e throttling na barra de progresso, economizando cerca de 85% de ciclos da CPU gráfica.
-- **Injeção Modular de Motor de Download**: O Crimson faz um parse direto com a base do GitHub. Usando apenas bibliotecas puras, ele baixa a Source Code Master e manipula o radar interno do Python (`sys.path.insert`) para forçá-lo a compilar com o novo pacote na memória.
+## ° Advanced Optimization & Core Technologies
+Crimson features core optimizations designed to resolve common bottlenecks such as network instability, high CPU usage, and outdated static libraries:
+- **Adaptive Stream Compatibility**: Using updated extractor profiles, Crimson selects optimal high-definition audio and video streams (1080p and 4K) compatible with native FFmpeg multiplexing.
+- **Reduced CPU & GPU Usage**: Powered by PySide6 (Qt6) with native Fusion rendering, RAM icon caching, progress bar throttling, and automatic animation pausing when minimized, saving ~85% of graphical CPU cycles.
+- **Modular Download Engine Injection**: Crimson fetches the latest `yt-dlp` source archive from GitHub, validates its integrity in a staging directory, and dynamically injects it into Python's runtime module search path (`sys.path.insert`).
 
-## • Arquitetura de Compilação (O Teste de "Releases")
-O Crimson nasce não só como uma utilidade do dia a dia, mas também com o papel de ser um **projeto de homologação para o sistema de "Releases" do GitHub**.
-
-A arquitetura final do projeto tem como objetivo compilar (via **PyInstaller**) tanto as lógicas do Python quanto os binários do `FFmpeg` na construção de um único artefato autossuficiente. No Windows, esse artefato é um `.exe` portátil; no Linux, um binário ELF compilado. Esse pacote encapsulado será testado nas publicações de Release do GitHub, servindo como modelo para que qualquer pessoa consiga baixar o software de forma limpa e no melhor conceito "Plug and Play".
+## • Build Architecture (Cross-Platform Releases)
+Crimson is structured for clean packaging via **PyInstaller** into standalone release artifacts. On Windows, it generates a portable `.exe`; on Linux, an ELF binary bundled within a `.tar.gz` archive preserving executable permissions. Build automation scripts are located in `Compile_project/` (`Linux.sh` and `Windows.bat`).
 
 ---
 
-## ◉ Créditos e Repositórios
-Este projeto foi criado com o auxílio de inteligências artificiais (AI), buscando melhoria contínua e novos aprendizados, mas sem omitir seu uso na estruturação e suporte à codificação. 
-Além disso, só foi possível graças às excelentes comunidades *Open Source* e aos desenvolvedores e artistas que fornecem ferramentas vitais de forma livre. Meus mais profundos agradecimentos a:
+## ◉ Credits & Repositories
+This project was created with the assistance of artificial intelligence (AI) tools, seeking continuous improvement and learning while transparently acknowledging their role in code structuring and support.
+Furthermore, it was only made possible thanks to the *Open Source* communities and the developers and artists who freely provide vital tools. My deepest thanks to:
 
-### ◓ Tecnologias Base
-- **[yt-dlp](https://github.com/yt-dlp/yt-dlp)**: Motor principal de extração de mídias.
-- **[FFmpeg Builds](https://github.com/BtbN/FFmpeg-Builds/releases)**: Processador e conversor integrado de mídia.
+### ◓ Core Technologies
+- **[yt-dlp](https://github.com/yt-dlp/yt-dlp)**: Primary media extraction engine.
+- **[FFmpeg Builds](https://github.com/BtbN/FFmpeg-Builds/releases)**: Integrated media processor and converter.
 
-### ◒ Design e Ícones (Flaticon)
-Os ícones utilizados na interface gráfica pertencem integralmente aos seus respectivos criadores, licenciados para uso gratuito com atribuição através da plataforma **Flaticon**:
-- [Ponto de interrogação - ícone criado por Magnific - Flaticon](https://www.flaticon.com/br/icones-gratis/ponto-de-interrogacao)
-- [Lixeira - ícone criado por Mayor Icons - Flaticon](https://www.flaticon.com/br/icones-gratis/desperdicio)
-- [Continuar - ícone criado por sonnycandra - Flaticon](https://www.flaticon.com/br/icones-gratis/botao-play)
-- [Pausar - ícone criado por Slidicon - Flaticon](https://www.flaticon.com/br/icones-gratis/pausa)
-- [Configurações - ícone criado por Pixel perfect - Flaticon](https://www.flaticon.com/br/icones-gratis/configuracoes)
-- [Comunidade - ícone criado por Soremba - Flaticon](https://www.flaticon.com/br/icones-gratis/comunidade)
-- [Github - ícone criado por riajulislam - Flaticon](https://www.flaticon.com/br/icones-gratis/github)
-- [Limpeza - ícone criado por Us and Up - Flaticon](https://www.flaticon.com/br/icones-gratis/vassoura)
+### ◒ Design & Icons (Flaticon)
+The icons used in the graphical interface belong entirely to their respective creators, licensed for free use with attribution through the **Flaticon** platform:
+- [Question mark - icon created by Magnific - Flaticon](https://www.flaticon.com/br/icones-gratis/ponto-de-interrogacao)
+- [Trash - icon created by Mayor Icons - Flaticon](https://www.flaticon.com/br/icones-gratis/desperdicio)
+- [Resume / Play - icon created by sonnycandra - Flaticon](https://www.flaticon.com/br/icones-gratis/botao-play)
+- [Pause - icon created by Slidicon - Flaticon](https://www.flaticon.com/br/icones-gratis/pausa)
+- [Settings - icon created by Pixel perfect - Flaticon](https://www.flaticon.com/br/icones-gratis/configuracoes)
+- [Community - icon created by Soremba - Flaticon](https://www.flaticon.com/br/icones-gratis/comunidade)
+- [Github - icon created by riajulislam - Flaticon](https://www.flaticon.com/br/icones-gratis/github)
+- [Clean / Broom - icon created by Us and Up - Flaticon](https://www.flaticon.com/br/icones-gratis/vassoura)
+
+---
+
+## ⚖️ License
+
+Project **Crimson** is licensed under the **[GNU General Public License v3.0 (GPLv3)](LICENSE)**.
+
+This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [LICENSE](LICENSE) file for more details.
+
+For third-party dependencies, licenses, and icon attributions, see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ---
 
 <br>
 
-**Desenvolvido por Luan** <br>
+**Developed by LuanDevCodes** <br>
 *Ad Infinitum*
