@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue" alt="License: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Release-v3.0.0-brightgreen" alt="Release: v3.0.0">
+  <img src="https://img.shields.io/badge/Release-v3.0.1-brightgreen" alt="Release: v3.0.1">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/GUI-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
   <img src="https://img.shields.io/badge/Engine-yt--dlp%20%7C%20FFmpeg-E50914" alt="Engine: yt-dlp & FFmpeg">
@@ -107,7 +107,7 @@ Crimson automatically detects the host operating system (`platform.system()`) an
 
 ## ❏ Graphical Interface & Themes
 
-### → Release 3.0.0 (Current)
+### → Release 3.0.1 (Current)
 <div align="center">
   <p><b>Main Window Overview (Frutiger Aero Theme - PySide6)</b></p>
   <img src="Screenshots/Crimson_main_window.png" alt="Crimson Main Window" width="85%">

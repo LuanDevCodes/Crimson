@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="../LICENSE"><img src="https://img.shields.io/badge/Licença-GPLv3-blue" alt="Licença: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Versão-v3.0.0-brightgreen" alt="Versão: v3.0.0">
+  <img src="https://img.shields.io/badge/Versão-v3.0.1-brightgreen" alt="Versão: v3.0.1">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/Interface-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
   <img src="https://img.shields.io/badge/Motor-yt--dlp%20%7C%20FFmpeg-E50914" alt="Motor: yt-dlp & FFmpeg">
@@ -103,7 +103,7 @@ O Crimson detecta automaticamente o sistema operacional em execução e adapta s
 
 ## ❏ Interface Visual
 
-### → Release 3.0.0 (Atual)
+### → Release 3.0.1 (Atual)
 <div align="center">
   <p><b>Visão Geral da Nova Interface (Tema Frutiger Aero - PySide6)</b></p>
   <img src="../Screenshots/Crimson_main_window.png" alt="Janela Principal do Crimson" width="85%">
