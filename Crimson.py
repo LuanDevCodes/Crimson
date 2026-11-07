@@ -50,19 +50,20 @@ from PySide6.QtGui import (
 )
 
 # Constante única de versão para manter sincronia em toda a aplicação
-VERSAO_APP = "V.3.0.0"
+VERSAO_APP = "V.3.0.1"
 
 # -------------------------------
 # --- Setup de Diretórios do Aplicativo (AppData) e Persistência ---
 
 SISTEMA = platform.system()  # Retorna 'Windows', 'Linux' ou 'Darwin' (macOS)
+EM_FLATPAK = os.path.exists('/.flatpak-info')  # Identifica se está rodando dentro do sandbox oficial do Flatpak
 
 # No Windows: usa a pasta oficial LocalAppData (ex: C:\Users\Luan\AppData\Local\Crimson)
-# No Linux:   segue o padrão XDG, que é ~/.local/share/Crimson
+# No Linux:   respeita o XDG_DATA_HOME (essencial para o sandbox do Flatpak) com fallback para ~/.local/share/Crimson
 if SISTEMA == 'Windows':
     appdata_local = os.environ.get('LOCALAPPDATA') or os.path.expanduser('~')
 else:
-    appdata_local = os.path.join(os.path.expanduser('~'), '.local', 'share')
+    appdata_local = os.environ.get('XDG_DATA_HOME') or os.path.join(os.path.expanduser('~'), '.local', 'share')
 
 crimson_dir = os.path.join(appdata_local, 'Crimson')
 lib_dir = os.path.join(crimson_dir, 'Lib')
@@ -3713,6 +3714,12 @@ class JanelaCrimson(QMainWindow):
     # ------------------------------------------------------------------
     # --- Lógica da Tela de Carregamento (Update Inicial) ---
     def iniciar_loading_atualizacao(self):
+        
+        # No Flatpak, as atualizações são gerenciadas pela própria loja (Flathub), abrindo a interface instantaneamente
+        if EM_FLATPAK:
+            self.finalizar_loading()
+            return
+
         self.container_principal.hide()
         self.label_loading.setText(DICIONARIO_IDIOMAS["instrucao_init"][idioma_atual])
         self.container_loading.show()
@@ -4067,6 +4074,8 @@ class JanelaCrimson(QMainWindow):
 # --- Inicialização da Aplicação ---
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setApplicationName("Crimson")
+    app.setDesktopFileName("io.github.luandevcodes.Crimson")
 
     # O estilo 'Fusion' é desenhado pelo próprio Qt, então fica idêntico no Windows e no Linux
     # (sem ele, o Qt usa o estilo do sistema, como Breeze no KDE, Windows 11 no Windows, etc.)
