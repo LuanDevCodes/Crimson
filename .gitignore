@@ -1,6 +1,7 @@
 # Arquivos de ambiente e variáveis
 .env
 GEMINI.md
+CLAUDE.md
 
 # Ignorar pastas de download específicas
 downloads - Versão beta/

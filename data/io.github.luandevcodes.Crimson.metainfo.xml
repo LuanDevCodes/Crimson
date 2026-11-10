@@ -62,6 +62,19 @@
   </screenshots>
 
   <releases>
+    <release version="4.0.0" date="2026-11-09">
+      <url type="details">https://github.com/LuanDevCodes/Crimson/releases/tag/V.4.0.0</url>
+      <description>
+        <p>Complete restructuring of the project into a modular Python package with its own build system:</p>
+        <ul>
+          <li>Split the single-file application into separate modules (interface, themes, languages, download engine)</li>
+          <li>Added a Meson build system that installs the application, desktop entry, metadata and icons</li>
+          <li>Downloads now run in a temporary folder and the finished file is moved to the location chosen in the save dialog, so no static file system permission is required in sandboxed environments</li>
+          <li>Fixed the file extension being duplicated in saved file names (for example audio.mp3.mp3)</li>
+          <li>The transfer speed and remaining time now keep the last known value instead of flickering to Unknown</li>
+        </ul>
+      </description>
+    </release>
     <release version="3.0.1" date="2026-11-07">
       <url type="details">https://github.com/LuanDevCodes/Crimson/releases/tag/V.3.0.1</url>
       <description>

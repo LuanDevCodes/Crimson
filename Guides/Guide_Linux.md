@@ -49,7 +49,15 @@ source venv/bin/activate.fish   # Fish Shell (CachyOS default)
 pip install -r Requirements/requirements_linux.txt
 
 # 4. Run the application
-python Crimson.py
+python -m crimson
+```
+
+To install Crimson as a regular system command (optional), run `pip install .` from the project root (it creates the `crimson` command), or use the Meson build system, which also installs the desktop entry, AppStream metadata and icons:
+
+```bash
+meson setup build --prefix=/usr
+meson test -C build        # validates the .desktop and metainfo files
+sudo meson install -C build
 ```
 
 ---
@@ -61,9 +69,11 @@ Crimson uses PyInstaller to bundle the application into a single standalone bina
 ```bash
 # With the virtual environment active, from the project root:
 pyinstaller --noconsole --onefile \
+  --name Crimson \
+  --paths . \
   --collect-all PIL \
-  --add-data "Icons:Icons" \
-  Crimson.py
+  --add-data "crimson/Icons:Icons" \
+  crimson/__main__.py
 ```
 
 Or run the pre-configured script (recommended):
@@ -104,7 +114,7 @@ Type=Application
 Name=Crimson
 Comment=Video and Audio Downloader
 Exec="$(pwd)/dist/Crimson"
-Icon=$(pwd)/Icons/Crimson.png
+Icon=$(pwd)/crimson/Icons/Crimson.png
 Terminal=false
 Categories=AudioVideo;Utility;Network;
 StartupNotify=true
@@ -121,11 +131,12 @@ All set! **Crimson** will now appear in your system menu (KDE/GNOME/XFCE) with i
 
 ## 🔍 4. How Crimson Adapts Automatically on Linux
 
-The same `Crimson.py` codebase operates across both Windows and Linux. Environment detection occurs automatically via `platform.system()` upon startup.
+The same `crimson` package operates across both Windows and Linux. Environment detection occurs automatically via `platform.system()` upon startup.
 
 | Feature | Windows | Linux |
 |---|---|---|
 | **Configuration Directory** | `%LOCALAPPDATA%\Crimson` | `~/.local/share/Crimson` |
+| **Temporary Download Folder** | `%LOCALAPPDATA%\Crimson\Temp` | `~/.cache/Crimson/Temp` |
 | **FFmpeg** | Local project `ffmpeg/` directory or `PATH` | Discovered automatically in system `PATH` (`shutil.which`) |
 | **Child Process Cleanup** | Scoped strictly by parent PID (`Win32_Process`) | Scoped strictly by parent PID (`pkill -P <PID> -x ffmpeg`) |
 | **Graphical Interface** | `PySide6 (Qt6 - Fusion Style)` | `PySide6 (Qt6 - Fusion Style)` |
