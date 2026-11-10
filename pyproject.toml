@@ -1,0 +1,44 @@
+# Projeto Crimson - Metadados do pacote Python
+# Este arquivo é o "documento de identidade" do projeto para o pip: com ele, 'pip install .' instala o Crimson
+# e cria sozinho o comando 'crimson' (veja [project.scripts] abaixo)
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crimson"
+version = "4.0.0"
+description = "Graphical client for downloading and converting online videos and audio streams (yt-dlp + FFmpeg)"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{ name = "LuanDevCodes" }]
+requires-python = ">=3.9"
+keywords = ["yt-dlp", "ffmpeg", "downloader", "pyside6", "qt6"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Environment :: X11 Applications :: Qt",
+    "Topic :: Multimedia :: Video",
+    "Topic :: Multimedia :: Sound/Audio",
+]
+dependencies = [
+    "PySide6",
+    "yt-dlp",
+    "Pillow",
+]
+
+[project.urls]
+Homepage = "https://github.com/LuanDevCodes/Crimson"
+Issues = "https://github.com/LuanDevCodes/Crimson/issues"
+
+# Cria o comando 'crimson' no terminal: ele chama a função main() do arquivo crimson/main.py
+[project.scripts]
+crimson = "crimson.main:main"
+
+# Diz ao setuptools quais pastas fazem parte do pacote e que os ícones devem ir junto com ele
+[tool.setuptools.packages.find]
+include = ["crimson*"]
+
+[tool.setuptools.package-data]
+crimson = ["Icons/*.png", "Icons/*.svg"]

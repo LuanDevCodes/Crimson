@@ -1,0 +1,14 @@
+#!@PYTHON@
+
+# Projeto Crimson - Comando 'crimson' instalado pelo Meson
+# Copyright (C) 2026 LuanDevCodes
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Este arquivo é um MODELO (.in): na instalação, o Meson troca '@PYTHON@' pelo caminho do Python do sistema
+# e grava o resultado como o executável 'crimson' (veja o meson.build da raiz)
+import sys
+
+from crimson.main import main
+
+if __name__ == '__main__':
+    sys.exit(main())
