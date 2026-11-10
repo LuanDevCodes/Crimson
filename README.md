@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="Icons/Crimson.png" width="40" valign="middle"> 
+  <img src="crimson/Icons/Crimson.png" width="40" valign="middle"> 
   Project Crimson - Cross-Platform Media Archiving Client
 </h1>
 
@@ -150,10 +150,11 @@ Crimson automatically detects the host operating system (`platform.system()`) an
    python -m venv venv
    source venv/bin/activate
    pip install -r Requirements/requirements_linux.txt
-   python Crimson.py
+   python -m crimson
    ```
 3. **Compile**: Run `bash Compile_project/Linux.sh` to produce the standalone binary `dist/Crimson`.
-4. Consult the full **[Linux Guide](Guides/Guide_Linux.md)** for desktop launcher integration (`.desktop`).
+4. **Install (optional)**: `pip install .` creates the `crimson` command, or use the Meson build system (`meson setup build --prefix=/usr && meson install -C build`) to also install the desktop entry, AppStream metadata and icons.
+5. Consult the full **[Linux Guide](Guides/Guide_Linux.md)** for desktop launcher integration (`.desktop`).
 
 ## ° Advanced Optimization & Core Technologies
 Crimson features core optimizations designed to resolve common bottlenecks such as network instability, high CPU usage, and outdated static libraries:
@@ -163,6 +164,23 @@ Crimson features core optimizations designed to resolve common bottlenecks such 
 
 ## • Build Architecture (Cross-Platform Releases)
 Crimson is structured for clean packaging via **PyInstaller** into standalone release artifacts. On Windows, it generates a portable `.exe`; on Linux, an ELF binary bundled within a `.tar.gz` archive preserving executable permissions. Build automation scripts are located in `Compile_project/` (`Linux.sh` and `Windows.bat`).
+
+## ▪ Project Structure
+Since V.4.0.0, Crimson is a modular Python package (`crimson/`) with its own build system (**Meson**, see `meson.build`, plus `pyproject.toml` for `pip`):
+
+| Module | Responsibility |
+|---|---|
+| `crimson/main.py` | Application startup |
+| `crimson/janela.py` | Main window and download flow |
+| `crimson/dialogos.py` | Settings/About and Supported Platforms dialogs |
+| `crimson/widgets.py` | Custom widgets (dropdown, progress bar, switch, animated background) |
+| `crimson/motor.py` | yt-dlp and FFmpeg download engine, pause mechanism and process cleanup |
+| `crimson/idiomas.py` / `crimson/temas.py` | The 25 translations and the 6 visual themes |
+| `crimson/config.py` / `crimson/estado.py` | Saved settings, paths and shared state |
+| `crimson/icones.py` | Icon loading and theme recoloring |
+| `data/` | Desktop entry and AppStream metadata for Linux |
+
+The legacy single-file version (V.3.0.1) is kept in `Crimson_Old/` for reference only.
 
 ---
 

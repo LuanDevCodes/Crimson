@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="../Icons/Crimson.png" width="40" valign="middle"> 
+  <img src="../crimson/Icons/Crimson.png" width="40" valign="middle"> 
   Projeto Crimson - Interface de Download Multi-Plataforma
 </h1>
 
@@ -137,7 +137,7 @@ Caso você venha a clonar este repositório para inspecionar, executar ou modifi
 O Crimson não confia na instalação global das dependências no computador do usuário. Ele exige e rastreia o **FFmpeg** em um escopo totalmente local (na mesma pasta do código):
 
 1. **Instale as Bibliotecas**: Instale as bibliotecas com `pip install -r Requirements/requirements_windows.txt`.
-2. **Setup do FFmpeg**: Crie uma pasta chamada `ffmpeg` na raiz deste projeto (onde o arquivo `Crimson.py` está localizado).
+2. **Setup do FFmpeg**: Crie uma pasta chamada `ffmpeg` na raiz deste projeto (a mesma pasta onde ficam o `meson.build` e a pasta `crimson/`).
 3. Baixe os binários de execução do FFmpeg (.exe) e aloque-os dentro dessa pasta (ffmpeg.exe, ffplay.exe e ffprobe.exe):
 **[ » Acessar Repositório do FFmpeg Builds ](https://github.com/BtbN/FFmpeg-Builds/releases)**
 
@@ -156,6 +156,23 @@ O Crimson passou por otimizações no seu núcleo para resolver gargalos de inst
 O Crimson nasce não só como uma utilidade do dia a dia, mas também com o papel de ser um **projeto de homologação para o sistema de "Releases" do GitHub**.
 
 A arquitetura final do projeto tem como objetivo compilar (via **PyInstaller**) tanto as lógicas do Python quanto os binários do `FFmpeg` na construção de um único artefato autossuficiente. No Windows, esse artefato é um `.exe` portátil; no Linux, um binário ELF compilado. Esse pacote encapsulado será testado nas publicações de Release do GitHub, servindo como modelo para que qualquer pessoa consiga baixar o software de forma limpa e no melhor conceito "Plug and Play".
+
+## ▪ Estrutura do Projeto
+Desde a V.4.0.0, o Crimson é um pacote Python modular (`crimson/`) com sistema de build próprio (**Meson**, veja o `meson.build`, e o `pyproject.toml` para o `pip`):
+
+| Módulo | Responsabilidade |
+|---|---|
+| `crimson/main.py` | Inicialização do aplicativo |
+| `crimson/janela.py` | Janela principal e fluxo de download |
+| `crimson/dialogos.py` | Janelas de Configurações/Sobre e de Plataformas Suportadas |
+| `crimson/widgets.py` | Widgets personalizados (dropdown, barra de progresso, interruptor e fundo animado) |
+| `crimson/motor.py` | Motor de download (yt-dlp e FFmpeg), mecanismo de pausa e limpeza de processos |
+| `crimson/idiomas.py` / `crimson/temas.py` | As 25 traduções e os 6 temas visuais |
+| `crimson/config.py` / `crimson/estado.py` | Configurações salvas, caminhos e estado compartilhado |
+| `crimson/icones.py` | Carregamento e recoloração dos ícones |
+| `data/` | Atalho (`.desktop`) e metadados AppStream para Linux |
+
+A versão legado de arquivo único (V.3.0.1) foi mantida em `Crimson_Old/` apenas como referência.
 
 ---
 

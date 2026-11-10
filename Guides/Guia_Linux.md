@@ -49,7 +49,15 @@ source venv/bin/activate.fish   # Fish Shell (padrão CachyOS)
 pip install -r Requirements/requirements_linux.txt
 
 # 4. Execute o aplicativo
-python Crimson.py
+python -m crimson
+```
+
+Para instalar o Crimson como um comando comum do sistema (opcional), rode `pip install .` na pasta raiz do projeto (ele cria o comando `crimson`) ou use o sistema de build Meson, que também instala o atalho do menu, os metadados da loja e os ícones:
+
+```bash
+meson setup build --prefix=/usr
+meson test -C build        # valida os arquivos .desktop e metainfo
+sudo meson install -C build
 ```
 
 ---
@@ -61,9 +69,11 @@ O Crimson utiliza PyInstaller para empacotar a aplicação em um único binário
 ```bash
 # Com o venv ativado, na pasta raiz do projeto:
 pyinstaller --noconsole --onefile \
+  --name Crimson \
+  --paths . \
   --collect-all PIL \
-  --add-data "Icons:Icons" \
-  Crimson.py
+  --add-data "crimson/Icons:Icons" \
+  crimson/__main__.py
 ```
 
 Ou use o script pronto (mais simples):
@@ -104,7 +114,7 @@ Type=Application
 Name=Crimson
 Comment=Video and Audio Downloader
 Exec="$(pwd)/dist/Crimson"
-Icon=$(pwd)/Icons/Crimson.png
+Icon=$(pwd)/crimson/Icons/Crimson.png
 Terminal=false
 Categories=AudioVideo;Utility;Network;
 StartupNotify=true
@@ -121,11 +131,12 @@ Pronto! Agora o **Crimson** aparecerá no menu do sistema (KDE/GNOME) com o seu 
 
 ## 🔍 4. O que o Crimson adapta automaticamente no Linux
 
-O mesmo `Crimson.py` funciona nos dois sistemas. A detecção é feita via `platform.system()` logo na inicialização.
+O mesmo pacote `crimson` funciona nos dois sistemas. A detecção é feita via `platform.system()` logo na inicialização.
 
 | Ponto | Windows | Linux |
 |---|---|---|
 | **Pasta de configuração** | `%LOCALAPPDATA%\Crimson` | `~/.local/share/Crimson` |
+| **Pasta temporária dos downloads** | `%LOCALAPPDATA%\Crimson\Temp` | `~/.cache/Crimson/Temp` |
 | **FFmpeg** | Pasta local `ffmpeg/` do projeto ou `PATH` | Descoberto automaticamente no `PATH` (`shutil.which`) |
 | **Limpar processos filhos** | Escopo restrito por PID pai (`Win32_Process`) | Escopo restrito por PID pai (`pkill -P <PID> -x ffmpeg`) |
 | **Interface Gráfica** | `PySide6 (Qt6 - Estilo Fusion)` | `PySide6 (Qt6 - Estilo Fusion)` |
