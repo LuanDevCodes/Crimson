@@ -28,11 +28,14 @@ echo "[*] [1/3] Cleaning previous builds..."
 rm -rf build dist Crimson.spec
 
 # Bundle Python source, Pillow library, and icon assets into a single ELF binary
+# --name Crimson: binary name | --paths .: lets PyInstaller find the 'crimson' package | crimson/__main__.py: entry point
 echo "[*] [2/3] Packaging dependencies with PyInstaller..."
 ./venv/bin/pyinstaller --noconsole --onefile \
+  --name Crimson \
+  --paths . \
   --collect-all PIL \
-  --add-data "Icons:Icons" \
-  Crimson.py
+  --add-data "crimson/Icons:Icons" \
+  crimson/__main__.py
 
 # Grant execution permission to the generated Linux binary in dist/
 echo "[*] [3/3] Applying execution permissions..."

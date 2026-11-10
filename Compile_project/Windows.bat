@@ -12,11 +12,12 @@ pip install -r Requirements\requirements_windows.txt
 
 REM Standardize main icon dimensions (256x256) and convert from PNG to Windows ICO format
 echo [*] Standardizing dimensions and converting PNG icon to ICO...
-python -c "from PIL import Image; import glob; f = glob.glob('Icons/*Crimson*.png'); img = Image.open(f[0]).resize((256, 256)); img.save('Icons/icone.ico', format='ICO')"
+python -c "from PIL import Image; import glob; f = glob.glob('crimson/Icons/*Crimson*.png'); img = Image.open(f[0]).resize((256, 256)); img.save('crimson/Icons/icone.ico', format='ICO')"
 
 REM Bundle the project into a standalone single-file executable (.exe) including icons and local FFmpeg
 echo [*] Starting Crimson compilation (this may take one or two minutes)...
-pyinstaller --noconsole --onefile --icon="Icons/icone.ico" --collect-all PIL --add-data "Icons;Icons" --add-data "ffmpeg;ffmpeg" Crimson.py
+REM --name Crimson: nome do .exe | --paths .: ensina o PyInstaller a achar o pacote 'crimson' | crimson\__main__.py: ponto de entrada
+pyinstaller --noconsole --onefile --name Crimson --paths . --icon="crimson/Icons/icone.ico" --collect-all PIL --add-data "crimson/Icons;Icons" --add-data "ffmpeg;ffmpeg" crimson/__main__.py
 
 REM Display completion message and wait for user input before closing the window
 echo [*] Compilation completed successfully!
