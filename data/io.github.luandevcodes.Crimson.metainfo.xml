@@ -40,23 +40,23 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/fc7cfcd869892226b43ca4655c318e1f5c040ffb/Screenshots/Crimson_main_window.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.0.0/Screenshots/Crimson_main_window.png</image>
       <caption>Main download interface in the Frutiger Aero theme</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/fc7cfcd869892226b43ca4655c318e1f5c040ffb/Screenshots/Crimson_download_progress.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.0.0/Screenshots/Crimson_download_progress.png</image>
       <caption>Live download progress with transfer speed and time remaining</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/fc7cfcd869892226b43ca4655c318e1f5c040ffb/Screenshots/Crimson_settings_tab.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.0.0/Screenshots/Crimson_settings_tab.png</image>
       <caption>Settings tab with language, theme, and process controls</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/fc7cfcd869892226b43ca4655c318e1f5c040ffb/Screenshots/Crimson_about_tab.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.0.0/Screenshots/Crimson_about_tab.png</image>
       <caption>About tab displaying application architecture and credits</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/fc7cfcd869892226b43ca4655c318e1f5c040ffb/Screenshots/Crimson_supported_platforms.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.0.0/Screenshots/Crimson_supported_platforms.png</image>
       <caption>Dialog listing supported media streaming platforms</caption>
     </screenshot>
   </screenshots>

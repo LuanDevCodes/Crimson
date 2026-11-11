@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="../LICENSE"><img src="https://img.shields.io/badge/Licença-GPLv3-blue" alt="Licença: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Versão-v3.0.1-brightgreen" alt="Versão: v3.0.1">
+  <img src="https://img.shields.io/badge/Versão-v4.0.0-brightgreen" alt="Versão: v4.0.0">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/Interface-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
   <img src="https://img.shields.io/badge/Motor-yt--dlp%20%7C%20FFmpeg-E50914" alt="Motor: yt-dlp & FFmpeg">
@@ -18,6 +18,35 @@
 
 ## = Descrição do Projeto
 O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica moderna (PySide6 / Qt6) criada para facilitar e automatizar o arquivamento e download de vídeos e áudios em múltiplos ambientes de desktop. O projeto encapsula o poder da biblioteca `yt-dlp` e a capacidade de processamento de mídia do `FFmpeg` por trás de uma tela amigável, elegante e com anti-aliasing nativo no Windows e Linux. A aplicação também gerencia de forma autônoma as atualizações e integridade do seu motor interno para manter compatibilidade contínua com protocolos modernos de mídia. A ideia do projeto nasceu de uma necessidade pessoal de estudo e preservação offline de conteúdo.
+
+## ❏ Interface Visual
+
+### → Release 4.0.0 (Atual)
+<div align="center">
+  <p><b>Visão Geral da Nova Interface (Tema Frutiger Aero - PySide6)</b></p>
+  <img src="../Screenshots/Crimson_main_window.png" alt="Janela Principal do Crimson" width="85%">
+  
+  <br><br>
+  
+  <p><b>Download Assíncrono com Atualização em Tempo Real</b></p>
+  <img src="../Screenshots/Crimson_download_starting.png" alt="Iniciando Download" width="45%">
+  &nbsp;
+  <img src="../Screenshots/Crimson_download_progress.png" alt="Progresso do Download" width="45%">
+
+  <br><br>
+
+  <p><b>Painel de Configurações Dinâmicas e Créditos</b></p>
+  <img src="../Screenshots/Crimson_settings_tab.png" alt="Aba Configurações" width="45%">
+  &nbsp;
+  <img src="../Screenshots/Crimson_about_tab.png" alt="Aba Sobre e Repositórios" width="45%">
+
+  <br><br>
+
+  <p><b>Diálogo de Plataformas Suportadas e Aviso Legal</b></p>
+  <img src="../Screenshots/Crimson_supported_platforms.png" alt="Diálogo de Plataformas Suportadas" width="60%">
+</div>
+
+<br>
 
 ## Δ Bibliotecas e Ferramentas
 - **Python 3.x**
@@ -100,35 +129,6 @@ O Crimson detecta automaticamente o sistema operacional em execução e adapta s
 | **Fedora / RHEL** | Fedora, AlmaLinux, Rocky Linux | [✓] Suporte completo |
 | **openSUSE** | Tumbleweed, Leap | [✓] Suporte completo |
 | **Alpine Linux** | Alpine puro | [✓] Suporte completo |
-
-## ❏ Interface Visual
-
-### → Release 3.0.1 (Atual)
-<div align="center">
-  <p><b>Visão Geral da Nova Interface (Tema Frutiger Aero - PySide6)</b></p>
-  <img src="../Screenshots/Crimson_main_window.png" alt="Janela Principal do Crimson" width="85%">
-  
-  <br><br>
-  
-  <p><b>Download Assíncrono com Atualização em Tempo Real</b></p>
-  <img src="../Screenshots/Crimson_download_starting.png" alt="Iniciando Download" width="45%">
-  &nbsp;
-  <img src="../Screenshots/Crimson_download_progress.png" alt="Progresso do Download" width="45%">
-
-  <br><br>
-
-  <p><b>Painel de Configurações Dinâmicas e Créditos</b></p>
-  <img src="../Screenshots/Crimson_settings_tab.png" alt="Aba Configurações" width="45%">
-  &nbsp;
-  <img src="../Screenshots/Crimson_about_tab.png" alt="Aba Sobre e Repositórios" width="45%">
-
-  <br><br>
-
-  <p><b>Diálogo de Plataformas Suportadas e Aviso Legal</b></p>
-  <img src="../Screenshots/Crimson_supported_platforms.png" alt="Diálogo de Plataformas Suportadas" width="60%">
-</div>
-
-<br>
 
 ## + Guia de Uso e Configuração de Ambiente
 Caso você venha a clonar este repositório para inspecionar, executar ou modificar o código através de uma IDE local, existem alguns pré-requisitos fundamentais para o funcionamento.

@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue" alt="License: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Release-v3.0.1-brightgreen" alt="Release: v3.0.1">
+  <img src="https://img.shields.io/badge/Release-v4.0.0-brightgreen" alt="Release: v4.0.0">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/GUI-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
   <img src="https://img.shields.io/badge/Engine-yt--dlp%20%7C%20FFmpeg-E50914" alt="Engine: yt-dlp & FFmpeg">
@@ -20,6 +20,35 @@
 Crimson is a cross-platform desktop application developed in Python with modern graphical rendering (PySide6 / Qt6), engineered to simplify and automate local media archiving and audio/video stream extraction across multiple desktop environments. The project brings together the extraction engine of `yt-dlp` and the multimedia processing pipeline of `FFmpeg` behind an elegant, responsive, and hardware-efficient graphical interface with native vector anti-aliasing on both Windows and Linux. 
 
 The software autonomously manages its underlying extraction engine, performing automated integrity checks and updates to maintain compatibility with modern streaming protocols and format standards. Created as an open-source educational utility, Crimson provides the community with a safe, accessible, and lightweight desktop alternative for offline media backup and educational content preservation.
+
+## ❏ Graphical Interface & Themes
+
+### → Release 4.0.0 (Current)
+<div align="center">
+  <p><b>Main Window Overview (Frutiger Aero Theme - PySide6)</b></p>
+  <img src="Screenshots/Crimson_main_window.png" alt="Crimson Main Window" width="85%">
+  
+  <br><br>
+  
+  <p><b>Real-Time Asynchronous Download & Transfer Progress</b></p>
+  <img src="Screenshots/Crimson_download_starting.png" alt="Starting Download" width="45%">
+  &nbsp;
+  <img src="Screenshots/Crimson_download_progress.png" alt="Download Progress" width="45%">
+
+  <br><br>
+
+  <p><b>Dynamic Configuration & Credits Panels</b></p>
+  <img src="Screenshots/Crimson_settings_tab.png" alt="Settings Tab" width="45%">
+  &nbsp;
+  <img src="Screenshots/Crimson_about_tab.png" alt="About & Repositories Tab" width="45%">
+
+  <br><br>
+
+  <p><b>Supported Platforms Dialog & Legal Notice</b></p>
+  <img src="Screenshots/Crimson_supported_platforms.png" alt="Supported Platforms Dialog" width="60%">
+</div>
+
+<br>
 
 ## Δ Libraries & Core Technologies
 - **Python 3.x**
@@ -104,35 +133,6 @@ Crimson automatically detects the host operating system (`platform.system()`) an
 | **Fedora / RHEL** | Fedora, AlmaLinux, Rocky Linux | [✓] Full Support |
 | **openSUSE** | Tumbleweed, Leap | [✓] Full Support |
 | **Alpine Linux** | Alpine Linux | [✓] Full Support |
-
-## ❏ Graphical Interface & Themes
-
-### → Release 3.0.1 (Current)
-<div align="center">
-  <p><b>Main Window Overview (Frutiger Aero Theme - PySide6)</b></p>
-  <img src="Screenshots/Crimson_main_window.png" alt="Crimson Main Window" width="85%">
-  
-  <br><br>
-  
-  <p><b>Real-Time Asynchronous Download & Transfer Progress</b></p>
-  <img src="Screenshots/Crimson_download_starting.png" alt="Starting Download" width="45%">
-  &nbsp;
-  <img src="Screenshots/Crimson_download_progress.png" alt="Download Progress" width="45%">
-
-  <br><br>
-
-  <p><b>Dynamic Configuration & Credits Panels</b></p>
-  <img src="Screenshots/Crimson_settings_tab.png" alt="Settings Tab" width="45%">
-  &nbsp;
-  <img src="Screenshots/Crimson_about_tab.png" alt="About & Repositories Tab" width="45%">
-
-  <br><br>
-
-  <p><b>Supported Platforms Dialog & Legal Notice</b></p>
-  <img src="Screenshots/Crimson_supported_platforms.png" alt="Supported Platforms Dialog" width="60%">
-</div>
-
-<br>
 
 ## + Usage Guide & Environment Setup
 
