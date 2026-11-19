@@ -20,6 +20,31 @@ from crimson.motor import encerrar_processos_filhos
 from crimson.widgets import ComboBoxModerno, BotaoSwitchTema
 
 # --------------------------------------------------------------------------------------------------------------------
+# --- Pop-ups de Mensagem (Pergunta, Informação e Aviso) ---
+# --------------------------------------------------------------------------------------------------------------------
+
+def caixa_mensagem(pai, icone, titulo, texto, botoes=QMessageBox.StandardButton.Ok):
+
+    """
+    Abre um pop-up e devolve o botão que foi clicado (ex: QMessageBox.StandardButton.Yes)
+    Substitui os atalhos 'QMessageBox.question/information/warning', que deixam o 'Yes' e o 'No' sempre em inglês
+    """
+
+    caixa = QMessageBox(icone, titulo, texto, botoes, pai)
+
+    # Troca o texto dos botões 'Sim' e 'Não' pelo do idioma atual (o 'OK' é igual em todos os idiomas)
+    botao_sim = caixa.button(QMessageBox.StandardButton.Yes)
+    if botao_sim:
+        botao_sim.setText(DICIONARIO_IDIOMAS["btn_sim"][estado.idioma_atual])
+
+    botao_nao = caixa.button(QMessageBox.StandardButton.No)
+    if botao_nao:
+        botao_nao.setText(DICIONARIO_IDIOMAS["btn_nao"][estado.idioma_atual])
+
+    caixa.exec()
+    return caixa.standardButton(caixa.clickedButton())
+
+# --------------------------------------------------------------------------------------------------------------------
 # --- Janela Modal: Plataformas Suportadas ---
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -28,7 +53,6 @@ class DialogoPlataformas(QDialog):
     def __init__(self, parent):
         super().__init__(parent)
         self.setModal(True)
-        self.setMinimumWidth(470)
         self.construir_ui()
         self.atualizar_textos_e_tema()
 
@@ -40,6 +64,10 @@ class DialogoPlataformas(QDialog):
         self.lbl_titulo = QLabel()
         self.lbl_titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lbl_titulo.setObjectName("tituloModal")
+
+        # Mantém a janela com pelo menos 470 px (422 + 24 de margem em cada lado), deixando o layout alargá-la
+        # quando o texto do botão for maior (uma largura mínima fixa na própria janela cortaria o texto)
+        self.lbl_titulo.setMinimumWidth(422)
         layout_principal.addWidget(self.lbl_titulo)
 
         # Card que direciona para a documentação oficial de sites suportados do yt-dlp sem listar marcas comerciais
@@ -301,8 +329,9 @@ class DialogoConfiguracoes(QDialog):
         self.abas.addTab(self.aba_sobre, "")
 
     def limpar_processos(self):
-        resposta = QMessageBox.question(
+        resposta = caixa_mensagem(
             self,
+            QMessageBox.Icon.Question,
             DICIONARIO_IDIOMAS["msg_confirm_limpeza_titulo"][estado.idioma_atual],
             DICIONARIO_IDIOMAS["msg_confirm_limpeza_texto"][estado.idioma_atual],
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
@@ -328,8 +357,9 @@ class DialogoConfiguracoes(QDialog):
         titulo_msg = DICIONARIO_IDIOMAS["msg_confirm_salvar_titulo"].get(estado.idioma_atual, "Confirm")
         texto_msg = DICIONARIO_IDIOMAS["msg_confirm_salvar_texto"].get(estado.idioma_atual, "Are you sure you want to save?")
 
-        resposta = QMessageBox.question(
+        resposta = caixa_mensagem(
             self,
+            QMessageBox.Icon.Question,
             titulo_msg,
             texto_msg,
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No

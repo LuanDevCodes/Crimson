@@ -2,8 +2,8 @@
 # Copyright (C) 2026 LuanDevCodes
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from PySide6.QtWidgets import QApplication
-from PySide6.QtGui import QColor, QPalette
+from PySide6.QtWidgets import QApplication, QProxyStyle, QStyle
+from PySide6.QtGui import QColor, QPalette, QIcon, QPainter
 
 from crimson.estado import estado
 
@@ -174,6 +174,48 @@ def aplicar_paleta_global(cor):
         paleta.setColor(QPalette.ColorGroup.Disabled, papel, QColor(cor["cor_texto_secundario"]))
 
     app.setPalette(paleta)
+
+# Ícones padrão dos botões dos pop-ups (OK, Sim, Não, Cancelar, Salvar, etc.)
+ICONES_BOTOES_DIALOGO = (
+    QStyle.StandardPixmap.SP_DialogOkButton,
+    QStyle.StandardPixmap.SP_DialogCancelButton,
+    QStyle.StandardPixmap.SP_DialogYesButton,
+    QStyle.StandardPixmap.SP_DialogNoButton,
+    QStyle.StandardPixmap.SP_DialogOpenButton,
+    QStyle.StandardPixmap.SP_DialogSaveButton,
+    QStyle.StandardPixmap.SP_DialogCloseButton,
+    QStyle.StandardPixmap.SP_DialogApplyButton,
+    QStyle.StandardPixmap.SP_DialogResetButton,
+    QStyle.StandardPixmap.SP_DialogDiscardButton,
+    QStyle.StandardPixmap.SP_DialogHelpButton,
+)
+
+class EstiloCrimson(QProxyStyle):
+
+    """
+    Estilo 'Fusion' com um único ajuste, os ícones dos botões dos pop-ups são pintados com a cor do texto do tema
+    Sem isso, o ícone vem do tema de ícones do sistema (ex: branco no KDE Breeze Dark) e some nos temas claros do Crimson
+    """
+
+    def standardIcon(self, tipo_icone, opcao=None, widget=None):
+        icone = super().standardIcon(tipo_icone, opcao, widget)
+
+        # Os demais ícones (como o 'i' azul de informação) continuam com as cores originais
+        if tipo_icone not in ICONES_BOTOES_DIALOGO:
+            return icone
+
+        pixmap = icone.pixmap(64, 64)
+        if pixmap.isNull():
+            return icone
+
+        # 'SourceIn' troca a cor de cada pixel pela cor do tema, mantendo o formato (transparência) do desenho
+        cor_icone = QApplication.palette().color(QPalette.ColorRole.ButtonText)
+        pintor = QPainter(pixmap)
+        pintor.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceIn)
+        pintor.fillRect(pixmap.rect(), cor_icone)
+        pintor.end()
+
+        return QIcon(pixmap)
 
 def estilo_lista_dropdown(cor):
 

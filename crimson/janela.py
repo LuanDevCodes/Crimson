@@ -31,7 +31,7 @@ from crimson.idiomas import DICIONARIO_IDIOMAS
 from crimson.icones import caminho_icons, carregar_icone_tematico
 from crimson.motor import yt_dlp, DownloadPausado, baixar_midia, encerrar_processos_filhos
 from crimson.widgets import ComboBoxModerno, BarraProgressoModerna, WidgetFundoCrimson
-from crimson.dialogos import DialogoPlataformas, DialogoConfiguracoes
+from crimson.dialogos import DialogoPlataformas, DialogoConfiguracoes, caixa_mensagem
 
 # Expressões regulares pré-compiladas para evitar overhead de compilação em loops de alta frequência
 RE_ANSI_ESCAPE = re.compile(r'\x1b\[[0-9;]*[mK]')
@@ -62,8 +62,14 @@ class JanelaCrimson(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Crimson - Video Downloader")
-        self.setMinimumSize(640, 370)
+
+        # Só a altura mínima é fixa, a largura mínima fica por conta do layout, que a calcula pelos textos do idioma atual
+        # (um 'setMinimumSize' com largura fixa vence o layout e corta o texto dos botões em idiomas de escrita longa)
+        self.setMinimumHeight(370)
         self.resize(670, 385)
+
+        # Último tamanho definido pelo próprio app, se a janela estiver diferente disso, foi o usuário quem redimensionou
+        self._tamanho_automatico = self.size()
 
         # Controle de instâncias para evitar múltiplas janelas abertas simultaneamente
         self.dialogo_plataformas = None
@@ -179,6 +185,7 @@ class JanelaCrimson(QMainWindow):
         self.entrada_url = QLineEdit()
         self.entrada_url.setObjectName("entradaUrl")
         self.entrada_url.setFixedHeight(44)
+        self.entrada_url.setMinimumWidth(588)  # Mantém a janela com pelo menos 640 px (588 + 26 de margem em cada lado)
         self.entrada_url.setPlaceholderText(DICIONARIO_IDIOMAS["placeholder_url"][estado.idioma_atual])
         self.entrada_url.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.entrada_url.customContextMenuRequested.connect(self.exibir_menu_contexto)
@@ -756,10 +763,49 @@ class JanelaCrimson(QMainWindow):
             }}
         """)
 
+        self.ajustar_tamanho_janela()
+
         if self.dialogo_plataformas and self.dialogo_plataformas.isVisible():
             self.dialogo_plataformas.atualizar_textos_e_tema()
         if self.dialogo_config and self.dialogo_config.isVisible():
             self.dialogo_config.atualizar_textos_e_tema()
+
+    # ------------------------------------------------------------------
+
+    def ajustar_tamanho_janela(self):
+
+        """
+        Confere, ao trocar idioma ou tema, se a janela tem espaço (largura e altura) para exibir os textos sem cortes
+        -> Se o usuário redimensionou a janela e o conteúdo cabe nela, nada é alterado
+        -> Se o conteúdo não cabe, ou se a janela ainda está no tamanho que o próprio app definiu,
+          ela vai para o tamanho padrão do idioma atual (670 x 385, ou maior se os textos precisarem)
+        """
+
+        # Janela maximizada ou em tela cheia já tem todo o espaço disponível
+        if self.isMaximized() or self.isFullScreen():
+            return
+
+        # Guarda o tamanho de agora, pois o Qt pode alargar a janela sozinho durante o cálculo abaixo
+        tamanho_antes = self.size()
+
+        # O Qt só recalcula os layouts mais tarde (um nível por vez), então forço o cálculo agora, de dentro para fora
+        for widget in (self.card_audio, self.card_video, self.container_acoes, self.container_principal, self.widget_central):
+            widget.layout().activate()
+        self.layout().activate()
+
+        # Espaço mínimo que o conteúdo do idioma atual precisa
+        largura_necessaria = self.minimumWidth()
+        altura_necessaria = max(self.minimumHeight(), self.widget_central.minimumSizeHint().height())
+
+        conteudo_cabe = tamanho_antes.width() >= largura_necessaria and tamanho_antes.height() >= altura_necessaria
+        usuario_redimensionou = tamanho_antes != self._tamanho_automatico
+
+        if conteudo_cabe and usuario_redimensionou:
+            return
+
+        # Tamanho padrão do idioma, o padrão do app, alargado só o necessário para os botões não ficarem espremidos
+        self.resize(max(670, largura_necessaria), max(385, altura_necessaria))
+        self._tamanho_automatico = self.size()
 
     # ------------------------------------------------------------------
     # --- Abertura das Janelas Modais ---
@@ -793,8 +839,9 @@ class JanelaCrimson(QMainWindow):
     def closeEvent(self, event):
         # Proteção ao fechar a janela durante um download ativo para evitar processos órfãos
         if estado.estado_download in ("rodando", "pausado"):
-            resposta = QMessageBox.question(
+            resposta = caixa_mensagem(
                 self,
+                QMessageBox.Icon.Question,
                 DICIONARIO_IDIOMAS["msg_excluir_titulo"][estado.idioma_atual],
                 DICIONARIO_IDIOMAS["msg_excluir_texto"][estado.idioma_atual],
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
@@ -900,6 +947,9 @@ class JanelaCrimson(QMainWindow):
         self.container_loading.hide()
         self.label_instrucao.setText(DICIONARIO_IDIOMAS["instrucao_ready"][estado.idioma_atual])
         self.container_principal.show()
+
+        # O conteúdo principal acabou de aparecer, confere se ele cabe na janela no idioma atual
+        self.ajustar_tamanho_janela()
 
     # ------------------------------------------------------------------
     # --- Lógica de Download, Progresso e Controles ---
@@ -1180,8 +1230,9 @@ class JanelaCrimson(QMainWindow):
 
     def acionar_excluir(self):
 
-        resposta = QMessageBox.question(
+        resposta = caixa_mensagem(
             self,
+            QMessageBox.Icon.Question,
             DICIONARIO_IDIOMAS["msg_excluir_titulo"][estado.idioma_atual],
             DICIONARIO_IDIOMAS["msg_excluir_texto"][estado.idioma_atual],
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
