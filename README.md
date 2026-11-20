@@ -5,11 +5,11 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue" alt="License: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Release-v4.0.0-brightgreen" alt="Release: v4.0.0">
+  <img src="https://img.shields.io/badge/Release-v4.1.0-brightgreen" alt="Release: v4.1.0">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/GUI-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
   <img src="https://img.shields.io/badge/Engine-yt--dlp%20%7C%20FFmpeg-E50914" alt="Engine: yt-dlp & FFmpeg">
-  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux-555555" alt="Platforms">
+  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux-8A63D2" alt="Platforms">
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@ The software autonomously manages its underlying extraction engine, performing a
 
 ## ❏ Graphical Interface & Themes
 
-### → Release 4.0.0 (Current)
+### → Release 4.1.0 (Current)
 <div align="center">
   <p><b>Main Window Overview (Frutiger Aero Theme - PySide6)</b></p>
   <img src="Screenshots/Crimson_main_window.png" alt="Crimson Main Window" width="85%">
@@ -37,15 +37,19 @@ The software autonomously manages its underlying extraction engine, performing a
 
   <br><br>
 
-  <p><b>Dynamic Configuration & Credits Panels</b></p>
-  <img src="Screenshots/Crimson_settings_tab.png" alt="Settings Tab" width="45%">
+  <p><b>Settings Panels: System, Advanced & About</b></p>
+  <img src="Screenshots/Crimson_settings_tab.png" alt="System Tab" width="30%">
   &nbsp;
-  <img src="Screenshots/Crimson_about_tab.png" alt="About & Repositories Tab" width="45%">
+  <img src="Screenshots/Crimson_advanced_tab.png" alt="Advanced Tab" width="30%">
+  &nbsp;
+  <img src="Screenshots/Crimson_about_tab.png" alt="About & Repositories Tab" width="30%">
 
   <br><br>
 
-  <p><b>Supported Platforms Dialog & Legal Notice</b></p>
-  <img src="Screenshots/Crimson_supported_platforms.png" alt="Supported Platforms Dialog" width="60%">
+  <p><b>Sequential Archiving & Supported Platforms</b></p>
+  <img src="Screenshots/Crimson_sequential_archiving.png" alt="Sequential Archiving Queue" width="45%">
+  &nbsp;
+  <img src="Screenshots/Crimson_supported_platforms.png" alt="Supported Platforms Dialog" width="45%">
 </div>
 
 <br>
@@ -56,7 +60,7 @@ The software autonomously manages its underlying extraction engine, performing a
 - **PySide6 (Qt6)**: Graphical user interface powered by Qt 6 with native anti-aliasing, uniform cross-platform styling (Fusion), modular action cards, and dynamic theme rendering.
 - **Threading**: Asynchronous task scheduling ensuring a zero-freeze experience, decoupling heavy download pipelines from the graphical event loop.
 - **json & os & platform**: Native system persistence adapting user configuration paths per platform (`%LOCALAPPDATA%` on Windows, XDG on Linux).
-- **urllib.request & zipfile**: In-memory modular updater with streaming chunking and network protection timeouts.
+- **urllib.request & zipfile**: Modular updater that fetches the latest official `yt-dlp` release (only when a newer one exists) with streaming chunking and network protection timeouts, applied on the next app launch.
 - **subprocess & re**: Native process supervision (terminating orphaned background tasks) and precompiled regex cleaning for progress parsing.
 - **webbrowser**: Standard redirection module for repository and credits navigation.
 - **Pillow (PIL)**: High-definition RGBA color processing with in-memory RAM caching for instant response.
@@ -65,9 +69,13 @@ The software autonomously manages its underlying extraction engine, performing a
 - **Flexible Stream Extraction**: Seamless separation and extraction of audio and video with format multiplexing (`mp3`, `mp4`, `mkv`, `webm`, etc.) via visual dropdown menus.
 - **Asynchronous Architecture (Zero-Freeze)**: Network and disk operations execute on secondary threads, communicating progress, transfer speed, and ETA to the main UI thread via Qt Signals and Slots without stuttering.
 - **Chunked Network Division**: Streams are split into manageable chunks (`http_chunk_size`) utilizing concurrent connection pools to maximize transfer stability.
-- **Protected Auto-Updater**: On startup, Crimson verifies and fetches updates for the extraction engine with automated ZIP integrity checks, path traversal safeguards, and a 5-second timeout for offline or low-connectivity environments.
+- **Protected Auto-Updater**: On startup, Crimson checks whether a newer official release of the extraction engine exists and, only then, downloads it in the background with ZIP integrity checks, path traversal safeguards and network timeouts. The new engine is applied on the next launch (on Flatpak, updates come from Flathub).
+- **Sequential Archiving (Download Queue)**: Paste up to 50 links separated by semicolons; they are validated, confirmed in a scrollable list and downloaded one after another, with a final summary of any link that failed. A cancelled queue resumes from where it stopped.
+- **Quality Selection**: Choose the audio quality (Best, 320, 192 or 128 kbps) and the maximum video resolution (Best, 2160p down to 360p) for each download, or lock a fixed quality in the Advanced settings.
+- **Playlists & Default Folder**: Optional whole-playlist downloads and a default destination folder that skips the "Save as" dialog, naming each file after the media title.
+- **Disk-Full Protection**: When the disk runs out of space, the download is paused instead of failing and can be resumed after freeing some space.
 - **Direct Stream Multiplexing (FFmpeg)**: Video and audio channels are merged without re-encoding overhead whenever possible, preserving CPU cycles and completing conversions in seconds.
-- **Real-Time Internationalization (25 Native Languages)**: Full native support for 25 languages sorted alphabetically, including Arabic, Bambara, Bengali, Chinese, Dutch, English, Filipino, French, German, Hausa, Hindi, Indonesian, Italian, Japanese, Korean, Latin, Norwegian, Persian, Polish, Portuguese, Russian, Spanish, Turkish, Ukrainian, and Vietnamese. Languages can be switched on the fly without restarting.
+- **Real-Time Internationalization (45 Native Languages)**: Full native support for 45 languages sorted alphabetically, including Amharic, Arabic, Bambara, Bengali, Catalan, Chinese (Simplified and Traditional), Czech, Dutch, English, Filipino, French, German, Greek, Hausa, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Latin, Malay, Marathi, Nepali, Norwegian, Persian, Polish, Portuguese, Quechua, Romanian, Russian, Spanish, Swahili, Swedish, Tamil, Telugu, Thai, Turkish, Ukrainian, Urdu, Uzbek, Vietnamese, Yoruba, and Zulu. Languages can be switched on the fly without restarting.
 - **Visual Identity & 6 Dynamic Themes**: Curated aesthetic options including the signature **Frutiger Aero** (featuring animated bubbles, sky gradients, and glossy Aqua glassmorphism), **Dark**, **Egg**, **Matcha**, **Savage**, and **Platinum Disc**, with a built-in animation toggle switch for zero-CPU static mode.
 - **Hardware Optimization for Low-End PCs**:
   - *In-Memory Icon Cache*: Image assets are read from disk only once; subsequent lookups take microseconds directly from RAM.
@@ -81,35 +89,57 @@ The software autonomously manages its underlying extraction engine, performing a
 - **Context Menus**: Right-click actions for quick Paste and Clear operations on the URL input bar.
 - **Customized Scrollbars**: Discreet, slim vertical scrollbars styled to match the active theme across extensive dropdown lists.
 
-## ಄ Supported Languages (25 Native Languages)
+## ಄ Supported Languages (45 Native Languages)
 
 | Language | Code | Status |
 |---|---|---|
-| العربية (Arabic) | `Arabic` | [✓] Complete |
+| አማርኛ (Amharic) | `Amharic` | [✓] Complete |
+| &lrm;العربية (Arabic) | `Arabic` | [✓] Complete |
 | Bamanankan (Bambara) | `Bambara` | [✓] Complete |
 | বাংলা (Bengali) | `Bengali` | [✓] Complete |
+| Català (Catalan) | `Catalan` | [✓] Complete |
 | 中文 (Simplified Mandarin) | `Chinese` | [✓] Complete |
+| Čeština (Czech) | `Czech` | [✓] Complete |
 | Nederlands (Dutch) | `Dutch` | [✓] Complete |
 | English | `English` | [✓] Complete |
 | Filipino / Tagalog | `Filipino` | [✓] Complete |
 | Français (French) | `French` | [✓] Complete |
 | Deutsch (German) | `German` | [✓] Complete |
+| Ελληνικά (Greek) | `Greek` | [✓] Complete |
 | Harshen Hausa (Hausa) | `Hausa` | [✓] Complete |
 | हिन्दी (Hindi) | `Hindi` | [✓] Complete |
+| Magyar (Hungarian) | `Hungarian` | [✓] Complete |
 | Bahasa Indonesia | `Indonesian` | [✓] Complete |
 | Italiano (Italian) | `Italian` | [✓] Complete |
 | 日本語 (Japanese) | `Japanese` | [✓] Complete |
 | 한국어 (Korean) | `Korean` | [✓] Complete |
 | Latina (Latin) | `Latin` | [✓] Complete |
+| Bahasa Melayu (Malay) | `Malay` | [✓] Complete |
+| मराठी (Marathi) | `Marathi` | [✓] Complete |
+| नेपाली (Nepali) | `Nepali` | [✓] Complete |
 | Norsk (Norwegian) | `Norwegian` | [✓] Complete |
-| فارسی (Persian) | `Persian` | [✓] Complete |
+| &lrm;فارسی (Persian) | `Persian` | [✓] Complete |
 | Polski (Polish) | `Polish` | [✓] Complete |
 | Português (Brasil) | `Portuguese` | [✓] Complete |
+| Runasimi (Quechua) | `Quechua` | [✓] Complete |
+| Română (Romanian) | `Romanian` | [✓] Complete |
 | Русский (Russian) | `Russian` | [✓] Complete |
 | Español | `Spanish` | [✓] Complete |
+| Kiswahili (Swahili) | `Swahili` | [✓] Complete |
+| Svenska (Swedish) | `Swedish` | [✓] Complete |
+| தமிழ் (Tamil) | `Tamil` | [✓] Complete |
+| తెలుగు (Telugu) | `Telugu` | [✓] Complete |
+| ไทย (Thai) | `Thai` | [✓] Complete |
+| 繁體中文 (Traditional Chinese) | `Traditional Chinese` | [✓] Complete |
 | Türkçe (Turkish) | `Turkish` | [✓] Complete |
 | Українська (Ukrainian) | `Ukrainian` | [✓] Complete |
+| &lrm;اردو (Urdu) | `Urdu` | [✓] Complete |
+| Oʻzbekcha (Uzbek) | `Uzbek` | [✓] Complete |
 | Tiếng Việt (Vietnamese) | `Vietnamese` | [✓] Complete |
+| Yorùbá (Yoruba) | `Yoruba` | [✓] Complete |
+| isiZulu (Zulu) | `Zulu` | [✓] Complete |
+
+Translation reviews by native speakers are very welcome: if you find a term that sounds unnatural in your language, please open an issue.
 
 Language selection takes effect immediately from the Settings Panel without restarting the application.
 
@@ -141,7 +171,7 @@ Crimson automatically detects the host operating system (`platform.system()`) an
 2. **Local FFmpeg**: Create an `ffmpeg` folder in the project root containing `ffmpeg.exe`, `ffplay.exe`, and `ffprobe.exe`:
 **[ » Access FFmpeg Builds Repository ](https://github.com/BtbN/FFmpeg-Builds/releases)**
 3. The application automatically appends the local `ffmpeg` folder to the runtime `os.environ["PATH"]`.
-4. **Compile**: Run `Compile_project\Windows.bat` to generate the standalone portable executable inside `dist/`.
+4. **Compile**: Run `Compile_project\Windows.bat` to generate the standalone portable executable inside `dist/`, plus the release package `dist/Crimson-windows-x64.zip` (executable, license files and FFmpeg version info).
 
 ### Linux
 1. **System FFmpeg**: Install FFmpeg via your package manager (e.g., `sudo pacman -S ffmpeg` or `sudo apt install ffmpeg`).
@@ -152,7 +182,7 @@ Crimson automatically detects the host operating system (`platform.system()`) an
    pip install -r Requirements/requirements_linux.txt
    python -m crimson
    ```
-3. **Compile**: Run `bash Compile_project/Linux.sh` to produce the standalone binary `dist/Crimson`.
+3. **Compile**: Run `bash Compile_project/Linux.sh` to produce the standalone binary `dist/Crimson`, plus the release package `dist/Crimson-linux-x86_64.tar.gz` (binary and license files).
 4. **Install (optional)**: `pip install .` creates the `crimson` command, or use the Meson build system (`meson setup build --prefix=/usr && meson install -C build`) to also install the desktop entry, AppStream metadata and icons.
 5. Consult the full **[Linux Guide](Guides/Guide_Linux.md)** for desktop launcher integration (`.desktop`).
 
@@ -163,7 +193,7 @@ Crimson features core optimizations designed to resolve common bottlenecks such 
 - **Modular Download Engine Injection**: Crimson fetches the latest `yt-dlp` source archive from GitHub, validates its integrity in a staging directory, and dynamically injects it into Python's runtime module search path (`sys.path.insert`).
 
 ## • Build Architecture (Cross-Platform Releases)
-Crimson is structured for clean packaging via **PyInstaller** into standalone release artifacts. On Windows, it generates a portable `.exe`; on Linux, an ELF binary bundled within a `.tar.gz` archive preserving executable permissions. Build automation scripts are located in `Compile_project/` (`Linux.sh` and `Windows.bat`).
+Crimson is structured for clean packaging via **PyInstaller** into standalone release artifacts. On Windows, it generates a portable `.exe` packed in a `.zip`; on Linux, an ELF binary bundled within a `.tar.gz` archive preserving executable permissions. Both packages include `LICENSE`, `THIRD_PARTY_NOTICES.md` and the `licenses/` folder required by the bundled libraries. Build automation scripts are located in `Compile_project/` (`Linux.sh` and `Windows.bat`).
 
 ## ▪ Project Structure
 Since V.4.0.0, Crimson is a modular Python package (`crimson/`) with its own build system (**Meson**, see `meson.build`, plus `pyproject.toml` for `pip`):
@@ -192,16 +222,10 @@ Furthermore, it was only made possible thanks to the *Open Source* communities a
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)**: Primary media extraction engine.
 - **[FFmpeg Builds](https://github.com/BtbN/FFmpeg-Builds/releases)**: Integrated media processor and converter.
 
-### ◒ Design & Icons (Flaticon)
-The icons used in the graphical interface belong entirely to their respective creators, licensed for free use with attribution through the **Flaticon** platform:
-- [Question mark - icon created by Magnific - Flaticon](https://www.flaticon.com/br/icones-gratis/ponto-de-interrogacao)
-- [Trash - icon created by Mayor Icons - Flaticon](https://www.flaticon.com/br/icones-gratis/desperdicio)
-- [Resume / Play - icon created by sonnycandra - Flaticon](https://www.flaticon.com/br/icones-gratis/botao-play)
-- [Pause - icon created by Slidicon - Flaticon](https://www.flaticon.com/br/icones-gratis/pausa)
-- [Settings - icon created by Pixel perfect - Flaticon](https://www.flaticon.com/br/icones-gratis/configuracoes)
-- [Community - icon created by Soremba - Flaticon](https://www.flaticon.com/br/icones-gratis/comunidade)
-- [Github - icon created by riajulislam - Flaticon](https://www.flaticon.com/br/icones-gratis/github)
-- [Clean / Broom - icon created by Us and Up - Flaticon](https://www.flaticon.com/br/icones-gratis/vassoura)
+### ◒ Design & Icons
+- **[Material Symbols](https://github.com/google/material-design-icons)** (Google, Apache License 2.0): interface icons (question mark, trash, play, pause, settings, community, cleaning, folder, refresh and text).
+- **[GitHub logo](https://brand.github.com/)**: official logo, used only to link to GitHub repositories. It is a trademark of GitHub, Inc.
+- **Crimson icon**: created by LuanDevCodes.
 
 ---
 

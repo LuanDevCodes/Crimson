@@ -5,11 +5,11 @@
 
 <p align="center">
   <a href="../LICENSE"><img src="https://img.shields.io/badge/Licença-GPLv3-blue" alt="Licença: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Versão-v4.0.0-brightgreen" alt="Versão: v4.0.0">
+  <img src="https://img.shields.io/badge/Versão-v4.1.0-brightgreen" alt="Versão: v4.1.0">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/Interface-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
   <img src="https://img.shields.io/badge/Motor-yt--dlp%20%7C%20FFmpeg-E50914" alt="Motor: yt-dlp & FFmpeg">
-  <img src="https://img.shields.io/badge/Plataformas-Windows%20%7C%20Linux-555555" alt="Plataformas">
+  <img src="https://img.shields.io/badge/Plataformas-Windows%20%7C%20Linux-8A63D2" alt="Plataformas">
 </p>
 
 <p align="center">
@@ -21,7 +21,7 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 
 ## ❏ Interface Visual
 
-### → Release 4.0.0 (Atual)
+### → Release 4.1.0 (Atual)
 <div align="center">
   <p><b>Visão Geral da Nova Interface (Tema Frutiger Aero - PySide6)</b></p>
   <img src="../Screenshots/Crimson_main_window.png" alt="Janela Principal do Crimson" width="85%">
@@ -35,15 +35,19 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 
   <br><br>
 
-  <p><b>Painel de Configurações Dinâmicas e Créditos</b></p>
-  <img src="../Screenshots/Crimson_settings_tab.png" alt="Aba Configurações" width="45%">
+  <p><b>Painéis de Configuração: Sistema, Avançado e Sobre</b></p>
+  <img src="../Screenshots/Crimson_settings_tab.png" alt="Aba Sistema" width="30%">
   &nbsp;
-  <img src="../Screenshots/Crimson_about_tab.png" alt="Aba Sobre e Repositórios" width="45%">
+  <img src="../Screenshots/Crimson_advanced_tab.png" alt="Aba Avançado" width="30%">
+  &nbsp;
+  <img src="../Screenshots/Crimson_about_tab.png" alt="Aba Sobre e Repositórios" width="30%">
 
   <br><br>
 
-  <p><b>Diálogo de Plataformas Suportadas e Aviso Legal</b></p>
-  <img src="../Screenshots/Crimson_supported_platforms.png" alt="Diálogo de Plataformas Suportadas" width="60%">
+  <p><b>Arquivamento Sequencial e Plataformas Suportadas</b></p>
+  <img src="../Screenshots/Crimson_sequential_archiving.png" alt="Fila do Arquivamento Sequencial" width="45%">
+  &nbsp;
+  <img src="../Screenshots/Crimson_supported_platforms.png" alt="Diálogo de Plataformas Suportadas" width="45%">
 </div>
 
 <br>
@@ -54,7 +58,7 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 - **PySide6 (Qt6)**: Interface gráfica com anti-aliasing nativo vetorial, visual uniforme em todas as distribuições Linux e no Windows, estilo Fusion e cards modulares responsivos.
 - **Threading**: Módulo responsável por criar rotinas em segundo plano, evitando o congelamento da interface gráfica durante o processo de download.
 - **json & os & platform**: Orquestradas em conjunto para lidar com a pasta oficial de configurações do usuário (adaptada por sistema operacional) e salvar o estado da aplicação via memória persistente.
-- **urllib.request & zipfile**: Usados para orquestrar o motor modular com streaming em blocos e timeout de segurança, agindo como ponte de download direto com a source master do `yt-dlp`.
+- **urllib.request & zipfile**: Usados para orquestrar o motor modular com streaming em blocos e timeout de segurança, agindo como ponte de download direto com a última versão oficial (release) do `yt-dlp`, aplicada na próxima abertura do app.
 - **subprocess & re**: Utilizados para operar ferramentas (como limpar processos fantasmas) e tratar os dados de progresso e velocidade com expressões regulares pré-compiladas.
 - **webbrowser**: Módulo nativo do Python usado para transformar os links dos repositórios no Painel de Créditos em botões clicáveis de redirecionamento.
 - **Pillow (PIL)**: Manipulação avançada de canais RGBA com cache inteligente em memória RAM para desempenho instantâneo.
@@ -63,9 +67,13 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 - **Download Flexível e Descomplicado**: Escolha entre baixar apenas áudio ou vídeo (com as qualidades mescladas perfeitamente) através de dropdowns visuais (`mp3`, `mp4`, `mkv`, `webm`, etc).
 - **Processamento Assíncrono (Zero-Freeze)**: As operações de download pesado e gravação de arquivos não disputam espaço com a renderização visual. Tudo ocorre em *threads* separadas, com a barra de progresso, velocidade e ETA atualizando de forma lisa e constante na thread principal.
 - **Download reformulado**: Implementação de uma divisão inteligente de rede. O sistema divide a requisição da mídia em blocos (`http_chunk_size`) com 5 conexões simultâneas, garantindo estabilidade e alto desempenho nas taxas de transferência.
-- **Blindagem do Auto-Update Silencioso**: Na inicialização, a thread secundária verifica, valida a integridade estrutural do arquivo ZIP (com proteção contra *path traversal*) e aplica silenciosamente o motor `yt-dlp` com timeout de proteção para conexões lentas ou offline.
+- **Blindagem do Auto-Update Silencioso**: Na inicialização, o Crimson confere se existe uma versão oficial mais nova do motor `yt-dlp` e, só nesse caso, baixa em segundo plano, validando a integridade do arquivo ZIP (com proteção contra *path traversal*) e com timeout para conexões lentas ou offline. O motor novo passa a valer na próxima abertura (no Flatpak, as atualizações vêm do Flathub).
+- **Arquivamento Sequencial (Fila de Downloads)**: Cole até 50 links separados por ponto e vírgula; eles são validados, conferidos numa lista com rolagem e baixados um após o outro, com um resumo final dos links que falharam. Uma fila cancelada recomeça de onde parou.
+- **Escolha de Qualidade**: Escolha a qualidade do áudio (Melhor, 320, 192 ou 128 kbps) e a resolução máxima do vídeo (Melhor, de 2160p até 360p) a cada download, ou fixe uma qualidade na aba Avançado das configurações.
+- **Playlists e Pasta Padrão**: Download opcional de playlists inteiras e uma pasta de destino padrão que dispensa a janela "Salvar como", usando o título da mídia como nome do arquivo.
+- **Proteção Contra Disco Cheio**: Quando o disco enche, o download é pausado em vez de falhar, e pode ser retomado depois de liberar espaço.
 - **Conversão por Fator Externo (FFmpeg)**: O motor de extração puxa nativamente os vídeos na melhor qualidade, mas geralmente separadamente da faixa de áudio de alta resolução. O Crimson aciona o FFmpeg de maneira integrada para mesclar essas duas camadas ou convertê-las para formatos específicos.
-- **Internacionalização Completa em Tempo Real (25 Idiomas Nativos)**: Suporte integral a 25 idiomas organizados em ordem alfabética (Árabe, Bambara, Bengali, Chinês, Holandês, Inglês, Filipino, Francês, Alemão, Hauçá, Hindi, Indonésio, Italiano, Japonês, Coreano, Latim, Norueguês, Persa, Polonês, Português, Russo, Espanhol, Turco, Ucraniano e Vietnamita). A troca é instantânea pelo Painel de Configurações, sem necessidade de reiniciar.
+- **Internacionalização Completa em Tempo Real (45 Idiomas Nativos)**: Suporte integral a 45 idiomas organizados em ordem alfabética (Amárico, Árabe, Bambara, Bengali, Catalão, Chinês Simplificado e Tradicional, Tcheco, Holandês, Inglês, Filipino, Francês, Alemão, Grego, Hauçá, Hindi, Húngaro, Indonésio, Italiano, Japonês, Coreano, Latim, Malaio, Marati, Nepalês, Norueguês, Persa, Polonês, Português, Quíchua, Romeno, Russo, Espanhol, Suaíli, Sueco, Tâmil, Telugu, Tailandês, Turco, Ucraniano, Urdu, Uzbeque, Vietnamita, Iorubá e Zulu). A troca é instantânea pelo Painel de Configurações, sem necessidade de reiniciar.
 - **Identidade Visual e 6 Temas Dinâmicos**: O aplicativo suporta variações completas de tema com paletas harmoniosas: `Frutiger Aero` (tema principal com bolhas animadas e vidro Aqua 3D), `Dark` (escuro moderno), `Egg` (creme aconchegante), `Matcha` (verde suave), `Savage` (vermelho vivo e carmesim puro) e `Platinum Disc` (cinza titânio metálico), além de contar com um interruptor (switch) dedicado para desativar animações quando desejado.
 - **Eficiência Extrema para Computadores Modestos**:
   - *Cache em RAM de Ícones*: O disco só é lido uma única vez; acessos subsequentes ocorrem em microssegundos direto da memória.
@@ -77,35 +85,57 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 - **Controle de Instâncias (Anti-Spam)**: As janelas do sistema (como as Plataformas e Configurações) possuem um bloqueio inteligente e modal que impede a abertura simultânea de dezenas de abas ao clicar repetidas vezes.
 - **Menu de Contexto Intuitivo**: Interaja com a barra de pesquisa usando o botão direito do mouse para *Colar* links ou *Apagar* seleções de texto de forma rápida.
 
-## ಄ Idiomas Suportados (25 Idiomas Nativos)
+## ಄ Idiomas Suportados (45 Idiomas Nativos)
 
 | Idioma | Código | Status |
 |---|---|---|
-| العربية (Árabe) | `Arabic` | [✓] Completo |
+| አማርኛ (Amárico) | `Amharic` | [✓] Completo |
+| &lrm;العربية (Árabe) | `Arabic` | [✓] Completo |
 | Bamanankan (Bambara) | `Bambara` | [✓] Completo |
 | বাংলা (Bengali) | `Bengali` | [✓] Completo |
+| Català (Catalão) | `Catalan` | [✓] Completo |
 | 中文 (Mandarim Simplificado) | `Chinese` | [✓] Completo |
+| Čeština (Tcheco) | `Czech` | [✓] Completo |
 | Nederlands (Holandês) | `Dutch` | [✓] Completo |
 | English (Inglês) | `English` | [✓] Completo |
 | Filipino / Tagalog | `Filipino` | [✓] Completo |
 | Français (Francês) | `French` | [✓] Completo |
 | Deutsch (Alemão) | `German` | [✓] Completo |
+| Ελληνικά (Grego) | `Greek` | [✓] Completo |
 | Harshen Hausa (Hauçá) | `Hausa` | [✓] Completo |
 | हिन्दी (Hindi) | `Hindi` | [✓] Completo |
+| Magyar (Húngaro) | `Hungarian` | [✓] Completo |
 | Bahasa Indonesia | `Indonesian` | [✓] Completo |
 | Italiano | `Italian` | [✓] Completo |
 | 日本語 (Japonês) | `Japanese` | [✓] Completo |
 | 한국어 (Sul Coreano) | `Korean` | [✓] Completo |
 | Latina (Latim) | `Latin` | [✓] Completo |
+| Bahasa Melayu (Malaio) | `Malay` | [✓] Completo |
+| मराठी (Marati) | `Marathi` | [✓] Completo |
+| नेपाली (Nepalês) | `Nepali` | [✓] Completo |
 | Norsk (Norueguês) | `Norwegian` | [✓] Completo |
-| فارسی (Persa) | `Persian` | [✓] Completo |
+| &lrm;فارسی (Persa) | `Persian` | [✓] Completo |
 | Polski (Polonês) | `Polish` | [✓] Completo |
 | Português (Brasil) | `Portuguese` | [✓] Completo |
+| Runasimi (Quíchua) | `Quechua` | [✓] Completo |
+| Română (Romeno) | `Romanian` | [✓] Completo |
 | Русский (Russo) | `Russian` | [✓] Completo |
 | Español (Espanhol) | `Spanish` | [✓] Completo |
+| Kiswahili (Suaíli) | `Swahili` | [✓] Completo |
+| Svenska (Sueco) | `Swedish` | [✓] Completo |
+| தமிழ் (Tâmil) | `Tamil` | [✓] Completo |
+| తెలుగు (Telugu) | `Telugu` | [✓] Completo |
+| ไทย (Tailandês) | `Thai` | [✓] Completo |
+| 繁體中文 (Chinês Tradicional) | `Traditional Chinese` | [✓] Completo |
 | Türkçe (Turco) | `Turkish` | [✓] Completo |
 | Українська (Ucraniano) | `Ukrainian` | [✓] Completo |
+| &lrm;اردو (Urdu) | `Urdu` | [✓] Completo |
+| Oʻzbekcha (Uzbeque) | `Uzbek` | [✓] Completo |
 | Tiếng Việt (Vietnamita) | `Vietnamese` | [✓] Completo |
+| Yorùbá (Iorubá) | `Yoruba` | [✓] Completo |
+| isiZulu (Zulu) | `Zulu` | [✓] Completo |
+
+Revisões de tradução feitas por falantes nativos são muito bem-vindas: se encontrar um termo que soe estranho no seu idioma, abra uma issue.
 
 A troca de idioma é feita em tempo real pelo Painel de Configurações, sem necessidade de reiniciar o aplicativo.
 
@@ -184,16 +214,10 @@ Além disso, só foi possível graças às excelentes comunidades *Open Source* 
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)**: Motor principal de extração de mídias.
 - **[FFmpeg Builds](https://github.com/BtbN/FFmpeg-Builds/releases)**: Processador e conversor integrado de mídia.
 
-### ◒ Design e Ícones (Flaticon)
-Os ícones utilizados na interface gráfica pertencem integralmente aos seus respectivos criadores, licenciados para uso gratuito com atribuição através da plataforma **Flaticon**:
-- [Ponto de interrogação - ícone criado por Magnific - Flaticon](https://www.flaticon.com/br/icones-gratis/ponto-de-interrogacao)
-- [Lixeira - ícone criado por Mayor Icons - Flaticon](https://www.flaticon.com/br/icones-gratis/desperdicio)
-- [Continuar - ícone criado por sonnycandra - Flaticon](https://www.flaticon.com/br/icones-gratis/botao-play)
-- [Pausar - ícone criado por Slidicon - Flaticon](https://www.flaticon.com/br/icones-gratis/pausa)
-- [Configurações - ícone criado por Pixel perfect - Flaticon](https://www.flaticon.com/br/icones-gratis/configuracoes)
-- [Comunidade - ícone criado por Soremba - Flaticon](https://www.flaticon.com/br/icones-gratis/comunidade)
-- [Github - ícone criado por riajulislam - Flaticon](https://www.flaticon.com/br/icones-gratis/github)
-- [Limpeza - ícone criado por Us and Up - Flaticon](https://www.flaticon.com/br/icones-gratis/vassoura)
+### ◒ Design e Ícones
+- **[Material Symbols](https://github.com/google/material-design-icons)** (Google, licença Apache 2.0): ícones da interface (interrogação, lixeira, continuar, pausar, configurações, comunidade, limpeza, pasta, recarregar e texto).
+- **[Logo do GitHub](https://brand.github.com/)**: logo oficial, usado apenas nos links para repositórios do GitHub. É marca registrada da GitHub, Inc.
+- **Ícone do Crimson**: criado por LuanDevCodes.
 
 ---
 
@@ -211,7 +235,7 @@ O projeto **Crimson** é distribuído e licenciado sob os termos da **[GNU Gener
 
 Este software é disponibilizado na esperança de que seja útil, mas SEM QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIABILIDADE ou ADEQUAÇÃO A UM DETERMINADO PROPÓSITO. Consulte o arquivo [LICENSE](../LICENSE) para obter mais detalhes.
 
-Para consultar as licenças dos componentes e ferramentas de terceiros (FFmpeg, yt-dlp, PySide6, Pillow e Flaticon), veja [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
+Para consultar as licenças dos componentes e ferramentas de terceiros (FFmpeg, yt-dlp, PySide6, Pillow, Material Symbols e demais bibliotecas), veja [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
 
 ---
 
