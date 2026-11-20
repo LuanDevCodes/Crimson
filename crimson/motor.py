@@ -3,10 +3,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os           # Biblioteca para interagir com o sistema operacional (caminhos, variáveis de ambiente e PID)
+import errno        # Códigos de erro do sistema (ex: ENOSPC = disco cheio)
 import sys          # Necessário para identificar se está rodando como .exe e para ajustar o caminho de importação
 import glob         # Para procurar arquivos na pasta temporária pelo nome
 import shutil       # Usado para limpeza segura de pastas temporárias e localização de binários no sistema
 import subprocess   # Usado para executar comandos do sistema (como atualizar o yt-dlp ou finalizar processos)
+import time         # Usado para saber a idade dos arquivos que sobraram na pasta temporária
 
 from crimson.config import SISTEMA, lib_dir, temp_dir, registrar_erro
 
@@ -14,6 +16,16 @@ from crimson.config import SISTEMA, lib_dir, temp_dir, registrar_erro
 # Procura se o motor do yt-dlp já foi baixado na pasta Lib
 # Se existir, força o Python a ler as bibliotecas dessa pasta antes das bibliotecas congeladas (PyInstaller)
 path_yt_dlp = os.path.join(lib_dir, 'yt-dlp-master')
+
+# Atualização baixada na execução anterior: ela fica guardada em 'yt-dlp-novo' e só entra no lugar agora,
+# antes do import, para nunca apagar arquivos de um motor que está em uso
+path_yt_dlp_novo = os.path.join(lib_dir, 'yt-dlp-novo')
+if os.path.isfile(os.path.join(path_yt_dlp_novo, 'yt_dlp', '__init__.py')):
+    try:
+        shutil.rmtree(path_yt_dlp, ignore_errors=True)
+        os.replace(path_yt_dlp_novo, path_yt_dlp)
+    except OSError as erro_troca:
+        registrar_erro("trocar_motor_yt_dlp", erro_troca)
 
 if os.path.exists(path_yt_dlp):
     sys.path.insert(0, path_yt_dlp)  # O insert 0 diz basicamente "olhe aqui antes de qualquer outro lugar"
@@ -100,8 +112,69 @@ def encerrar_processos_filhos():
 # 3. O disparo do erro corta a linha de execução do yt-dlp na mesma hora, forçando ele a parar e deixar o arquivo '.part' salvo na pasta
 # 4. A função 'thread_download' pega esse erro no bloco 'try...except' e simplesmente dá um "pass" (ignora), evitando que o aplicativo quebre ou trave
 # Quando o usuário clica em "Continuar", apenas mando ele baixar novamente. O yt-dlp acha o arquivo '.part' na pasta e retoma de onde o corte ocorreu
-class DownloadPausado(Exception):
+# Ela herda de 'DownloadCancelled' (a exceção de cancelamento do próprio yt-dlp) porque, em playlists, o yt-dlp
+# pula qualquer outro erro e segue para o próximo vídeo; o cancelamento é o único erro que ele sempre deixa passar
+class DownloadPausado(yt_dlp.utils.DownloadCancelled):
     pass
+
+# --- Limpeza de Restos Antigos na Pasta Temporária ---
+def limpar_temp_antigo(horas=24):
+
+    # Apaga da pasta temporária o que ficou para trás há mais de 'horas' (ex: depois de uma queda de energia)
+    # Itens recentes são preservados, pois podem ser um download pausado de outra janela do Crimson
+    limite = time.time() - horas * 3600
+    try:
+        for nome in os.listdir(temp_dir):
+            caminho = os.path.join(temp_dir, nome)
+            try:
+                if os.path.getmtime(caminho) < limite:
+                    if os.path.isdir(caminho):
+                        shutil.rmtree(caminho, ignore_errors=True)
+                    else:
+                        os.remove(caminho)
+            except OSError:
+                pass
+    except OSError as erro_limpeza:
+        registrar_erro("limpar_temp_antigo", erro_limpeza)
+
+# --- Detecção de Disco Cheio ---
+def erro_disco_cheio(erro):
+
+    """
+    Descobre se um erro foi causado por falta de espaço em disco
+    O yt-dlp costuma "embrulhar" o erro original do sistema dentro do dele, então procura em toda a cadeia de erros:
+    -> Linux/macOS: OSError com errno 28 (ENOSPC, "No space left on device")
+    -> Windows: OSError com winerror 112 (ERROR_DISK_FULL)
+    """
+
+    vistos = set()
+    while erro is not None and id(erro) not in vistos:
+        vistos.add(id(erro))
+        if isinstance(erro, OSError) and (erro.errno == errno.ENOSPC or getattr(erro, 'winerror', None) == 112):
+            return True
+        texto = str(erro)
+        if "No space left on device" in texto or "not enough space on the disk" in texto:
+            return True
+
+        # Próximo elo da cadeia: o erro original guardado pelo yt-dlp (exc_info) ou pelo próprio Python (__cause__/__context__)
+        exc_info = getattr(erro, 'exc_info', None)
+        if exc_info and len(exc_info) > 1 and exc_info[1] is not erro:
+            erro = exc_info[1]
+        else:
+            erro = erro.__cause__ or erro.__context__
+    return False
+
+def espaco_livre(*pastas):
+
+    # Devolve o menor espaço livre (em bytes) entre as pastas informadas (a pasta temporária e a de destino)
+    livres = []
+    for pasta in pastas:
+        if pasta and os.path.isdir(pasta):
+            try:
+                livres.append(shutil.disk_usage(pasta).free)
+            except OSError:
+                pass
+    return min(livres) if livres else 0
 
 def localizar_arquivo_final(info, nome_temporario):
 
@@ -120,13 +193,76 @@ def localizar_arquivo_final(info, nome_temporario):
         raise FileNotFoundError("O arquivo final não foi encontrado na pasta temporária.")
     return max(candidatos, key=os.path.getsize)
 
-def baixar_midia(url, tipo, formato, hook_progresso, nome_temporario):
+# Qualidades disponíveis (valores internos, salvos no JSON)
+# Áudio: taxa de bits em kbps | Vídeo: altura máxima em pixels | "melhor" = a maior que o site oferecer
+QUALIDADES_AUDIO = ["melhor", "320", "192", "128"]
+QUALIDADES_VIDEO = ["melhor", "2160", "1440", "1080", "720", "480", "360"]
+
+def arquivos_da_playlist(pasta_playlist):
+
+    # Lista os arquivos prontos de uma playlist (ignorando os parciais), em ordem, junto com o título de cada um
+    # O título vem do próprio nome do arquivo, que o yt-dlp montou como "001 - Título.ext"
+    arquivos = []
+    for arq in sorted(glob.glob(os.path.join(glob.escape(pasta_playlist), "*"))):
+        if os.path.isfile(arq) and not arq.endswith((".part", ".ytdl", ".temp")):
+            arquivos.append((arq, os.path.splitext(os.path.basename(arq))[0]))
+    if not arquivos:
+        raise FileNotFoundError("Nenhum arquivo da playlist foi encontrado na pasta temporária.")
+    return arquivos
+
+class RegistradorPlaylist:
+
+    """
+    "Ouvinte" das mensagens do yt-dlp usado nas playlists
+    Lá o yt-dlp pula os vídeos que falham e só escreve o erro no terminal; com este registrador
+    ele guarda esses erros numa lista, para avisar o usuário no final (e descobrir se o disco encheu)
+    """
+
+    def __init__(self, falhas):
+        self.falhas = falhas
+
+    def debug(self, mensagem):
+        # As linhas de progresso ("[download]  42.0% ...") chegam aqui o tempo todo: não imprimo para não poluir o terminal
+        if not mensagem.startswith('[download]'):
+            print(mensagem)
+
+    def info(self, mensagem):
+        self.debug(mensagem)
+
+    def warning(self, mensagem):
+        pass
+
+    def error(self, mensagem):
+        print(mensagem)
+        self.falhas.append(mensagem)
+
+def baixar_midia(url, tipo, formato, hook_progresso, nome_temporario, qualidade="melhor", baixar_playlist=False, falhas=None):
+
+    """
+    Baixa a mídia na pasta temporária e devolve uma LISTA de tuplas (caminho_do_arquivo, titulo)
+    -> Vídeo único: lista com 1 item
+    -> Playlist (com o switch ligado): um item para cada vídeo baixado
+    'falhas' é uma lista opcional onde anoto os erros dos vídeos da playlist que não puderam ser baixados
+    """
+
+    if falhas is None:
+        falhas = []
+
+    # O download acontece na pasta temporária do aplicativo, e não direto na pasta que o usuário escolheu
+    # (no Flatpak o app só pode escrever nos locais liberados pelo portal)
+    # O molde termina em '.%(ext)s' para o yt-dlp colocar sozinho a extensão correta, evitando nomes como 'audio.mp3.mp3'
+    if baixar_playlist:
+        # Cada playlist ganha uma subpasta própria, e cada arquivo leva o número na lista + o título
+        # '%(playlist_index|)03d' escreve o número com 3 dígitos (001, 002...) para os arquivos ficarem em ordem,
+        # e '%(playlist_index& - |)s' coloca o " - " depois dele; os dois ficam vazios se o link não for uma playlist
+        pasta_playlist = os.path.join(temp_dir, nome_temporario)
+        molde_saida = os.path.join(pasta_playlist, "%(playlist_index|)03d%(playlist_index& - |)s%(title).150B.%(ext)s")
+    else:
+        molde_saida = os.path.join(temp_dir, nome_temporario + ".%(ext)s")
+
     # Configurações base de Download (ydl_opts)
     ydl_opts = {
-        # O download acontece na pasta temporária do aplicativo, e não direto na pasta que o usuário escolheu
-        # (no Flatpak o app só pode escrever no arquivo escolhido pela janela "Salvar como", via portal)
-        # O molde termina em '.%(ext)s' para o yt-dlp colocar sozinho a extensão correta, evitando nomes como 'audio.mp3.mp3'
-        'outtmpl': os.path.join(temp_dir, nome_temporario + ".%(ext)s"),
+        'outtmpl': molde_saida,
 
         # Conecta a função da nossa barra de progresso no sistema do yt-dlp
         'progress_hooks': [hook_progresso],
@@ -134,8 +270,10 @@ def baixar_midia(url, tipo, formato, hook_progresso, nome_temporario):
         # Indica para o yt-dlp onde encontrar o executável do ffmpeg
         'ffmpeg_location': caminho_ffmpeg_dir,
 
-        # Garante que links contendo listas de reprodução baixem apenas o vídeo individual
-        'noplaylist': True,
+        # Switch desligado: links com listas de reprodução baixam apenas o vídeo individual
+        # Switch ligado: baixa a playlist inteira, pulando vídeos indisponíveis em vez de parar tudo
+        'noplaylist': not baixar_playlist,
+        'ignoreerrors': 'only_download' if baixar_playlist else False,
 
         # Mostra o progresso no console
         'quiet': False,
@@ -149,23 +287,41 @@ def baixar_midia(url, tipo, formato, hook_progresso, nome_temporario):
         'http_chunk_size': 10485760,         # Divide em blocos de 10MB para download estável
     }
 
+    if baixar_playlist:
+        # Guarda os erros dos vídeos pulados (ver RegistradorPlaylist)
+        ydl_opts['logger'] = RegistradorPlaylist(falhas)
+    else:
+        # O 'noplaylist' só vale para links que são vídeo E playlist ao mesmo tempo (ex: watch?v=...&list=...)
+        # Num link que é só de playlist, o yt-dlp baixaria tudo; aqui limito ao primeiro vídeo
+        ydl_opts['playlist_items'] = '1'
+
     # Se o usuário escolheu áudio, configuro para extrair o áudio
     if tipo == 'audio':
         ydl_opts['format'] = 'bestaudio/best'  # Pega a melhor qualidade de áudio
+        # No yt-dlp, '0' significa a melhor qualidade variável (VBR); valores como '320' são a taxa de bits em kbps
+        # (formatos sem perda, como wav e flac, ignoram esse valor)
+        qualidade_audio = '0' if qualidade == "melhor" else qualidade
         ydl_opts['postprocessors'] = [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': formato,
-            'preferredquality': '192',  # Qualidade do áudio (192kbps é um bom padrão)
+            'preferredquality': qualidade_audio,
         }]
+        # Avisa o yt-dlp da extensão final: assim, ao retomar uma playlist, ele reconhece os áudios
+        # que já foram convertidos e não baixa tudo de novo
+        ydl_opts['final_ext'] = formato
 
     # Se o usuário escolheu vídeo, configuro para baixar vídeo e áudio juntos
     elif tipo == 'video':
         # Força o download de formatos que sejam naturalmente compatíveis
         # evitando que o FFmpeg precise re-renderizar o vídeo (poupando 100% de CPU)
+        # Limite de altura (ex: '[height<=1080]'); vazio quando a escolha é a melhor qualidade
+        limite = '' if qualidade == "melhor" else f'[height<={qualidade}]'
+
+        # O '/best' no final é a última alternativa: se nada respeitar o limite, baixa o que existir em vez de falhar
         if formato == 'mp4':
-            ydl_opts['format'] = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best'
+            ydl_opts['format'] = f'bestvideo{limite}[ext=mp4]+bestaudio[ext=m4a]/bestvideo{limite}+bestaudio/best{limite}/best'
         else:
-            ydl_opts['format'] = 'bestvideo+bestaudio/best'
+            ydl_opts['format'] = f'bestvideo{limite}+bestaudio/best{limite}/best'
 
         # O merge_output_format diz ao FFmpeg apenas para juntar o áudio e o vídeo (Muxing)
         ydl_opts['merge_output_format'] = formato
@@ -179,5 +335,22 @@ def baixar_midia(url, tipo, formato, hook_progresso, nome_temporario):
 
     print("[*] Download concluído com sucesso")
 
-    # Devolve o caminho do arquivo final (já convertido ou mesclado) que ficou na pasta temporária
-    return localizar_arquivo_final(info, nome_temporario)
+    # Devolve os arquivos finais (já convertidos ou mesclados) que ficaram na pasta temporária
+    if baixar_playlist:
+        # Se algum vídeo falhou por falta de espaço, trato como disco cheio (o app pausa e avisa o usuário)
+        for mensagem in falhas:
+            if "No space left on device" in mensagem or "not enough space on the disk" in mensagem:
+                raise OSError(errno.ENOSPC, mensagem)
+        try:
+            return arquivos_da_playlist(pasta_playlist)
+        except FileNotFoundError:
+            # Nenhum vídeo deu certo: mostra o primeiro erro do yt-dlp, que explica melhor o motivo
+            if falhas:
+                raise RuntimeError(falhas[0])
+            raise
+
+    # Link de playlist com o switch desligado: o yt-dlp devolve a playlist, então uso o primeiro vídeo dela
+    if info and info.get('_type') == 'playlist' and info.get('entries'):
+        info = next((item for item in info['entries'] if item), info)
+    titulo = (info or {}).get('title') or nome_temporario
+    return [(localizar_arquivo_final(info, nome_temporario), titulo)]

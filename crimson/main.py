@@ -2,6 +2,7 @@
 # Copyright (C) 2026 LuanDevCodes
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
 import sys
 
 from PySide6.QtWidgets import QApplication
@@ -12,6 +13,14 @@ from crimson.temas import EstiloCrimson
 
 # Função que cria a aplicação Qt, abre a janela principal e mantém o programa rodando
 def main():
+
+    # No Linux, pede ao Qt que use o "portal" do sistema (xdg-desktop-portal) para as janelas de abrir/salvar
+    # Assim o "Salvar como" e o "Selecionar pasta" usam o explorador de arquivos nativo (KDE, GNOME...)
+    # em vez do seletor genérico do Qt. Se o sistema não tiver o portal, o Qt volta sozinho para o seletor próprio
+    # O 'setdefault' respeita quem já escolheu outro tema (ex: qt6ct); precisa vir ANTES de criar o QApplication
+    if sys.platform.startswith("linux"):
+        os.environ.setdefault("QT_QPA_PLATFORMTHEME", "xdgdesktopportal")
+
     app = QApplication(sys.argv)
     app.setApplicationName("Crimson")
     app.setDesktopFileName("io.github.luandevcodes.Crimson")

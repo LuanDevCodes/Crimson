@@ -12,7 +12,7 @@ from PySide6.QtGui import (
 )
 
 from crimson.estado import estado
-from crimson.temas import TEMAS
+from crimson.temas import TEMAS, cores_desativado
 
 class ComboBoxModerno(QComboBox):
 
@@ -50,6 +50,10 @@ class ComboBoxModerno(QComboBox):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         cor_seta = QColor(TEMAS[estado.tema_atual]["cor_fonte_botoes"])
+
+        # Dropdown desativado, a seta fica no mesmo cinza do texto desativado
+        if not self.isEnabled():
+            cor_seta = QColor(cores_desativado(TEMAS[estado.tema_atual])[1])
         pen = QPen(cor_seta, 2.0, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin)
         painter.setPen(pen)
 
@@ -234,7 +238,12 @@ class BotaoSwitchTema(QPushButton):
         caminho_trilho = QPainterPath()
         caminho_trilho.addRoundedRect(ret_trilho, raio - 1.0, raio - 1.0)
 
-        if estado.tema_atual == "Frutiger Aero":
+        if not self.isEnabled():
+            # Switch bloqueado (ex: durante um download), trilho cinza, igual aos outros itens desativados
+            fundo_cinza, _, borda_cinza = cores_desativado(cor)
+            brush_trilho = QBrush(QColor(fundo_cinza))
+            pen_borda = QPen(QColor(borda_cinza), 1.2)
+        elif estado.tema_atual == "Frutiger Aero":
             if ativo:
                 grad_trilho = QLinearGradient(0, 0, 0, h)
                 grad_trilho.setColorAt(0.0, QColor("#46DC70"))

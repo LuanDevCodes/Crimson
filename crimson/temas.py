@@ -307,3 +307,28 @@ def estilo_lista_dropdown(cor):
                 border: none;
             }}
     """
+
+# --- Visual dos Itens Desativados (botões e dropdowns que não podem ser clicados) ---
+def cores_desativado(cor):
+
+    """
+    Devolve (fundo, texto, borda) em tons de cinza para os itens desativados
+    Em temas claros o cinza é claro; em temas escuros, um cinza escuro, para combinar com o fundo
+    O tema é considerado escuro quando o brilho da cor de fundo da janela é baixo (abaixo de 128, numa escala de 0 a 255)
+    """
+
+    brilho = QColor(cor["cor_fundo_janela"]).lightness()
+    if brilho < 128:
+        return "#3E434B", "#8D939C", "#555B64"
+    return "#D3D7DD", "#8A919B", "#BFC4CC"
+
+def icone_github(cor):
+
+    # Logo oficial do GitHub: versão preta nos temas claros e branca nos escuros (como o próprio GitHub recomenda)
+    return "github_branco.png" if QColor(cor["cor_fundo_janela"]).lightness() < 128 else "github.png"
+
+def estilo_desativado(cor):
+
+    # Mesmas cores acima em formato de stylesheet ('background' sobrescreve também os gradientes dos temas)
+    fundo, texto, borda = cores_desativado(cor)
+    return f"background: {fundo}; color: {texto}; border: 1px solid {borda};"

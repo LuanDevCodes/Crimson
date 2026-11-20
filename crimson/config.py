@@ -4,6 +4,7 @@
 
 import os                           # Biblioteca para interagir com o sistema operacional (pastas, arquivos e variáveis de ambiente)
 import json                         # Biblioteca nativa para salvar e ler dados configurados usando esse formato de arquivo
+import re                           # Biblioteca do Regex
 import platform                     # Detecta o sistema operacional para adaptar os caminhos
 from datetime import datetime       # Usado para carimbar data e hora nos registros de erro
 
@@ -45,9 +46,18 @@ def registrar_erro(contexto, erro):
     # Salva falhas técnicas em arquivo dedicado na pasta Config para diagnóstico sem expor dados sensíveis
     try:
         os.makedirs(config_dir, exist_ok=True)
+
+        # Rodízio, quando o log passa de 1 MB, ele vira 'errors_crimson.log.old' (substituindo o antigo)
+        # e um log novo começa, assim o arquivo nunca cresce sem limite
+        if os.path.exists(errors_file) and os.path.getsize(errors_file) > 1024 * 1024:
+            os.replace(errors_file, errors_file + ".old")
+
+        # Troca os links por '<link>': eles podem ter dados pessoais ou tokens de acesso
+        texto_erro = re.sub(r'https?://\S+', '<link>', repr(erro))
+
         carimbo = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with open(errors_file, 'a', encoding='utf-8') as f:
-            f.write(f"[{carimbo}] [{contexto}] {repr(erro)}\n")
+            f.write(f"[{carimbo}] [{contexto}] {texto_erro}\n")
     except Exception:
         pass
 
@@ -66,19 +76,31 @@ def carregar_configuracoes():
             registrar_erro("carregar_configuracoes", erro_json)
     return padrao
 
-def salvar_configuracoes(idioma, tema, desativar_anim=False):
+# Os parâmetros novos (playlist, qualidades e pasta padrão) têm valores padrão,
+# então quem só passa idioma, tema e animações continua funcionando
+# Qualidade "livre" significa que o usuário escolhe na tela inicial a cada download
+def salvar_configuracoes(idioma, tema, desativar_anim=False, baixar_playlist=False,
+                         qualidade_audio="livre", qualidade_video="livre", pasta_padrao=""):
+    # Gravação segura, escreve primeiro num arquivo temporário e só depois troca pelo verdadeiro (os.replace)
+    # Se o PC desligar no meio da gravação, o config.json antigo continua inteiro, em vez de ficar pela metade
+    arquivo_temporario = config_file + ".tmp"
     try:
         os.makedirs(config_dir, exist_ok=True)
-        with open(config_file, 'w', encoding='utf-8') as f:
+        with open(arquivo_temporario, 'w', encoding='utf-8') as f:
             json.dump(
                 {
                     "idioma": idioma,
                     "tema": tema,
-                    "desativar_animacoes": bool(desativar_anim)
+                    "desativar_animacoes": bool(desativar_anim),
+                    "baixar_playlist": bool(baixar_playlist),
+                    "qualidade_audio": qualidade_audio,
+                    "qualidade_video": qualidade_video,
+                    "pasta_padrao": pasta_padrao
                 },
                 f,
                 indent=4
             )
+        os.replace(arquivo_temporario, config_file)
         return True
     except Exception as erro_salvar:
         registrar_erro("salvar_configuracoes", erro_salvar)

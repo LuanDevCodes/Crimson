@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os               # Biblioteca para interagir com o sistema operacional (navegar entre pastas, verificar se um arquivo existe, criar pastas e ler variáveis)
-import sys              # Necessário para ajustar o caminho de importação ao carregar o motor yt-dlp atualizado
+import json             # Usado para ler a resposta do GitHub com a versão mais recente do yt-dlp
 import glob             # Para manipulação dos caminhos dos arquivos, além de ajudar na exclusão dos arquivos residuais
 import threading        # Biblioteca para criar rotinas em segundo plano (evita que a tela trave)
 import time             # Controle de intervalos e throttling para manter a UI leve
@@ -12,7 +12,6 @@ import re               # Usado para limpar textos gerados pelo yt-dlp
 import urllib.request   # Biblioteca nativa para baixar arquivos da internet
 import zipfile          # Biblioteca nativa para extrair arquivos compactados
 import shutil           # Usado para limpeza segura de pastas temporárias e localização de binários no sistema
-import importlib        # Permite recarregar o motor yt-dlp em memória após atualização sem reiniciar o app
 
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
@@ -23,19 +22,29 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QSize, Signal, QObject, QEvent, QStandardPaths
 from PySide6.QtGui import QIcon, QCursor, QAction
 
-from crimson import VERSAO_APP
+from crimson import VERSAO_APP, TITULO_JANELA
 from crimson.config import EM_FLATPAK, lib_dir, temp_dir, registrar_erro
 from crimson.estado import estado
-from crimson.temas import TEMAS, aplicar_paleta_global, estilo_lista_dropdown
+from crimson.temas import TEMAS, aplicar_paleta_global, estilo_lista_dropdown, estilo_desativado
 from crimson.idiomas import DICIONARIO_IDIOMAS
 from crimson.icones import caminho_icons, carregar_icone_tematico
-from crimson.motor import yt_dlp, DownloadPausado, baixar_midia, encerrar_processos_filhos
+from crimson.motor import (
+    yt_dlp, DownloadPausado, baixar_midia, encerrar_processos_filhos, erro_disco_cheio, espaco_livre,
+    limpar_temp_antigo, QUALIDADES_AUDIO, QUALIDADES_VIDEO
+)
 from crimson.widgets import ComboBoxModerno, BarraProgressoModerna, WidgetFundoCrimson
-from crimson.dialogos import DialogoPlataformas, DialogoConfiguracoes, caixa_mensagem
+from crimson.dialogos import (
+    DialogoPlataformas, DialogoConfiguracoes, DialogoSequencial, caixa_mensagem, preencher_combo_qualidade
+)
 
 # Expressões regulares pré-compiladas para evitar overhead de compilação em loops de alta frequência
 RE_ANSI_ESCAPE = re.compile(r'\x1b\[[0-9;]*[mK]')
 RE_ESPACO_VELOCIDADE = re.compile(r'(?<=\d)(?=[a-zA-Z])')
+
+def versao_em_numeros(versao):
+    # Transforma "2026.07.23" em (2026, 7, 23) para comparar versões número por número
+    # (as partes que não são números, como "dev0", são ignoradas)
+    return tuple(int(parte) for parte in versao.split('.') if parte.isdigit())
 
 # --------------------------------------------------------------------------------------------------------------------
 # --- Ponte de Sinais Assíncronos (Thread-Safe UI Updates) ---
@@ -50,6 +59,8 @@ class SinaisDownload(QObject):
 
     progresso = Signal(float, str)
     etapa_conversao = Signal()
+    etapa_download = Signal()
+    disco_cheio = Signal()
     sucesso = Signal(str, str)
     erro = Signal(str)
     loading_concluido = Signal()
@@ -61,12 +72,13 @@ class SinaisDownload(QObject):
 class JanelaCrimson(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Crimson - Video Downloader")
+        self.setWindowTitle(TITULO_JANELA)
 
         # Só a altura mínima é fixa, a largura mínima fica por conta do layout, que a calcula pelos textos do idioma atual
         # (um 'setMinimumSize' com largura fixa vence o layout e corta o texto dos botões em idiomas de escrita longa)
-        self.setMinimumHeight(370)
-        self.resize(670, 385)
+        # A altura mínima (430) já reserva o espaço da linha de qualidade e da barra de progresso durante o download
+        self.setMinimumHeight(430)
+        self.resize(670, 440)
 
         # Último tamanho definido pelo próprio app, se a janela estiver diferente disso, foi o usuário quem redimensionou
         self._tamanho_automatico = self.size()
@@ -79,6 +91,8 @@ class JanelaCrimson(QMainWindow):
         self.sinais = SinaisDownload()
         self.sinais.progresso.connect(self.set_progresso_ui)
         self.sinais.etapa_conversao.connect(self.bloquear_pausa_na_conversao)
+        self.sinais.etapa_download.connect(self.liberar_pausa_no_download)
+        self.sinais.disco_cheio.connect(self.avisar_disco_cheio)
         self.sinais.sucesso.connect(self.finalizar_com_sucesso)
         self.sinais.erro.connect(self.finalizar_com_erro)
         self.sinais.loading_concluido.connect(self.finalizar_loading)
@@ -93,6 +107,26 @@ class JanelaCrimson(QMainWindow):
         # Últimos valores válidos de velocidade e tempo restante (o yt-dlp às vezes informa 'Unknown' no meio do download)
         self._ultima_velocidade = "--"
         self._ultimo_eta = "--"
+
+        # Indica que o arquivo atual terminou de baixar e está sendo convertido (usado nas playlists)
+        self._em_conversao = False
+
+        # Arquivos já baixados que ainda precisam ser movidos para o destino (usado ao retomar após disco cheio)
+        self._arquivos_pendentes = []
+
+        # Arquivamento Sequencial: posição do link atual na fila e links que falharam
+        self._indice_fila = 0
+        self._falhas_fila = []
+
+        # Playlist: erros dos vídeos que não puderam ser baixados e o total de vídeos (para o resumo final)
+        self._falhas_playlist = []
+        self._total_playlist = 0
+
+        # Downloads cancelados enquanto a thread ainda terminava: a própria thread apaga os temporários ao sair
+        self._limpar_ao_sair = set()
+
+        # Apaga restos de downloads antigos (ex: de uma queda de energia) que ficaram na pasta temporária
+        limpar_temp_antigo()
 
         self.configurar_icone_janela()
         self.construir_ui()
@@ -157,6 +191,7 @@ class JanelaCrimson(QMainWindow):
         # Barra Superior (Configurações | Instrução | Plataformas)
         layout_topo = QHBoxLayout()
         layout_topo.setContentsMargins(0, 0, 0, 0)
+        layout_topo.setSpacing(10)  # Distância fixa entre os itens da barra (deixa os dois botões da direita próximos)
 
         self.botao_config = QPushButton()
         self.botao_config.setObjectName("botaoIconeTopo")
@@ -169,7 +204,21 @@ class JanelaCrimson(QMainWindow):
         self.label_instrucao = QLabel(DICIONARIO_IDIOMAS["instrucao_ready"][estado.idioma_atual])
         self.label_instrucao.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label_instrucao.setObjectName("labelInstrucao")
+
+        # Espaço do mesmo tamanho do botão de fila mais o vão até o "?" (40 + 10), para o título continuar
+        # centralizado com 2 botões à direita (o Qt não coloca o espaçamento da barra ao redor deste espaço vazio)
+        layout_topo.addSpacing(50)
         layout_topo.addWidget(self.label_instrucao, stretch=1)
+
+        # Botão do Arquivamento Sequencial (fila de links), ao lado do botão de plataformas
+        self.botao_sequencial = QPushButton()
+        self.botao_sequencial.setObjectName("botaoIconeTopo")
+        self.botao_sequencial.setFixedSize(40, 40)
+        self.botao_sequencial.setIconSize(QSize(24, 24))
+        self.botao_sequencial.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.botao_sequencial.clicked.connect(self.abrir_sequencial)
+        self.botao_sequencial.setToolTip(DICIONARIO_IDIOMAS["seq_titulo"][estado.idioma_atual])
+        layout_topo.addWidget(self.botao_sequencial)
 
         self.botao_plataformas = QPushButton()
         self.botao_plataformas.setObjectName("botaoIconeTopo")
@@ -227,6 +276,21 @@ class JanelaCrimson(QMainWindow):
         linha_audio.addWidget(self.botao_baixar_audio, stretch=1)
 
         layout_card_audio.addLayout(linha_audio)
+
+        # Linha de qualidade do áudio (reaproveita o visual do dropdown de formato pelo mesmo objectName)
+        linha_qual_audio = QHBoxLayout()
+        linha_qual_audio.setSpacing(10)
+        self.lbl_qualidade_audio = QLabel()
+        self.lbl_qualidade_audio.setObjectName("labelQualidade")
+        linha_qual_audio.addWidget(self.lbl_qualidade_audio)
+        self.dropdown_qualidade_audio = ComboBoxModerno()
+        self.dropdown_qualidade_audio.setObjectName("dropdownAudio")
+        self.dropdown_qualidade_audio.setFixedHeight(34)
+        self.dropdown_qualidade_audio.setMaxVisibleItems(4)  # Lista curta, com barra de rolagem, para não sair da janela
+        self.dropdown_qualidade_audio.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        linha_qual_audio.addWidget(self.dropdown_qualidade_audio, stretch=1)
+        layout_card_audio.addLayout(linha_qual_audio)
+
         layout_cards.addWidget(self.card_audio, stretch=1)
 
         # Card de Vídeo
@@ -259,7 +323,25 @@ class JanelaCrimson(QMainWindow):
         linha_video.addWidget(self.botao_baixar_video, stretch=1)
 
         layout_card_video.addLayout(linha_video)
+
+        # Linha de qualidade do vídeo (altura máxima da imagem)
+        linha_qual_video = QHBoxLayout()
+        linha_qual_video.setSpacing(10)
+        self.lbl_qualidade_video = QLabel()
+        self.lbl_qualidade_video.setObjectName("labelQualidade")
+        linha_qual_video.addWidget(self.lbl_qualidade_video)
+        self.dropdown_qualidade_video = ComboBoxModerno()
+        self.dropdown_qualidade_video.setObjectName("dropdownVideo")
+        self.dropdown_qualidade_video.setFixedHeight(34)
+        self.dropdown_qualidade_video.setMaxVisibleItems(4)  # 7 opções não cabem abaixo do card: mostra 4 e rola o resto
+        self.dropdown_qualidade_video.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        linha_qual_video.addWidget(self.dropdown_qualidade_video, stretch=1)
+        layout_card_video.addLayout(linha_qual_video)
+
         layout_cards.addWidget(self.card_video, stretch=1)
+
+        # Preenche os dropdowns de qualidade conforme o que foi definido nas configurações
+        self.atualizar_dropdowns_qualidade()
 
         layout_principal.addWidget(self.container_acoes)
 
@@ -365,6 +447,7 @@ class JanelaCrimson(QMainWindow):
 
         self.botao_config.setIcon(carregar_icone_tematico("configuracoes.png", cor_hex=cor_icone, opacidade=0.95))
         self.botao_plataformas.setIcon(carregar_icone_tematico("duvidas.png", cor_hex=cor_icone, opacidade=0.95))
+        self.botao_sequencial.setIcon(carregar_icone_tematico("text.png", cor_hex=cor_icone, opacidade=0.95))
 
     # ------------------------------------------------------------------
     # --- Internacionalização e Temas ---
@@ -379,8 +462,35 @@ class JanelaCrimson(QMainWindow):
             self.botao_baixar_audio.setText(DICIONARIO_IDIOMAS["cor_botao_audio"][estado.idioma_atual])
             self.botao_baixar_video.setText(DICIONARIO_IDIOMAS["cor_botao_video"][estado.idioma_atual])
 
+        self.atualizar_dropdowns_qualidade()
+        self.botao_sequencial.setToolTip(DICIONARIO_IDIOMAS["seq_titulo"][estado.idioma_atual])
+        if estado.fila_urls and estado.estado_download == "parado":
+            self.atualizar_modo_sequencial()  # Reescreve o aviso da barra de URL no idioma novo
+
         if self.dialogo_plataformas and self.dialogo_plataformas.isVisible():
             self.dialogo_plataformas.atualizar_textos_e_tema()
+
+    def atualizar_dropdowns_qualidade(self):
+
+        """
+        Preenche os dropdowns de qualidade da tela inicial no idioma atual
+        -> Configuração "livre": o usuário escolhe aqui a cada download (mantendo a escolha que já estava feita)
+        -> Qualidade fixada nas configurações: o dropdown mostra esse valor, mas fica travado
+        """
+
+        self.lbl_qualidade_audio.setText(DICIONARIO_IDIOMAS["lbl_qualidade"][estado.idioma_atual])
+        self.lbl_qualidade_video.setText(DICIONARIO_IDIOMAS["lbl_qualidade"][estado.idioma_atual])
+
+        for combo, valores, tipo, valor_config in (
+            (self.dropdown_qualidade_audio, QUALIDADES_AUDIO, "audio", estado.qualidade_audio),
+            (self.dropdown_qualidade_video, QUALIDADES_VIDEO, "video", estado.qualidade_video),
+        ):
+            fixada = valor_config != "livre"
+            valor = valor_config if fixada else (combo.currentData() or "melhor")
+            preencher_combo_qualidade(combo, valores, tipo, valor)
+
+            # Só fica clicável quando a qualidade é livre e não há download em andamento
+            combo.setEnabled(not fixada and estado.estado_download == "parado")
 
     def aplicar_tema(self):
         cor = TEMAS[estado.tema_atual]
@@ -691,6 +801,11 @@ class JanelaCrimson(QMainWindow):
                 font-weight: bold;
                 letter-spacing: 1px;
             }}
+            QLabel#labelQualidade {{
+                color: {cor["cor_texto_secundario"]};
+                font-size: 12px;
+                font-weight: bold;
+            }}
             QComboBox#dropdownAudio {{
                 {estilo_dropdown_audio}
             }}
@@ -722,6 +837,11 @@ class JanelaCrimson(QMainWindow):
             }}
             QPushButton#botaoVideo:hover:enabled {{
                 {estilo_btn_video_hover}
+            }}
+            QPushButton#botaoAudio:disabled, QPushButton#botaoVideo:disabled,
+            QComboBox#dropdownAudio:disabled, QComboBox#dropdownVideo:disabled,
+            QPushButton#botaoIconeTopo:disabled {{
+                {estilo_desativado(cor)}
             }}
             QProgressBar#barraProgresso {{
                 background: transparent;
@@ -778,7 +898,7 @@ class JanelaCrimson(QMainWindow):
         Confere, ao trocar idioma ou tema, se a janela tem espaço (largura e altura) para exibir os textos sem cortes
         -> Se o usuário redimensionou a janela e o conteúdo cabe nela, nada é alterado
         -> Se o conteúdo não cabe, ou se a janela ainda está no tamanho que o próprio app definiu,
-          ela vai para o tamanho padrão do idioma atual (670 x 385, ou maior se os textos precisarem)
+          ela vai para o tamanho padrão do idioma atual (670 x 440, ou maior se os textos precisarem)
         """
 
         # Janela maximizada ou em tela cheia já tem todo o espaço disponível
@@ -804,7 +924,7 @@ class JanelaCrimson(QMainWindow):
             return
 
         # Tamanho padrão do idioma, o padrão do app, alargado só o necessário para os botões não ficarem espremidos
-        self.resize(max(670, largura_necessaria), max(385, altura_necessaria))
+        self.resize(max(670, largura_necessaria), max(440, altura_necessaria))
         self._tamanho_automatico = self.size()
 
     # ------------------------------------------------------------------
@@ -874,16 +994,41 @@ class JanelaCrimson(QMainWindow):
         threading.Thread(target=self.thread_atualizacao_inicial, daemon=True).start()
 
     def thread_atualizacao_inicial(self):
-        caminho_zip = os.path.join(lib_dir, f"yt-dlp-update-{os.getpid()}.zip")
-        pasta_staging = os.path.join(lib_dir, f"yt-dlp-staging-{os.getpid()}")
+
+        """
+        Atualiza o motor yt-dlp em segundo plano:
+        1. Pergunta ao GitHub qual é a última versão OFICIAL (release) do yt-dlp
+        2. Se a versão em uso já for igual ou mais nova, não baixa nada
+        3. Se houver versão nova, libera a janela e baixa em segundo plano para a pasta 'yt-dlp-novo'
+        A versão nova só entra em uso na próxima vez que o Crimson abrir (ver o início do motor.py),
+        assim nunca misturo arquivos novos com o motor que já está carregado na memória
+        """
+
+        caminho_zip = os.path.join(lib_dir, "yt-dlp-update.zip")
+        pasta_staging = os.path.join(lib_dir, "yt-dlp-staging")
+        cabecalho = {'User-Agent': f'Mozilla/5.0 (compatible; Crimson-Downloader/{VERSAO_APP})'}
+        janela_liberada = False
         try:
             print("[*] Verificando atualizações de segurança (Motor yt-dlp)")
-            url_master = "https://github.com/yt-dlp/yt-dlp/archive/refs/heads/master.zip"
 
-            # Mantém compatibilidade com servidores/proxies identificando a versão do Crimson
+            # Última versão oficial publicada no GitHub (ex: "2026.07.23")
+            req_versao = urllib.request.Request(
+                "https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest", headers=cabecalho
+            )
+            with urllib.request.urlopen(req_versao, timeout=5) as resposta:
+                versao_nova = json.loads(resposta.read().decode('utf-8'))["tag_name"]
+
+            #Compara número por número (ex: (2026, 7, 23) com a versão em uso)
+            if versao_em_numeros(yt_dlp.version.__version__) >= versao_em_numeros(versao_nova):
+                print("[*] Motor yt-dlp já está atualizado")
+                return
+
+            # Há versão nova, a janela não precisa esperar o download, pois ela só vale na próxima abertura
+            self.sinais.loading_concluido.emit()
+            janela_liberada = True
+
             req = urllib.request.Request(
-                url_master,
-                headers={'User-Agent': f'Mozilla/5.0 (compatible; Crimson-Downloader/{VERSAO_APP})'}
+                f"https://github.com/yt-dlp/yt-dlp/archive/refs/tags/{versao_nova}.zip", headers=cabecalho
             )
             limite_bytes = 50 * 1024 * 1024  # Limite de segurança de 50 MB
             total_lido = 0
@@ -912,23 +1057,18 @@ class JanelaCrimson(QMainWindow):
                     raise zipfile.BadZipFile(f"Arquivo corrompido dentro do ZIP: {arquivo_corrompido}")
                 zip_ref.extractall(pasta_staging)
 
-            novo_motor = os.path.join(pasta_staging, "yt-dlp-master")
+            # O ZIP de uma versão traz tudo dentro de uma pasta chamada "yt-dlp-<versão>"
+            novo_motor = os.path.join(pasta_staging, f"yt-dlp-{versao_nova}")
             init_ytdlp = os.path.join(novo_motor, "yt_dlp", "__init__.py")
             if not os.path.isfile(init_ytdlp):
                 raise FileNotFoundError("Estrutura do motor yt-dlp inválida após extração.")
 
-            path_extraido = os.path.join(lib_dir, "yt-dlp-master")
-            shutil.rmtree(path_extraido, ignore_errors=True)
-            shutil.move(novo_motor, path_extraido)
+            # Guarda em 'yt-dlp-novo': o motor.py troca pelo atual na próxima abertura do Crimson
+            path_novo = os.path.join(lib_dir, "yt-dlp-novo")
+            shutil.rmtree(path_novo, ignore_errors=True)
+            os.replace(novo_motor, path_novo)
 
-            if path_extraido not in sys.path:
-                sys.path.insert(0, path_extraido)
-            try:
-                importlib.reload(yt_dlp)
-            except Exception:
-                pass
-
-            print("[*] Motor atualizado e injetado - Interface pronta")
+            print(f"[*] Motor yt-dlp {versao_nova} baixado, será usado na próxima abertura do Crimson")
         except Exception as e:
             registrar_erro("thread_atualizacao_inicial", e)
             print(f"[*] Não foi possível atualizar o motor online: {e}")
@@ -941,7 +1081,10 @@ class JanelaCrimson(QMainWindow):
                     pass
             if os.path.exists(pasta_staging):
                 shutil.rmtree(pasta_staging, ignore_errors=True)
-            self.sinais.loading_concluido.emit()
+
+            # Libera a janela (se ela ainda não foi liberada antes do download)
+            if not janela_liberada:
+                self.sinais.loading_concluido.emit()
 
     def finalizar_loading(self):
         self.container_loading.hide()
@@ -993,8 +1136,23 @@ class JanelaCrimson(QMainWindow):
                 else:
                     self._ultimo_eta = eta
 
+                # Playlist, o próximo vídeo começou depois da conversão do anterior, então o botão de pausa volta a funcionar
+                if self._em_conversao:
+                    self._em_conversao = False
+                    self.sinais.etapa_download.emit()
+
+                # Playlist, mostra qual vídeo está sendo baixado, ex: "[3/12]"
+                info = d.get('info_dict') or {}
+                indice = info.get('playlist_index')
+                total_itens = info.get('n_entries') or info.get('playlist_count')
+                prefixo = f"[{indice}/{total_itens}]   " if estado.playlist_atual and indice and total_itens else ""
+
+                # Fila do Arquivamento Sequencia, mostra a posição do link atual, ex: "[2/5]"
+                if estado.fila_urls:
+                    prefixo = f"[{self._indice_fila + 1}/{len(estado.fila_urls)}]   "
+
                 texto = (
-                    f"{DICIONARIO_IDIOMAS['progresso_baixando'][estado.idioma_atual]}: {percentual_float:.1f}%   |   "
+                    f"{prefixo}{DICIONARIO_IDIOMAS['progresso_baixando'][estado.idioma_atual]}: {percentual_float:.1f}%   |   "
                     f"{DICIONARIO_IDIOMAS['progresso_vel'][estado.idioma_atual]}: {velocidade}   |   "
                     f"{DICIONARIO_IDIOMAS['progresso_tempo'][estado.idioma_atual]}: {eta}"
                 )
@@ -1002,6 +1160,7 @@ class JanelaCrimson(QMainWindow):
             except Exception:
                 pass
         elif d['status'] == 'finished':
+            self._em_conversao = True
             self.sinais.etapa_conversao.emit()
             self.sinais.progresso.emit(100.0, DICIONARIO_IDIOMAS["progresso_convertendo"][estado.idioma_atual])
 
@@ -1010,12 +1169,24 @@ class JanelaCrimson(QMainWindow):
         self.botao_pausar.setEnabled(False)
         self.atualizar_icones_controles()
 
+    def liberar_pausa_no_download(self):
+        # Reativa o botão de pausa quando um novo arquivo começa a baixar (ex: próximo vídeo da playlist)
+        if estado.estado_download == "rodando":
+            self.botao_pausar.setEnabled(True)
+            self.atualizar_icones_controles()
+
     def set_progresso_ui(self, valor, texto):
         self.barra_progresso.setValue(int(valor))
         self.label_progresso.setText(texto)
 
     def iniciar_download(self, tipo):
-        url = self.entrada_url.text().strip()
+
+        # Com uma fila do Arquivamento Sequencial salva, começa pelo próximo link dela (já validados ao salvar)
+        # Numa fila nova é o primeiro; numa fila cancelada no meio, os links que já terminaram são pulados
+        modo_fila = bool(estado.fila_urls)
+        if modo_fila and estado.fila_proximo >= len(estado.fila_urls):
+            estado.fila_proximo = 0
+        url = estado.fila_urls[estado.fila_proximo] if modo_fila else self.entrada_url.text().strip()
         if not url or not url.startswith(("http://", "https://")):
             QMessageBox.warning(
                 self,
@@ -1024,12 +1195,15 @@ class JanelaCrimson(QMainWindow):
             )
             return
 
+        # currentData() devolve o valor interno da qualidade (ex: "320" ou "1080"), e não o texto exibido
         if tipo == 'audio':
             formato = self.dropdown_audio.currentText()
+            qualidade = self.dropdown_qualidade_audio.currentData()
             botao_ativo = self.botao_baixar_audio
             nome_sugerido = f"audio.{formato}"
         else:
             formato = self.dropdown_video.currentText()
+            qualidade = self.dropdown_qualidade_video.currentData()
             botao_ativo = self.botao_baixar_video
             nome_sugerido = f"video.{formato}"
 
@@ -1041,43 +1215,91 @@ class JanelaCrimson(QMainWindow):
         if not os.path.exists(pasta_downloads):
             pasta_downloads = os.path.expanduser('~')
 
-        caminho_completo, _ = QFileDialog.getSaveFileName(
-            self,
-            DICIONARIO_IDIOMAS["msg_salvar_como"][estado.idioma_atual],
-            os.path.join(pasta_downloads, nome_sugerido),
-            filtro_arquivo
-        )
+        # Onde salvar:
+        # -> Pasta padrão definida (e ainda existente): vai direto para ela, com o título do vídeo como nome
+        # -> Playlist ou fila sem pasta padrão: pede uma pasta (são vários arquivos, então "Salvar como" não serve)
+        # -> Nenhum dos dois: janela "Salvar como" de sempre, para um arquivo só
+        pasta_destino = ""
+        caminho_completo = ""
 
-        if not caminho_completo:
-            return
+        # Pasta padrão que sumiu (apagada ou num pendrive desconectado): avisa antes de pedir outro lugar
+        if estado.pasta_padrao and not os.path.isdir(estado.pasta_padrao):
+            caixa_mensagem(
+                self,
+                QMessageBox.Icon.Warning,
+                DICIONARIO_IDIOMAS["msg_aviso_titulo"][estado.idioma_atual],
+                DICIONARIO_IDIOMAS["msg_pasta_padrao_sumiu"][estado.idioma_atual]
+            )
 
-        if not caminho_completo.lower().endswith(f".{formato}"):
-            caminho_completo += f".{formato}"
+        if estado.pasta_padrao and os.path.isdir(estado.pasta_padrao):
+            pasta_destino = estado.pasta_padrao
+        elif estado.baixar_playlist or modo_fila:
+            pasta_destino = QFileDialog.getExistingDirectory(
+                self,
+                DICIONARIO_IDIOMAS["msg_escolher_pasta"][estado.idioma_atual],
+                pasta_downloads
+            )
+            if not pasta_destino:
+                return
+        else:
+            caminho_completo, _ = QFileDialog.getSaveFileName(
+                self,
+                DICIONARIO_IDIOMAS["msg_salvar_como"][estado.idioma_atual],
+                os.path.join(pasta_downloads, nome_sugerido),
+                filtro_arquivo
+            )
+
+            if not caminho_completo:
+                return
+
+            if not caminho_completo.lower().endswith(f".{formato}"):
+                caminho_completo += f".{formato}"
 
         # Se o arquivo já existia, o próprio diálogo já pediu a confirmação de substituição ao usuário,
         # e o arquivo antigo será substituído quando o download terminar (ver mover_para_destino)
 
-        estado.url_atual = url
         estado.tipo_atual = tipo
         estado.formato_atual = formato
+        estado.qualidade_atual = qualidade or "melhor"
         estado.caminho_salvamento_atual = caminho_completo
-        estado.nome_temporario_atual = f"crimson_{os.getpid()}_{int(time.time())}"  # Nome único deste download na pasta temporária
-        estado.estado_download = "rodando"
-        self._ultima_velocidade = "--"
-        self._ultimo_eta = "--"
+        estado.pasta_destino_atual = pasta_destino
+
+        # Na fila, cada link baixa só o vídeo individual (para a numeração (01), (02)... não se misturar com playlists)
+        estado.playlist_atual = estado.baixar_playlist and not modo_fila
+        self._indice_fila = estado.fila_proximo if modo_fila else 0
+
+        # A lista de falhas só recomeça numa fila nova; ao retomar, as falhas anteriores continuam no resumo
+        if self._indice_fila == 0:
+            self._falhas_fila = []
 
         self.botao_baixar_audio.setEnabled(False)
         self.botao_baixar_video.setEnabled(False)
+        self.botao_sequencial.setEnabled(False)  # A fila não pode ser trocada no meio dos downloads
 
         # Trava também a escolha de formato: enquanto houver um download em andamento (ou pausado), o usuário
         # não pode trocar o formato, senão a tela deixaria de refletir o que está realmente sendo baixado
         self.dropdown_audio.setEnabled(False)
         self.dropdown_video.setEnabled(False)
+        self.dropdown_qualidade_audio.setEnabled(False)
+        self.dropdown_qualidade_video.setEnabled(False)
 
         botao_ativo.setText(DICIONARIO_IDIOMAS["btn_baixar_inativo"][estado.idioma_atual])
 
         self.entrada_url.setReadOnly(True)
         self.container_progresso.show()
+
+        self.iniciar_item(url)
+
+    def iniciar_item(self, url):
+
+        # Prepara e dispara o download de um link (o único no modo normal, ou o item atual da fila)
+        estado.url_atual = url
+        estado.nome_temporario_atual = f"crimson_{os.getpid()}_{int(time.time())}_{self._indice_fila}"  # Nome único na pasta temporária
+        estado.estado_download = "rodando"
+        self._ultima_velocidade = "--"
+        self._ultimo_eta = "--"
+        self._em_conversao = False
+        self._arquivos_pendentes = []
 
         self.botao_pausar.setEnabled(True)
         self.botao_continuar.setEnabled(False)
@@ -1098,56 +1320,202 @@ class JanelaCrimson(QMainWindow):
         nova_thread.start()
 
     def thread_download(self, evento_cancelar=None, thread_anterior=None):
+
+        # Nome deste download na pasta temporária, guardado agora porque o estado pode mudar enquanto a thread roda
+        nome_temporario = estado.nome_temporario_atual
         try:
-            # Aguarda o encerramento completo da thread anterior antes de acessar o mesmo arquivo '.part'
+            # Aguarda a thread anterior terminar por completo antes de mexer no mesmo arquivo '.part'
+            # (sem limite de tempo: esta espera acontece aqui em segundo plano, então a janela não trava,
+            # e evita que duas threads baixem o mesmo arquivo ao mesmo tempo)
             if thread_anterior is not None and thread_anterior.is_alive():
-                thread_anterior.join(timeout=2.0)
+                thread_anterior.join()
 
             if evento_cancelar and evento_cancelar.is_set():
                 return
 
-            arquivo_final = baixar_midia(
-                estado.url_atual,
-                estado.tipo_atual,
-                estado.formato_atual,
-                hook_progresso=lambda d: self.atualizar_progresso(d, evento_cancelar),
-                nome_temporario=estado.nome_temporario_atual
-            )
+            # Se o download já tinha terminado e só faltou mover os arquivos (ex: disco cheio no destino),
+            # ao continuar não baixa de novo: vai direto para a mudança dos arquivos que sobraram
+            if not self._arquivos_pendentes:
+                falhas = []
+                self._arquivos_pendentes = baixar_midia(
+                    estado.url_atual,
+                    estado.tipo_atual,
+                    estado.formato_atual,
+                    hook_progresso=lambda d: self.atualizar_progresso(d, evento_cancelar),
+                    nome_temporario=nome_temporario,
+                    qualidade=estado.qualidade_atual,
+                    baixar_playlist=estado.playlist_atual,
+                    falhas=falhas
+                )
+                # Playlist: guarda quantos vídeos falharam e o total, para o resumo no final
+                self._falhas_playlist = falhas
+                self._total_playlist = len(self._arquivos_pendentes) + len(falhas)
             if not (evento_cancelar and evento_cancelar.is_set()) and estado.estado_download != "cancelado":
-                self.mover_para_destino(arquivo_final)
+
+                # Move um arquivo por vez e só o tira da lista depois de movido com sucesso
+                while self._arquivos_pendentes:
+                    arquivo_final, titulo = self._arquivos_pendentes[0]
+                    self.mover_para_destino(arquivo_final, self.definir_destino(arquivo_final, titulo))
+                    self._arquivos_pendentes.pop(0)
                 self._remover_arquivos_residuais()
                 self.sinais.sucesso.emit(estado.tipo_atual, estado.formato_atual)
         except DownloadPausado:
             pass
         except Exception as e:
+
+            # Disco cheio: em vez de falhar, pausa o download (mantendo os arquivos parciais) e avisa o usuário
+            if erro_disco_cheio(e) and not (evento_cancelar and evento_cancelar.is_set()) and estado.estado_download != "cancelado":
+                estado.estado_download = "pausado"
+                self.sinais.disco_cheio.emit()
+                return
             registrar_erro("thread_download", e)
             if not (evento_cancelar and evento_cancelar.is_set()) and estado.estado_download != "cancelado":
                 self.sinais.erro.emit(str(e))
+        finally:
+            # Download cancelado enquanto esta thread ainda terminava: agora que ela parou, apaga os temporários
+            if nome_temporario in self._limpar_ao_sair:
+                self._limpar_ao_sair.discard(nome_temporario)
+                self._remover_arquivos_residuais(nome_temporario)
 
-    def mover_para_destino(self, arquivo_final):
+    def definir_destino(self, arquivo_final, titulo):
 
-        # Leva o arquivo pronto da pasta temporária para o local que o usuário escolheu na janela "Salvar como"
-        destino = estado.caminho_salvamento_atual
+        # Sem pasta de destino, vale o caminho escolhido na janela "Salvar como"
+        if not estado.pasta_destino_atual:
+            return estado.caminho_salvamento_atual
+
+        # Com pasta de destino, o nome vem do título (sem caracteres proibidos em nomes de arquivo)
+        # e a extensão vem do arquivo real que o yt-dlp gerou
+        nome_limpo = yt_dlp.utils.sanitize_filename(titulo) or "Crimson"
+
+        # O Linux e o Windows aceitam nomes de no máximo 255 bytes. Corto o título em 150 bytes
+        # (letras como 'ã' ou '語' ocupam mais de 1 byte), sobrando espaço para "(01) ", " (2)" e a extensão
+        # O 'ignore' descarta um caractere que tenha ficado cortado pela metade
+        nome_limpo = nome_limpo.encode('utf-8')[:150].decode('utf-8', 'ignore').strip() or "Crimson"
+        extensao = os.path.splitext(arquivo_final)[1]
+
+        # Na fila, o nome ganha a posição do link, ex: "(01) Título", para os arquivos ficarem na ordem colada
+        if estado.fila_urls:
+            nome_limpo = f"({self._indice_fila + 1:02d}) {nome_limpo}"
+        return self.caminho_disponivel(estado.pasta_destino_atual, nome_limpo, extensao)
+
+    def caminho_disponivel(self, pasta, nome, extensao):
+
+        # Se "nome.ext" já existir na pasta, tenta "nome (2).ext", "nome (3).ext"... para não apagar nada do usuário
+        destino = os.path.join(pasta, nome + extensao)
+        contador = 2
+        while os.path.exists(destino):
+            destino = os.path.join(pasta, f"{nome} ({contador}){extensao}")
+            contador += 1
+        return destino
+
+    def mover_para_destino(self, arquivo_final, destino):
+
+        # Leva o arquivo pronto da pasta temporária para o destino final (escolhido pelo usuário ou montado pelo título)
         try:
             # Troca instantânea quando os dois locais estão no mesmo disco (e substitui o arquivo, se ele já existir)
             os.replace(arquivo_final, destino)
         except OSError:
             # Discos diferentes ou pasta do sandbox: copia o conteúdo e só depois apaga o temporário
-            shutil.copyfile(arquivo_final, destino)
+            try:
+                shutil.copyfile(arquivo_final, destino)
+            except OSError:
+                # Cópia interrompida (ex: disco cheio): apaga o pedaço copiado para não deixar um arquivo quebrado
+                # no destino, mantendo o original na pasta temporária para tentar de novo
+                if os.path.exists(destino):
+                    os.remove(destino)
+                raise
             os.remove(arquivo_final)
 
     def finalizar_com_sucesso(self, tipo, formato):
-        QMessageBox.information(
-            self,
-            DICIONARIO_IDIOMAS["msg_sucesso_titulo"][estado.idioma_atual],
-            DICIONARIO_IDIOMAS["msg_sucesso_texto"][estado.idioma_atual]
-        )
+
+        # Na fila: passa direto para o próximo link, sem pop-up (o resumo aparece só no final)
+        if estado.fila_urls:
+            self.proximo_item_fila()
+            return
+
+        if self._falhas_playlist:
+            # Playlist em que alguns vídeos não puderam ser baixados (indisponíveis, privados...): avisa quantos
+            caixa_mensagem(
+                self,
+                QMessageBox.Icon.Warning,
+                DICIONARIO_IDIOMAS["msg_aviso_titulo"][estado.idioma_atual],
+                DICIONARIO_IDIOMAS["msg_playlist_falhas"][estado.idioma_atual].format(
+                    falhas=len(self._falhas_playlist), total=self._total_playlist
+                )
+            )
+        else:
+            QMessageBox.information(
+                self,
+                DICIONARIO_IDIOMAS["msg_sucesso_titulo"][estado.idioma_atual],
+                DICIONARIO_IDIOMAS["msg_sucesso_texto"][estado.idioma_atual]
+            )
+        self._falhas_playlist = []
+        self.restaurar_botoes()
+        self.entrada_url.clear()
+
+    # ------------------------------------------------------------------
+    # --- Arquivamento Sequencial (Fila de Downloads) ---
+    def abrir_sequencial(self):
+        dialogo = DialogoSequencial(self)
+        dialogo.exec()
+
+    def atualizar_modo_sequencial(self):
+
+        # Com fila salva, a barra de URL fica travada mostrando o aviso do modo sequencial; sem fila, volta ao normal
+        if estado.fila_urls:
+            self.entrada_url.setReadOnly(True)
+            self.entrada_url.setText(DICIONARIO_IDIOMAS["seq_texto_entrada"][estado.idioma_atual])
+            self.entrada_url.setToolTip(f"{len(estado.fila_urls)} links")
+        elif estado.estado_download == "parado":
+            # Sem download rodando, a barra só fica travada no modo sequencial, então o texto dela é o aviso: apaga
+            if self.entrada_url.isReadOnly():
+                self.entrada_url.clear()
+            self.entrada_url.setToolTip("")
+            self.entrada_url.setReadOnly(False)
+
+    def proximo_item_fila(self):
+        # Avança para o próximo link da fila, ou mostra o resumo se ela acabou
+        self._indice_fila += 1
+        estado.fila_proximo = self._indice_fila  # Se a fila for cancelada depois daqui, recomeça deste link
+        if self._indice_fila < len(estado.fila_urls):
+            self.iniciar_item(estado.fila_urls[self._indice_fila])
+        else:
+            self.concluir_fila()
+
+    def concluir_fila(self):
+
+        # Fim da fila: mostra o resumo (com os links que falharam, se houver) e volta ao modo normal
+        total = len(estado.fila_urls)
+        titulo = DICIONARIO_IDIOMAS["msg_sucesso_titulo"][estado.idioma_atual]
+        texto = DICIONARIO_IDIOMAS["msg_sucesso_texto"][estado.idioma_atual]
+        icone = QMessageBox.Icon.Information
+        if self._falhas_fila:
+            # Com falhas, o título vira "Aviso" (e não "Sucesso", que seria estranho se todos falhassem)
+            icone = QMessageBox.Icon.Warning
+            titulo = DICIONARIO_IDIOMAS["msg_aviso_titulo"][estado.idioma_atual]
+            lista = "\n".join(f"• {link[:80]}" for link in self._falhas_fila[:10])
+            texto = DICIONARIO_IDIOMAS["seq_resumo_falhas"][estado.idioma_atual].format(falhas=len(self._falhas_fila), total=total)
+            texto += f"\n\n{lista}"
+
+        estado.fila_urls = []
+        estado.fila_proximo = 0
+        caixa_mensagem(self, icone, titulo, texto)
         self.restaurar_botoes()
         self.entrada_url.clear()
 
     def finalizar_com_erro(self, mensagem_erro):
+
+        # Na fila: guarda o link que falhou, limpa o que sobrou dele e segue para o próximo
+        if estado.fila_urls:
+            registrar_erro("fila_sequencial", mensagem_erro)
+            self._falhas_fila.append(estado.url_atual)
+            self._remover_arquivos_residuais()
+            self.proximo_item_fila()
+            return
+
         # Higieniza códigos ANSI, limita tamanho e força texto puro no diálogo de erro
         registrar_erro("finalizar_com_erro_ui", mensagem_erro)
+        self._remover_arquivos_residuais()  # Apaga os pedaços do download que falhou
         erro_limpo = RE_ANSI_ESCAPE.sub('', str(mensagem_erro)).strip()
         if len(erro_limpo) > 500:
             erro_limpo = erro_limpo[:500] + "..."
@@ -1169,12 +1537,18 @@ class JanelaCrimson(QMainWindow):
         # Libera de novo a escolha de formato, pois o contexto está livre para um novo download
         self.dropdown_audio.setEnabled(True)
         self.dropdown_video.setEnabled(True)
+        self.atualizar_dropdowns_qualidade()  # Libera a qualidade (se ela não estiver fixada nas configurações)
 
         self.botao_baixar_audio.setText(DICIONARIO_IDIOMAS["cor_botao_audio"][estado.idioma_atual])
         self.botao_baixar_video.setText(DICIONARIO_IDIOMAS["cor_botao_video"][estado.idioma_atual])
 
         self.container_progresso.hide()
         self.entrada_url.setReadOnly(False)
+        self.botao_sequencial.setEnabled(True)
+
+        # Fila ainda salva (ex: depois de cancelar): a barra de URL volta a mostrar o aviso do modo sequencial
+        if estado.fila_urls:
+            self.atualizar_modo_sequencial()
 
         self.botao_pausar.setEnabled(False)
         self.botao_continuar.setEnabled(False)
@@ -1213,18 +1587,25 @@ class JanelaCrimson(QMainWindow):
         self._thread_download = nova_thread
         nova_thread.start()
 
-    def _remover_arquivos_residuais(self):
+    def _remover_arquivos_residuais(self, nome_temporario=None):
+
+        # Sem nome informado, limpa o download atual
+        nome = nome_temporario or estado.nome_temporario_atual
         try:
-            if not estado.nome_temporario_atual:
+            if not nome:
                 return
             # Apaga da pasta temporária tudo que pertence a este download (.part, .ytdl, faixas separadas...)
-            base_nome = os.path.join(temp_dir, estado.nome_temporario_atual)
+            base_nome = os.path.join(temp_dir, nome)
             arquivos_residuais = glob.glob(glob.escape(base_nome) + ".*")
             for arq in arquivos_residuais:
                 try:
                     os.remove(arq)
                 except Exception:
                     pass
+
+            # Downloads de playlist usam uma subpasta com o mesmo nome, que é apagada inteira
+            if os.path.isdir(base_nome):
+                shutil.rmtree(base_nome, ignore_errors=True)
         except Exception as erro_res:
             registrar_erro("remover_arquivos_residuais", erro_res)
 
@@ -1238,12 +1619,72 @@ class JanelaCrimson(QMainWindow):
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
         if resposta == QMessageBox.StandardButton.Yes:
-            estado.estado_download = "cancelado"
-            if self._evento_cancelar_atual:
-                self._evento_cancelar_atual.set()
-            encerrar_processos_filhos()
-            if self._thread_download and self._thread_download.is_alive():
-                self._thread_download.join(timeout=1.0)
+            self.cancelar_download()
+
+    def cancelar_download(self):
+
+        # Interrompe o download, apaga os arquivos temporários e devolve a tela ao estado inicial
+        # (usado pelo botão de excluir e pelo "Finalizar" do aviso de disco cheio)
+        estado.estado_download = "cancelado"
+        if self._evento_cancelar_atual:
+            self._evento_cancelar_atual.set()
+        encerrar_processos_filhos()
+
+        # Se a thread ainda está terminando, apagar agora seria inútil (ela poderia recriar os arquivos):
+        # ela mesma apaga os temporários ao sair. Assim a janela não precisa ficar travada esperando
+        if self._thread_download and self._thread_download.is_alive():
+            self._limpar_ao_sair.add(estado.nome_temporario_atual)
+        else:
             self._remover_arquivos_residuais()
-            self.restaurar_botoes()
+        self.restaurar_botoes()
+
+        # A fila não é apagada ao cancelar, para o usuário poder recomeçar sem colar os links de novo
+        if not estado.fila_urls:
             self.entrada_url.clear()
+
+    # ------------------------------------------------------------------
+    # --- Aviso de Disco Cheio ---
+    def pastas_do_download(self):
+        # Pastas onde o download escreve, a temporária e a de destino
+        destino = estado.pasta_destino_atual or os.path.dirname(estado.caminho_salvamento_atual)
+        return temp_dir, destino
+
+    def avisar_disco_cheio(self):
+
+        """
+        Chamado quando o disco enche durante o download (ou ao mover o arquivo pronto)
+        O download já está pausado; a tela mostra os botões de pausa e o usuário escolhe:
+        -> Continuar: só retoma se algum espaço tiver sido liberado, senão o aviso aparece de novo
+        -> Finalizar: cancela o download e apaga os arquivos temporários
+        """
+
+        self.botao_pausar.setEnabled(False)
+        self.botao_continuar.setEnabled(True)
+        self.botao_excluir.setEnabled(True)
+        self.atualizar_icones_controles()
+        self.set_progresso_ui(self.barra_progresso.value(), DICIONARIO_IDIOMAS["msg_disco_cheio_titulo"][estado.idioma_atual])
+
+        # Espaço livre no momento do erro, para saber depois se o usuário liberou alguma coisa
+        livre_no_erro = espaco_livre(*self.pastas_do_download())
+
+        while True:
+            caixa = QMessageBox(self)
+            caixa.setIcon(QMessageBox.Icon.Warning)
+            caixa.setWindowTitle(DICIONARIO_IDIOMAS["msg_disco_cheio_titulo"][estado.idioma_atual])
+            caixa.setText(DICIONARIO_IDIOMAS["msg_disco_cheio_texto"][estado.idioma_atual])
+            botao_finalizar = caixa.addButton(DICIONARIO_IDIOMAS["btn_finalizar"][estado.idioma_atual], QMessageBox.ButtonRole.RejectRole)
+            botao_continuar = caixa.addButton(DICIONARIO_IDIOMAS["btn_continuar"][estado.idioma_atual], QMessageBox.ButtonRole.AcceptRole)
+            caixa.setDefaultButton(botao_continuar)
+            caixa.exec()
+            clicado = caixa.clickedButton()
+
+            if clicado == botao_finalizar:
+                self.cancelar_download()
+                return
+            if clicado != botao_continuar:
+                return  # Fechou o aviso pelo 'X': o download fica pausado e os botões da tela continuam valendo
+
+            # Só retoma se algum espaço foi liberado desde o erro (se ainda não for suficiente, o aviso volta sozinho)
+            if espaco_livre(*self.pastas_do_download()) > livre_no_erro:
+                self.acionar_retomar()
+                return
