@@ -8,11 +8,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "crimson"
-version = "4.0.0"
+version = "4.1.0"
 description = "Graphical client for downloading and converting online videos and audio streams (yt-dlp + FFmpeg)"
 readme = "README.md"
-license = "GPL-3.0-or-later"
-license-files = ["LICENSE"]
+license = "GPL-3.0-or-later AND Apache-2.0"
+license-files = ["LICENSE", "licenses/Material-Symbols-Apache-2.0.txt"]
 authors = [{ name = "LuanDevCodes" }]
 requires-python = ">=3.9"
 keywords = ["yt-dlp", "ffmpeg", "downloader", "pyside6", "qt6"]

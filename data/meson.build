@@ -22,6 +22,12 @@ install_data(
   install_dir: get_option('datadir') / 'icons/hicolor/512x512/apps',
 )
 
+# Licença dos ícones da interface (Material Symbols, Apache-2.0), instalada na pasta padrão de licenças do app
+install_data(
+  '../licenses/Material-Symbols-Apache-2.0.txt',
+  install_dir: get_option('datadir') / 'licenses' / app_id,
+)
+
 # Testes automáticos (rodam com 'meson test -C build'): só rodam se a ferramenta existir no computador
 desktop_validate = find_program('desktop-file-validate', required: false)
 if desktop_validate.found()
