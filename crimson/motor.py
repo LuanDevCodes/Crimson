@@ -9,6 +9,7 @@ import glob         # Para procurar arquivos na pasta temporária pelo nome
 import shutil       # Usado para limpeza segura de pastas temporárias e localização de binários no sistema
 import subprocess   # Usado para executar comandos do sistema (como atualizar o yt-dlp ou finalizar processos)
 import time         # Usado para saber a idade dos arquivos que sobraram na pasta temporária
+import re           # Expressões regulares, são bem úteis para manipular, localizar e filtrar strings
 
 from crimson.config import SISTEMA, lib_dir, temp_dir, registrar_erro
 
@@ -236,6 +237,38 @@ class RegistradorPlaylist:
         print(mensagem)
         self.falhas.append(mensagem)
 
+# --- Conversão de Links do Vimeo ---
+# Desde 2026 o Vimeo exige login para ler a página comum do vídeo (vimeo.com/ID), e o yt-dlp falha com
+# "The web client only works when logged-in". Já o player embutido (player.vimeo.com/video/ID) funciona sem login
+# reconhece padrões como 'vimeo.com/ID', 'vimeo.com/ID/CODIGO' (vídeo não listado), 'vimeo.com/channels/NOME/ID',
+# 'vimeo.com/groups/NOME/videos/ID', 'vimeo.com/album/NOME/video/ID', 'vimeo.com/showcase/NOME/video/ID', 'vimeo.com/video/ID' e 'vimeo.com/m/ID'
+# links de coleções inteiras (showcase, álbuns, perfis) não batem com o padrão e seguem sem alteração
+# '[0-9]' em vez de '\d': no Python, '\d' também aceita dígitos de outros alfabetos (ex: os arábicos '١٢٣')
+# O código do vídeo não listado tem sempre 10 caracteres hexadecimais, a mesma regra usada pelo yt-dlp
+# re.IGNORECASE ignora maiúsculas e minúsculas (ex: 'VIMEO.com' também é reconhecido)
+PADRAO_LINK_VIMEO = re.compile(
+    r'^https?://(?:www\.)?vimeo\.com/'
+    r'(?:channels/[^/]+/|groups/[^/]+/videos/|(?:album|showcase)/[^/]+/video/|videos?/|m/)?'
+    r'([0-9]+)(?:/([0-9a-f]{10}))?/?(?:[?#].*)?$',
+    re.IGNORECASE
+)
+
+def converter_link_vimeo(url):
+    
+    # Devolve o link do player embutido, qualquer link que não seja de um vídeo do Vimeo volta igual
+    encontrado = PADRAO_LINK_VIMEO.match(url.strip())
+    
+    if not encontrado:
+        return url
+
+    id_video, codigo_privado = encontrado.groups()
+    link_player = f"https://player.vimeo.com/video/{id_video}"
+    
+    # Vídeos não listados precisam do código extra, que no player vai no parâmetro '?h='
+    if codigo_privado:
+        link_player += f"?h={codigo_privado}"
+    return link_player
+
 def baixar_midia(url, tipo, formato, hook_progresso, nome_temporario, qualidade="melhor", baixar_playlist=False, falhas=None):
 
     """
@@ -247,6 +280,9 @@ def baixar_midia(url, tipo, formato, hook_progresso, nome_temporario, qualidade=
 
     if falhas is None:
         falhas = []
+
+    # Links comuns do Vimeo passam a usar o player embutido, que não exige login
+    url = converter_link_vimeo(url)
 
     # O download acontece na pasta temporária do aplicativo, e não direto na pasta que o usuário escolheu
     # (no Flatpak o app só pode escrever nos locais liberados pelo portal)
