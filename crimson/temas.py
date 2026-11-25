@@ -139,8 +139,161 @@ TEMAS = {
         "cor_do_texto_magua":           "#7A8B9E",  # marca d'água
         "cor_progresso_fundo":          "#161920",  # trilho
         "cor_progresso_barra":          "#8EA7C7"   # preenchimento platina lustrosa
+    },
+
+    "Star Hunter": {
+        "cor_fundo_janela":             "#0A0E24",  # azul-noite do espaço profundo
+        "cor_card":                     "#151C3D",  # vidro escuro (onde a transparência não é possível)
+        "cor_borda_card":               "#4A5C9E",  # contorno azulado do vidro
+        "cor_do_texto":                 "#EEF2FF",  # branco estelar levemente azulado
+        "cor_texto_secundario":         "#AAB6E6",  # azul-lavanda suave
+        "cor_botao_audio":              "#3A4F96",  # azul cósmico
+        "cor_botao_audio_hover":        "#4A62B2",  # hover áudio
+        "cor_botao_video":              "#4E4BA8",  # índigo nebular
+        "cor_botao_video_hover":        "#625FC4",  # hover vídeo
+        "cor_fonte_botoes":             "#FFFFFF",  # texto branco puro
+        "cor_barra_de_pesquisa":        "#0E1432",  # painel escuro da barra
+        "cor_texto_caixa_de_pesquisa":  "#EEF2FF",  # texto da barra
+        "cor_de_fundo_dropdown":        "#121836",  # fundo da lista aberta
+        "cor_do_hover_dropdown":        "#26306A",  # hover da lista
+        "cor_da_borda_botao_video":     "#8C8AF0",  # borda vídeo
+        "cor_da_borda_botao_audio":     "#7F9BF0",  # borda áudio
+        "cor_do_texto_magua":           "#7F89BD",  # marca d'água
+        "cor_progresso_fundo":          "#0E1432",  # trilho
+        "cor_progresso_barra":          "#7FB8FF"   # barra de progresso
+    },
+
+    "Komoki": {
+        "cor_fundo_janela":             "#15302A",  # verde profundo da floresta
+        "cor_card":                     "#1E3D33",  # vidro de folhagem (onde a transparência não é possível)
+        "cor_borda_card":               "#5E8F6E",  # contorno de musgo
+        "cor_do_texto":                 "#F1F6E9",  # creme claro, como a luz filtrada pelas folhas
+        "cor_texto_secundario":         "#BFD8B4",  # verde-claro suave
+        "cor_botao_audio":              "#3F7A5A",  # musgo
+        "cor_botao_audio_hover":        "#4C8E69",  # hover áudio
+        "cor_botao_video":              "#2F7470",  # água esverdeada
+        "cor_botao_video_hover":        "#3A8A85",  # hover vídeo
+        "cor_fonte_botoes":             "#FFFFFF",  # texto branco puro
+        "cor_barra_de_pesquisa":        "#10261F",  # painel escuro da barra
+        "cor_texto_caixa_de_pesquisa":  "#F1F6E9",  # texto da barra
+        "cor_de_fundo_dropdown":        "#183A30",  # fundo da lista aberta
+        "cor_do_hover_dropdown":        "#2A5546",  # hover da lista
+        "cor_da_borda_botao_video":     "#6FC2B4",  # borda vídeo
+        "cor_da_borda_botao_audio":     "#8FCB86",  # borda áudio
+        "cor_do_texto_magua":           "#8FB28A",  # marca d'água
+        "cor_progresso_fundo":          "#10261F",  # trilho
+        "cor_progresso_barra":          "#9FD67A"   # barra de progresso
+    },
+
+    "Time Moves Slow": {
+        "cor_fundo_janela":             "#1E1226",  # roxo do céu logo depois do pôr do sol
+        "cor_card":                     "#2C1830",  # vidro vinho (onde a transparência não é possível)
+        "cor_borda_card":               "#8A5A6E",  # contorno rosado
+        "cor_do_texto":                 "#FFF1E6",  # creme quente
+        "cor_texto_secundario":         "#E5C3B5",  # pêssego suave
+        "cor_botao_audio":              "#A8553A",  # âmbar do entardecer
+        "cor_botao_audio_hover":        "#C0664A",  # hover áudio
+        "cor_botao_video":              "#7A3A6A",  # rosa-violeta do crepúsculo
+        "cor_botao_video_hover":        "#904A80",  # hover vídeo
+        "cor_fonte_botoes":             "#FFFFFF",  # texto branco puro
+        "cor_barra_de_pesquisa":        "#170D1C",  # painel escuro da barra
+        "cor_texto_caixa_de_pesquisa":  "#FFF1E6",  # texto da barra
+        "cor_de_fundo_dropdown":        "#24142A",  # fundo da lista aberta
+        "cor_do_hover_dropdown":        "#3E2440",  # hover da lista
+        "cor_da_borda_botao_video":     "#C98AB8",  # borda vídeo
+        "cor_da_borda_botao_audio":     "#F0A27A",  # borda áudio
+        "cor_do_texto_magua":           "#B08A90",  # marca d'água
+        "cor_progresso_fundo":          "#170D1C",  # trilho
+        "cor_progresso_barra":          "#F0903F"   # barra de progresso
     }
 }
+
+# --- Temas de Vidro (Star Hunter, Komoki e Time Moves Slow) ---
+# Nesses temas, cards, botões e painéis são de vidro translúcido, e a cena animada aparece por trás
+# Cada tema guarda aqui as cores do seu vidro, a janela principal e os diálogos montam os estilos a partir delas
+# ("bolha_1" = botões de áudio e secundários | "bolha_2" = botões de vídeo e principais)
+VIDRO_TEMAS = {
+    "Star Hunter": {
+        # Vidro de escotilha de nave, azul-noite, bolhas azul e violeta, destaque em ciano
+        "painel":           "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(45, 60, 130, 0.30), stop:1 rgba(25, 35, 90, 0.40)); border: 1px solid rgba(165, 200, 255, 0.45);",
+        "botao_topo":       "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(60, 80, 160, 0.34), stop:1 rgba(40, 55, 130, 0.40)); border: 1px solid rgba(165, 200, 255, 0.50);",
+        "botao_topo_hover": "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(80, 105, 190, 0.44), stop:1 rgba(55, 75, 160, 0.50));",
+        "campo":            "rgba(8, 12, 34, 0.55)",
+        "campo_borda":      "rgba(150, 190, 255, 0.45)",
+        "destaque":         "rgba(130, 225, 255, 0.95)",
+        "selecao":          "#5B7BE0",
+        "bolha_1":          "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(200, 220, 255, 0.34), stop:0.48 rgba(110, 145, 240, 0.24), stop:0.52 rgba(75, 105, 215, 0.22), stop:1 rgba(90, 125, 235, 0.32));",
+        "bolha_1_hover":    "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(215, 232, 255, 0.46), stop:0.48 rgba(125, 160, 250, 0.36), stop:0.52 rgba(90, 120, 230, 0.34), stop:1 rgba(105, 140, 245, 0.44));",
+        "bolha_2":          "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(220, 205, 255, 0.34), stop:0.48 rgba(145, 115, 240, 0.24), stop:0.52 rgba(115, 85, 215, 0.22), stop:1 rgba(130, 100, 235, 0.32));",
+        "bolha_2_hover":    "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(232, 220, 255, 0.46), stop:0.48 rgba(160, 130, 250, 0.36), stop:0.52 rgba(130, 100, 230, 0.34), stop:1 rgba(145, 115, 245, 0.44));",
+        "borda_bolha":      "rgba(180, 208, 255, 0.55)",
+        "aba":              "rgba(40, 55, 120, 0.35)",
+        "aba_hover":        "rgba(70, 95, 180, 0.42)",
+        "aba_borda":        "rgba(165, 200, 255, 0.38)",
+        "plasma":           ("#6FD3FF", "#7B8CFF", "#B07BFF"),     # barra de progresso, switch e rolagem
+        "plasma_claro":     ("#B5E9FF", "#8DA0FF", "#A68AF5"),     # rolagem com o mouse por cima
+        "trilho":           ((10, 16, 42, 190), (32, 44, 100, 160), (160, 195, 255, 150)),  # topo, base e borda (RGBA)
+        "menu":             "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(30, 40, 90, 0.97), stop:1 rgba(14, 20, 48, 0.97)); border: 1.5px solid rgba(150, 190, 255, 0.55);",
+        "menu_hover":       "rgba(110, 150, 255, 0.32)",
+        "desativado":       ("#2E5A6EB4", "#73C8D4F5", "#38A5C8FF")  # "vidro apagado": fundo, texto e borda (#AARRGGBB)
+    },
+
+    "Komoki": {
+        # Vidro de folhagem, verde translúcido, bolhas de musgo e de água, destaque dourado como a luz do sol
+        "painel":           "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(24, 52, 38, 0.48), stop:1 rgba(12, 32, 26, 0.56)); border: 1px solid rgba(190, 230, 180, 0.42);",
+        "botao_topo":       "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(45, 85, 62, 0.40), stop:1 rgba(28, 58, 44, 0.48)); border: 1px solid rgba(190, 230, 180, 0.50);",
+        "botao_topo_hover": "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(65, 110, 80, 0.50), stop:1 rgba(40, 78, 58, 0.56));",
+        "campo":            "rgba(8, 24, 18, 0.55)",
+        "campo_borda":      "rgba(180, 225, 170, 0.45)",
+        "destaque":         "rgba(240, 228, 150, 0.95)",
+        "selecao":          "#5E9A6A",
+        "bolha_1":          "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(205, 235, 190, 0.32), stop:0.48 rgba(115, 170, 105, 0.24), stop:0.52 rgba(85, 145, 80, 0.22), stop:1 rgba(100, 160, 95, 0.30));",
+        "bolha_1_hover":    "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(220, 245, 205, 0.44), stop:0.48 rgba(130, 185, 120, 0.36), stop:0.52 rgba(100, 160, 95, 0.34), stop:1 rgba(115, 175, 110, 0.42));",
+        "bolha_2":          "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(195, 238, 230, 0.32), stop:0.48 rgba(95, 170, 160, 0.24), stop:0.52 rgba(65, 140, 135, 0.22), stop:1 rgba(80, 155, 150, 0.30));",
+        "bolha_2_hover":    "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(210, 246, 240, 0.44), stop:0.48 rgba(110, 185, 175, 0.36), stop:0.52 rgba(80, 155, 150, 0.34), stop:1 rgba(95, 170, 165, 0.42));",
+        "borda_bolha":      "rgba(195, 232, 185, 0.55)",
+        "aba":              "rgba(30, 62, 46, 0.38)",
+        "aba_hover":        "rgba(55, 100, 72, 0.46)",
+        "aba_borda":        "rgba(190, 230, 180, 0.40)",
+        "plasma":           ("#D6EE8E", "#86CD78", "#4FB3A6"),     # da folha iluminada à água
+        "plasma_claro":     ("#E6F6B0", "#A2DC93", "#6CC6BA"),
+        "trilho":           ((8, 26, 20, 190), (28, 62, 46, 160), (185, 225, 175, 150)),
+        "menu":             "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(32, 64, 48, 0.97), stop:1 rgba(16, 38, 30, 0.97)); border: 1.5px solid rgba(185, 225, 175, 0.55);",
+        "menu_hover":       "rgba(150, 210, 130, 0.30)",
+        "desativado":       ("#2E6E8C6E", "#73D7E8CD", "#38B4DCAA")
+    },
+
+    "Time Moves Slow": {
+        # Vidro de crepúsculo, vinho translúcido, bolhas âmbar e rosa-violeta, destaque amarelo como a luz do poste
+        "painel":           "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(70, 30, 55, 0.42), stop:1 rgba(35, 14, 35, 0.54)); border: 1px solid rgba(255, 195, 160, 0.42);",
+        "botao_topo":       "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(90, 40, 65, 0.44), stop:1 rgba(50, 22, 45, 0.52)); border: 1px solid rgba(255, 195, 160, 0.50);",
+        "botao_topo_hover": "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(120, 55, 80, 0.54), stop:1 rgba(70, 30, 58, 0.60));",
+        "campo":            "rgba(20, 8, 20, 0.55)",
+        "campo_borda":      "rgba(255, 190, 150, 0.45)",
+        "destaque":         "rgba(255, 214, 120, 0.95)",
+        "selecao":          "#B5506A",
+        "bolha_1":          "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 215, 170, 0.32), stop:0.48 rgba(225, 130, 80, 0.24), stop:0.52 rgba(195, 100, 60, 0.22), stop:1 rgba(210, 115, 70, 0.30));",
+        "bolha_1_hover":    "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 228, 190, 0.44), stop:0.48 rgba(240, 145, 95, 0.36), stop:0.52 rgba(210, 115, 75, 0.34), stop:1 rgba(225, 130, 85, 0.42));",
+        "bolha_2":          "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(245, 200, 230, 0.32), stop:0.48 rgba(185, 95, 150, 0.24), stop:0.52 rgba(150, 65, 125, 0.22), stop:1 rgba(165, 80, 140, 0.30));",
+        "bolha_2_hover":    "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(252, 215, 240, 0.44), stop:0.48 rgba(200, 110, 165, 0.36), stop:0.52 rgba(165, 80, 140, 0.34), stop:1 rgba(180, 95, 155, 0.42));",
+        "borda_bolha":      "rgba(255, 205, 175, 0.55)",
+        "aba":              "rgba(70, 30, 55, 0.40)",
+        "aba_hover":        "rgba(110, 50, 80, 0.48)",
+        "aba_borda":        "rgba(255, 195, 160, 0.40)",
+        "plasma":           ("#FFD27A", "#F0703F", "#B23A6E"),     # as cores do pôr do sol
+        "plasma_claro":     ("#FFE3A8", "#F58F66", "#C9578A"),
+        "trilho":           ((22, 8, 22, 190), (60, 25, 50, 160), (255, 190, 150, 150)),
+        "menu":             "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(60, 26, 50, 0.97), stop:1 rgba(30, 12, 30, 0.97)); border: 1.5px solid rgba(255, 190, 150, 0.55);",
+        "menu_hover":       "rgba(255, 170, 120, 0.28)",
+        "desativado":       ("#2E966E6E", "#73F0D7CD", "#38FFBE96"),
+        "veu_dialogo":      120   # Véu mais escuro nos diálogos, as casas iluminadas atrapalhavam a leitura (os outros temas usam 60)
+    }
+}
+
+def gradiente_plasma(cores):
+    
+    # Monta o gradiente horizontal de 3 cores em formato de stylesheet (usado na rolagem das listas)
+    return f"qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 {cores[0]}, stop:0.5 {cores[1]}, stop:1 {cores[2]})"
 
 def aplicar_paleta_global(cor):
 
@@ -230,6 +383,10 @@ def estilo_lista_dropdown(cor):
     elif estado.tema_atual == "Platinum Disc":
         bg_handle = "qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #A2B9D7, stop:0.5 #657997, stop:1 #475467)"
         bg_handle_hover = "qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #C8DAF2, stop:0.5 #7D93B3, stop:1 #5B6B82)"
+    elif estado.tema_atual in VIDRO_TEMAS:
+        # Temas de vidro, barra de rolagem com o mesmo gradiente da barra de progresso
+        bg_handle = gradiente_plasma(VIDRO_TEMAS[estado.tema_atual]["plasma"])
+        bg_handle_hover = gradiente_plasma(VIDRO_TEMAS[estado.tema_atual]["plasma_claro"])
     else:
         bg_handle = cor["cor_botao_audio"]
         bg_handle_hover = cor["cor_botao_audio_hover"]
@@ -316,6 +473,11 @@ def cores_desativado(cor):
     Em temas claros o cinza é claro; em temas escuros, um cinza escuro, para combinar com o fundo
     O tema é considerado escuro quando o brilho da cor de fundo da janela é baixo (abaixo de 128, numa escala de 0 a 255)
     """
+
+    # Temas de vidro, "vidro apagado", o mesmo vidro dos botões, só que quase transparente e com texto esmaecido
+    # (formato #AARRGGBB: os dois primeiros dígitos são a transparência, de 00 = invisível a FF = opaco)
+    if estado.tema_atual in VIDRO_TEMAS:
+        return VIDRO_TEMAS[estado.tema_atual]["desativado"]
 
     brilho = QColor(cor["cor_fundo_janela"]).lightness()
     if brilho < 128:

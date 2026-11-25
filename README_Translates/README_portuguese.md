@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="../LICENSE"><img src="https://img.shields.io/badge/Licença-GPLv3-blue" alt="Licença: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Versão-v4.1.0-brightgreen" alt="Versão: v4.1.0">
+  <img src="https://img.shields.io/badge/Versão-v4.2.0-brightgreen" alt="Versão: v4.2.0">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/Interface-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
   <img src="https://img.shields.io/badge/Motor-yt--dlp%20%7C%20FFmpeg-E50914" alt="Motor: yt-dlp & FFmpeg">
@@ -21,7 +21,7 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 
 ## ❏ Interface Visual
 
-### → Release 4.1.0 (Atual)
+### → Release 4.2.0 (Atual)
 <div align="center">
   <p><b>Visão Geral da Nova Interface (Tema Frutiger Aero - PySide6)</b></p>
   <img src="../Screenshots/Crimson_main_window.png" alt="Janela Principal do Crimson" width="85%">
@@ -72,9 +72,10 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 - **Escolha de Qualidade**: Escolha a qualidade do áudio (Melhor, 320, 192 ou 128 kbps) e a resolução máxima do vídeo (Melhor, de 2160p até 360p) a cada download, ou fixe uma qualidade na aba Avançado das configurações.
 - **Playlists e Pasta Padrão**: Download opcional de playlists inteiras e uma pasta de destino padrão que dispensa a janela "Salvar como", usando o título da mídia como nome do arquivo.
 - **Proteção Contra Disco Cheio**: Quando o disco enche, o download é pausado em vez de falhar, e pode ser retomado depois de liberar espaço.
+- **Mensagens de Erro Amigáveis**: Quando um download falha, o Crimson mostra uma explicação curta e traduzida (link não suportado, conteúdo privado ou removido, login exigido, bloqueio por região, proteção contra cópia (DRM), bloqueio temporário do site, qualidade ou formato indisponível, falha na conversão, problema de conexão, transmissão ao vivo que ainda não começou ou falta de permissão para gravar na pasta) no lugar da mensagem técnica, que fica guardada apenas no registro de erros.
 - **Conversão por Fator Externo (FFmpeg)**: O motor de extração puxa nativamente os vídeos na melhor qualidade, mas geralmente separadamente da faixa de áudio de alta resolução. O Crimson aciona o FFmpeg de maneira integrada para mesclar essas duas camadas ou convertê-las para formatos específicos.
 - **Internacionalização Completa em Tempo Real (45 Idiomas Nativos)**: Suporte integral a 45 idiomas organizados em ordem alfabética (Amárico, Árabe, Bambara, Bengali, Catalão, Chinês Simplificado e Tradicional, Tcheco, Holandês, Inglês, Filipino, Francês, Alemão, Grego, Hauçá, Hindi, Húngaro, Indonésio, Italiano, Japonês, Coreano, Latim, Malaio, Marati, Nepalês, Norueguês, Persa, Polonês, Português, Quíchua, Romeno, Russo, Espanhol, Suaíli, Sueco, Tâmil, Telugu, Tailandês, Turco, Ucraniano, Urdu, Uzbeque, Vietnamita, Iorubá e Zulu). A troca é instantânea pelo Painel de Configurações, sem necessidade de reiniciar.
-- **Identidade Visual e 6 Temas Dinâmicos**: O aplicativo suporta variações completas de tema com paletas harmoniosas: `Frutiger Aero` (tema principal com bolhas animadas e vidro Aqua 3D), `Dark` (escuro moderno), `Egg` (creme aconchegante), `Matcha` (verde suave), `Savage` (vermelho vivo e carmesim puro) e `Platinum Disc` (cinza titânio metálico), além de contar com um interruptor (switch) dedicado para desativar animações quando desejado.
+- **Identidade Visual e 9 Temas Dinâmicos**: O aplicativo suporta variações completas de tema com paletas harmoniosas: `Frutiger Aero` (tema principal com bolhas animadas e vidro Aqua 3D), `Dark` (escuro moderno), `Egg` (creme aconchegante), `Matcha` (verde suave), `Savage` (vermelho vivo e carmesim puro), `Platinum Disc` (cinza titânio metálico) e três temas animados de vidro: `Star Hunter` (espaço profundo), `Komoki` (floresta antiga com água) e `Time Moves Slow` (interior em pixel art ao pôr do sol), além de contar com um interruptor (switch) dedicado para desativar animações quando desejado.
 - **Eficiência Extrema para Computadores Modestos**:
   - *Cache em RAM de Ícones*: O disco só é lido uma única vez; acessos subsequentes ocorrem em microssegundos direto da memória.
   - *Throttling de Progresso (~16 FPS / 60ms)*: Reduz em ~85% a sobrecarga de repaints na thread de interface durante conexões velozes.
@@ -197,7 +198,7 @@ Desde a V.4.0.0, o Crimson é um pacote Python modular (`crimson/`) com sistema 
 | `crimson/dialogos.py` | Janelas de Configurações/Sobre e de Plataformas Suportadas |
 | `crimson/widgets.py` | Widgets personalizados (dropdown, barra de progresso, interruptor e fundo animado) |
 | `crimson/motor.py` | Motor de download (yt-dlp e FFmpeg), mecanismo de pausa e limpeza de processos |
-| `crimson/idiomas.py` / `crimson/temas.py` | As 25 traduções e os 6 temas visuais |
+| `crimson/idiomas.py` / `crimson/temas.py` | As 45 traduções e os 9 temas visuais |
 | `crimson/config.py` / `crimson/estado.py` | Configurações salvas, caminhos e estado compartilhado |
 | `crimson/icones.py` | Carregamento e recoloração dos ícones |
 | `data/` | Atalho (`.desktop`) e metadados AppStream para Linux |

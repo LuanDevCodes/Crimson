@@ -2,7 +2,7 @@
 <component type="desktop-application">
   <id>io.github.luandevcodes.Crimson</id>
   <name>Crimson</name>
-  <summary>Download and convert online videos and audio streams</summary>
+  <summary>Download and convert videos</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later AND Apache-2.0</project_license>
 
@@ -30,7 +30,7 @@
       <li>Extract audio into MP3, M4A, WAV or FLAC, in the best available quality or at 320, 192 or 128 kbps</li>
       <li>Download a single media link or an entire playlist, or queue up to 50 links with Sequential Archiving</li>
       <li>Save directly to a default folder, pause and resume transfers, and get a warning when the disk runs out of space</li>
-      <li>Customize the interface with six curated visual themes, including Frutiger Aero with optional animations</li>
+      <li>Customize the interface with nine curated visual themes, including Frutiger Aero and the animated glass themes</li>
       <li>Switch instantly between 45 supported languages at runtime</li>
     </ul>
   </description>
@@ -41,36 +41,46 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.1.0/Screenshots/Crimson_main_window.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_main_window.png</image>
       <caption>Main download interface in the Frutiger Aero theme</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.1.0/Screenshots/Crimson_download_progress.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_download_progress.png</image>
       <caption>Live download progress with transfer speed and time remaining</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.1.0/Screenshots/Crimson_sequential_archiving.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_sequential_archiving.png</image>
       <caption>Sequential Archiving queue for downloading several links one after another</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.1.0/Screenshots/Crimson_settings_tab.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_settings_tab.png</image>
       <caption>System tab with language, theme and animation settings</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.1.0/Screenshots/Crimson_advanced_tab.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_advanced_tab.png</image>
       <caption>Advanced tab with download quality, playlist and default folder options</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.1.0/Screenshots/Crimson_about_tab.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_about_tab.png</image>
       <caption>About tab with license information and credits</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.1.0/Screenshots/Crimson_supported_platforms.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_supported_platforms.png</image>
       <caption>Dialog linking to the list of supported media platforms</caption>
     </screenshot>
   </screenshots>
 
   <releases>
+    <release version="4.2.0" date="2026-11-24">
+      <description>
+        <p>New visual themes and clearer error messages:</p>
+        <ul>
+          <li>Three new animated glass themes: Star Hunter, Komoki and Time Moves Slow</li>
+          <li>Download errors now show a short, translated explanation instead of the technical message</li>
+          <li>Improved compatibility with public videos on some platforms</li>
+        </ul>
+      </description>
+    </release>
     <release version="4.1.0" date="2026-11-20">
       <url type="details">https://github.com/LuanDevCodes/Crimson/releases/tag/V.4.1.0</url>
       <description>

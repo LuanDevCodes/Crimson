@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue" alt="License: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Release-v4.1.0-brightgreen" alt="Release: v4.1.0">
+  <img src="https://img.shields.io/badge/Release-v4.2.0-brightgreen" alt="Release: v4.2.0">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/GUI-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
   <img src="https://img.shields.io/badge/Engine-yt--dlp%20%7C%20FFmpeg-E50914" alt="Engine: yt-dlp & FFmpeg">
@@ -23,7 +23,7 @@ The software autonomously manages its underlying extraction engine, performing a
 
 ## ❏ Graphical Interface & Themes
 
-### → Release 4.1.0 (Current)
+### → Release 4.2.0 (Current)
 <div align="center">
   <p><b>Main Window Overview (Frutiger Aero Theme - PySide6)</b></p>
   <img src="Screenshots/Crimson_main_window.png" alt="Crimson Main Window" width="85%">
@@ -74,9 +74,10 @@ The software autonomously manages its underlying extraction engine, performing a
 - **Quality Selection**: Choose the audio quality (Best, 320, 192 or 128 kbps) and the maximum video resolution (Best, 2160p down to 360p) for each download, or lock a fixed quality in the Advanced settings.
 - **Playlists & Default Folder**: Optional whole-playlist downloads and a default destination folder that skips the "Save as" dialog, naming each file after the media title.
 - **Disk-Full Protection**: When the disk runs out of space, the download is paused instead of failing and can be resumed after freeing some space.
+- **Friendly Error Messages**: When a download fails, Crimson shows a short, translated explanation (unsupported link, private or removed content, login required, region-locked, DRM-protected, temporarily blocked by the site, quality or format unavailable, conversion failure, connection problem, live stream not started, or no permission to write to the folder) instead of the technical message, which is kept only in the error log.
 - **Direct Stream Multiplexing (FFmpeg)**: Video and audio channels are merged without re-encoding overhead whenever possible, preserving CPU cycles and completing conversions in seconds.
 - **Real-Time Internationalization (45 Native Languages)**: Full native support for 45 languages sorted alphabetically, including Amharic, Arabic, Bambara, Bengali, Catalan, Chinese (Simplified and Traditional), Czech, Dutch, English, Filipino, French, German, Greek, Hausa, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Latin, Malay, Marathi, Nepali, Norwegian, Persian, Polish, Portuguese, Quechua, Romanian, Russian, Spanish, Swahili, Swedish, Tamil, Telugu, Thai, Turkish, Ukrainian, Urdu, Uzbek, Vietnamese, Yoruba, and Zulu. Languages can be switched on the fly without restarting.
-- **Visual Identity & 6 Dynamic Themes**: Curated aesthetic options including the signature **Frutiger Aero** (featuring animated bubbles, sky gradients, and glossy Aqua glassmorphism), **Dark**, **Egg**, **Matcha**, **Savage**, and **Platinum Disc**, with a built-in animation toggle switch for zero-CPU static mode.
+- **Visual Identity & 9 Dynamic Themes**: Curated aesthetic options including the signature **Frutiger Aero** (featuring animated bubbles, sky gradients, and glossy Aqua glassmorphism), **Dark**, **Egg**, **Matcha**, **Savage**, and **Platinum Disc**, plus three animated glass themes: **Star Hunter** (deep space), **Komoki** (ancient forest with water) and **Time Moves Slow** (pixel art countryside at sunset), with a built-in animation toggle switch for zero-CPU static mode.
 - **Hardware Optimization for Low-End PCs**:
   - *In-Memory Icon Cache*: Image assets are read from disk only once; subsequent lookups take microseconds directly from RAM.
   - *Progress Throttling (~16 FPS / 60ms)*: Eliminates ~85% of redundant UI repaint overhead during high-speed downloads.
@@ -205,7 +206,7 @@ Since V.4.0.0, Crimson is a modular Python package (`crimson/`) with its own bui
 | `crimson/dialogos.py` | Settings/About and Supported Platforms dialogs |
 | `crimson/widgets.py` | Custom widgets (dropdown, progress bar, switch, animated background) |
 | `crimson/motor.py` | yt-dlp and FFmpeg download engine, pause mechanism and process cleanup |
-| `crimson/idiomas.py` / `crimson/temas.py` | The 25 translations and the 6 visual themes |
+| `crimson/idiomas.py` / `crimson/temas.py` | The 45 translations and the 9 visual themes |
 | `crimson/config.py` / `crimson/estado.py` | Saved settings, paths and shared state |
 | `crimson/icones.py` | Icon loading and theme recoloring |
 | `data/` | Desktop entry and AppStream metadata for Linux |

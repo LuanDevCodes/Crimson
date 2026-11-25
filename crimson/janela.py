@@ -25,11 +25,11 @@ from PySide6.QtGui import QIcon, QCursor, QAction
 from crimson import VERSAO_APP, TITULO_JANELA
 from crimson.config import EM_FLATPAK, lib_dir, temp_dir, registrar_erro
 from crimson.estado import estado
-from crimson.temas import TEMAS, aplicar_paleta_global, estilo_lista_dropdown, estilo_desativado
+from crimson.temas import TEMAS, VIDRO_TEMAS, aplicar_paleta_global, estilo_lista_dropdown, estilo_desativado, gradiente_plasma
 from crimson.idiomas import DICIONARIO_IDIOMAS
 from crimson.icones import caminho_icons, carregar_icone_tematico
 from crimson.motor import (
-    yt_dlp, DownloadPausado, baixar_midia, encerrar_processos_filhos, erro_disco_cheio, espaco_livre,
+    yt_dlp, DownloadPausado, baixar_midia, encerrar_processos_filhos, erro_disco_cheio, classificar_erro, espaco_livre,
     limpar_temp_antigo, QUALIDADES_AUDIO, QUALIDADES_VIDEO
 )
 from crimson.widgets import ComboBoxModerno, BarraProgressoModerna, WidgetFundoCrimson
@@ -725,6 +725,112 @@ class JanelaCrimson(QMainWindow):
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #566377, stop:0.48 #3D4759, stop:0.52 #303947, stop:1 #3F4B5E);
                 color: #FFFFFF;
                 border: 1px solid rgba(162, 185, 215, 0.70);
+            """
+        elif estado.tema_atual in VIDRO_TEMAS:
+            
+            # Temas de vidro (Star Hunter e Komoki), painéis translúcidos com borda uniforme, a cena aparece por trás
+            # As cores de cada tema ficam em VIDRO_TEMAS (temas.py)
+            vidro = VIDRO_TEMAS[estado.tema_atual]
+            vidro_card = f"""
+                {vidro["painel"]}
+                border-radius: 14px;
+            """
+            estilo_card = vidro_card
+            estilo_card_ctrl = vidro_card
+            estilo_btn_topo = f"""
+                {vidro["botao_topo"]}
+                border-radius: 12px;
+            """
+            estilo_btn_topo_hover = f"""
+                {vidro["botao_topo_hover"]}
+                border: 1px solid {vidro["destaque"]};
+            """
+            estilo_url = f"""
+                background: {vidro["campo"]};
+                color: {cor["cor_texto_caixa_de_pesquisa"]};
+                border: 1.5px solid {vidro["campo_borda"]};
+                border-radius: 11px;
+                padding: 0px 16px;
+                font-size: 14px;
+                font-weight: 500;
+                selection-background-color: {vidro["selecao"]};
+                selection-color: #FFFFFF;
+            """
+            estilo_url_focus = f"border: 1.5px solid {vidro['destaque']};"
+
+            # Botões em "bolha de vidro" com duas cores (áudio e vídeo), a borda acende com a cor de destaque no hover
+            bolha_audio = vidro["bolha_1"]
+            bolha_audio_hover = vidro["bolha_1_hover"]
+            bolha_video = vidro["bolha_2"]
+            bolha_video_hover = vidro["bolha_2_hover"]
+            borda_bolha = f"border: 1px solid {vidro['borda_bolha']};"
+            borda_bolha_hover = f"border: 1px solid {vidro['destaque']};"
+
+            estilo_dropdown_audio = f"""
+                {bolha_audio}
+                color: #FFFFFF;
+                {borda_bolha}
+                border-radius: 9px;
+                padding: 4px 24px 4px 10px;
+                font-size: 12px;
+                font-weight: bold;
+            """
+            estilo_dropdown_audio_hover = bolha_audio_hover + borda_bolha_hover
+            estilo_dropdown_video = f"""
+                {bolha_video}
+                color: #FFFFFF;
+                {borda_bolha}
+                border-radius: 9px;
+                padding: 4px 24px 4px 10px;
+                font-size: 12px;
+                font-weight: bold;
+            """
+            estilo_dropdown_video_hover = bolha_video_hover + borda_bolha_hover
+            estilo_btn_audio = f"""
+                {bolha_audio}
+                color: #FFFFFF;
+                {borda_bolha}
+                border-radius: 9px;
+                padding: 6px 14px;
+                font-size: 13px;
+                font-weight: bold;
+            """
+            estilo_btn_audio_hover = bolha_audio_hover + borda_bolha_hover
+            estilo_btn_video = f"""
+                {bolha_video}
+                color: #FFFFFF;
+                {borda_bolha}
+                border-radius: 9px;
+                padding: 6px 14px;
+                font-size: 13px;
+                font-weight: bold;
+            """
+            estilo_btn_video_hover = bolha_video_hover + borda_bolha_hover
+            estilo_barra = f"""
+                background: {vidro["campo"]};
+                border: 1.2px solid {vidro["campo_borda"]};
+                border-radius: 9px;
+            """
+            estilo_barra_chunk = f"""
+                background: {gradiente_plasma(vidro["plasma"])};
+                border-radius: 7px;
+            """
+            # O menu é uma janelinha separada: fica quase opaco, pois por trás dele está a área de trabalho, não a cena
+            estilo_menu = f"""
+                {vidro["menu"]}
+                border-radius: 10px;
+                padding: 5px;
+            """
+            estilo_menu_item = f"""
+                color: {cor["cor_do_texto"]};
+                padding: 7px 22px;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 500;
+            """
+            estilo_menu_hover = f"""
+                background: {vidro["menu_hover"]};
+                color: #FFFFFF;
             """
         else:
             hover_bg_menu = cor["cor_botao_audio"] if estado.tema_atual in ("Dark", "Matcha") else cor["cor_botao_video"]
@@ -1513,18 +1619,17 @@ class JanelaCrimson(QMainWindow):
             self.proximo_item_fila()
             return
 
-        # Higieniza códigos ANSI, limita tamanho e força texto puro no diálogo de erro
+        # O erro técnico completo vai só para o registro de erros; na tela aparece apenas uma explicação amigável
         registrar_erro("finalizar_com_erro_ui", mensagem_erro)
         self._remover_arquivos_residuais()  # Apaga os pedaços do download que falhou
         erro_limpo = RE_ANSI_ESCAPE.sub('', str(mensagem_erro)).strip()
-        if len(erro_limpo) > 500:
-            erro_limpo = erro_limpo[:500] + "..."
+        chave_erro = classificar_erro(erro_limpo)  # Descobre o tipo do erro (link inválido, conteúdo privado, sem internet...)
 
         msg_box = QMessageBox(self)
         msg_box.setIcon(QMessageBox.Icon.Critical)
         msg_box.setWindowTitle(DICIONARIO_IDIOMAS["msg_erro_titulo"][estado.idioma_atual])
         msg_box.setTextFormat(Qt.TextFormat.PlainText)
-        msg_box.setText(f"{DICIONARIO_IDIOMAS['msg_erro_generico'][estado.idioma_atual]}{erro_limpo}")
+        msg_box.setText(f"{DICIONARIO_IDIOMAS['msg_erro_generico'][estado.idioma_atual]}{DICIONARIO_IDIOMAS[chave_erro][estado.idioma_atual]}")
         msg_box.exec()
         self.restaurar_botoes()
 

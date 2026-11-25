@@ -7,7 +7,7 @@
 
 # Constante única de versão para manter sincronia em toda a aplicação
 # Ao lançar uma nova versão, atualize também: pyproject.toml, meson.build e a lista <releases> do metainfo.xml
-VERSAO_APP = "V.4.1.0"
+VERSAO_APP = "V.4.2.0"
 
 # Título fixo da barra de todas as janelas do Crimson (principal, configurações, fila e plataformas)
 TITULO_JANELA = "Crimson - Media Archiving"

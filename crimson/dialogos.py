@@ -16,11 +16,11 @@ from PySide6.QtGui import QCursor
 from crimson import TITULO_JANELA
 from crimson.config import registrar_erro, salvar_configuracoes
 from crimson.estado import estado
-from crimson.temas import TEMAS, estilo_lista_dropdown, estilo_desativado, icone_github
+from crimson.temas import TEMAS, VIDRO_TEMAS, estilo_lista_dropdown, estilo_desativado, icone_github
 from crimson.idiomas import IDIOMAS_SUPORTADOS, DICIONARIO_IDIOMAS
 from crimson.icones import carregar_pixmap_icone, carregar_icone_tematico
 from crimson.motor import encerrar_processos_filhos, QUALIDADES_AUDIO, QUALIDADES_VIDEO
-from crimson.widgets import ComboBoxModerno, BotaoSwitchTema
+from crimson.widgets import ComboBoxModerno, BotaoSwitchTema, pintar_fundo_cena
 
 # --------------------------------------------------------------------------------------------------------------------
 # --- Pop-ups de Mensagem (Pergunta, Informação e Aviso) ---
@@ -46,6 +46,26 @@ def caixa_mensagem(pai, icone, titulo, texto, botoes=QMessageBox.StandardButton.
 
     caixa.exec()
     return caixa.standardButton(caixa.clickedButton())
+
+# --------------------------------------------------------------------------------------------------------------------
+# --- Vidro dos Temas Star Hunter e Komoki (compartilhado pelas janelas de Fila, Plataformas e Configurações) ---
+# --------------------------------------------------------------------------------------------------------------------
+
+def painel_vidro():
+    
+    # Painel de vidro translúcido com borda uniforme do tema atual (o mesmo dos cards da janela principal)
+    return VIDRO_TEMAS[estado.tema_atual]["painel"] + " border-radius: 14px;"
+
+def botao_vidro(numero, hover=False):
+
+    # Botão em "bolha de vidro" do tema atual, numero 1 = secundário, numero 2 = principal
+    
+    # No hover, a borda acende com a cor de destaque do tema
+    vidro = VIDRO_TEMAS[estado.tema_atual]
+    
+    if hover:
+        return f"{vidro[f'bolha_{numero}_hover']} border: 1px solid {vidro['destaque']};"
+    return f"{vidro[f'bolha_{numero}']} color: #FFFFFF; border: 1px solid {vidro['borda_bolha']};"
 
 # --- Texto exibido para cada qualidade ---
 def texto_qualidade(valor, tipo):
@@ -243,6 +263,12 @@ class DialogoSequencial(QDialog):
 
         return janela.exec() == QDialog.DialogCode.Accepted
 
+    def paintEvent(self, event):
+        # Nos temas de vidro, o fundo da janela é a cena do tema (parada), e os painéis de vidro ficam por cima
+        if estado.tema_atual in VIDRO_TEMAS:
+            pintar_fundo_cena(self)
+        super().paintEvent(event)
+
     def atualizar_textos_e_tema(self):
         cor = TEMAS[estado.tema_atual]
         self.setWindowTitle(TITULO_JANELA)  # Barra com o título fixo do app (o nome da janela já aparece no título interno)
@@ -266,12 +292,22 @@ class DialogoSequencial(QDialog):
             estilo_btn_sec_hover = "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #788EAF, stop:0.48 #586C8C, stop:0.52 #455776, stop:1 #536886); border: 1px solid #B0C4DE;"
             estilo_btn_prim = "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7592B8, stop:0.48 #547298, stop:0.52 #405C80, stop:1 #4D6B90); color: #FFFFFF; border: 1px solid #A2B9D7;"
             estilo_btn_prim_hover = "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8BA7CE, stop:0.48 #6584AB, stop:0.52 #4F6F94, stop:1 #6080A5); border: 1px solid #C4D7F0;"
+        elif estado.tema_atual in VIDRO_TEMAS:
+            # A cena é pintada no paintEvent, a cor abaixo só aparece na janelinha de confirmação da lista
+            estilo_fundo = f"background-color: {cor['cor_fundo_janela']};"
+            estilo_btn_sec = botao_vidro(1)
+            estilo_btn_sec_hover = botao_vidro(1, hover=True)
+            estilo_btn_prim = botao_vidro(2)
+            estilo_btn_prim_hover = botao_vidro(2, hover=True)
         else:
             estilo_fundo = f"background-color: {cor['cor_fundo_janela']};"
             estilo_btn_sec = f"background-color: {cor['cor_botao_audio']}; color: {cor['cor_fonte_botoes']}; border: 1px solid {cor['cor_da_borda_botao_audio']};"
             estilo_btn_sec_hover = f"background-color: {cor['cor_botao_audio_hover']};"
             estilo_btn_prim = f"background-color: {cor['cor_botao_video']}; color: {cor['cor_fonte_botoes']}; border: 1px solid {cor['cor_da_borda_botao_video']};"
             estilo_btn_prim_hover = f"background-color: {cor['cor_botao_video_hover']};"
+
+        # Campo de links, vidro translúcido nos temas de vidro, cor sólida nos outros temas
+        fundo_campo = VIDRO_TEMAS[estado.tema_atual]["campo"] if estado.tema_atual in VIDRO_TEMAS else cor["cor_barra_de_pesquisa"]
 
         self.setStyleSheet(f"""
             QDialog {{
@@ -295,7 +331,7 @@ class DialogoSequencial(QDialog):
                 font-weight: 600;
             }}
             QPlainTextEdit#campoLinks, QListWidget#listaLinks {{
-                background-color: {cor["cor_barra_de_pesquisa"]};
+                background-color: {fundo_campo};
                 color: {cor["cor_texto_caixa_de_pesquisa"]};
                 border: 1px solid {cor["cor_borda_card"]};
                 border-radius: 10px;
@@ -378,6 +414,13 @@ class DialogoPlataformas(QDialog):
         self.lbl_aviso.setObjectName("textoAviso")
         layout_principal.addWidget(self.lbl_aviso)
 
+    def paintEvent(self, event):
+        
+        # Nos temas de vidro, o fundo da janela é a cena do tema (parada), e os painéis de vidro ficam por cima
+        if estado.tema_atual in VIDRO_TEMAS:
+            pintar_fundo_cena(self)
+        super().paintEvent(event)
+
     def atualizar_textos_e_tema(self):
         cor = TEMAS[estado.tema_atual]
         self.setWindowTitle(TITULO_JANELA)  # Barra com o título fixo do app (o nome da janela já aparece no título interno)
@@ -386,6 +429,7 @@ class DialogoPlataformas(QDialog):
         self.botao_lista_oficial.setIcon(carregar_icone_tematico(icone_github(cor), cor_hex=None))
         self.lbl_aviso.setText(DICIONARIO_IDIOMAS["plataformas_aviso"][estado.idioma_atual])
 
+        estilo_aviso = ""  # Por padrão o aviso fica direto sobre o fundo, sem painel
         if estado.tema_atual == "Frutiger Aero":
             estilo_fundo = "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #BEE5FF, stop:0.5 #DEF3FF, stop:1 #C2F2D7);"
             estilo_card = "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(235, 248, 255, 0.78), stop:0.5 rgba(210, 240, 255, 0.58), stop:1 rgba(190, 232, 255, 0.72)); border: 1.5px solid rgba(135, 200, 245, 0.80); border-radius: 14px;"
@@ -396,6 +440,15 @@ class DialogoPlataformas(QDialog):
             estilo_card = "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(46, 54, 68, 0.90), stop:0.5 rgba(34, 40, 52, 0.84), stop:1 rgba(24, 28, 38, 0.92)); border: 1px solid rgba(162, 185, 215, 0.85); border-radius: 14px;"
             estilo_btn = "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #647796, stop:0.48 #485975, stop:0.52 #37465F, stop:1 #435470); color: #FFFFFF; border: 1px solid #8FA3BF; border-radius: 10px; padding: 8px 16px; font-weight: bold;"
             estilo_btn_hover = "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #788EAF, stop:0.48 #586C8C, stop:0.52 #455776, stop:1 #536886); border: 1px solid #B0C4DE;"
+        elif estado.tema_atual in VIDRO_TEMAS:
+            estilo_fundo = f"background-color: {cor['cor_fundo_janela']};"
+            estilo_card = painel_vidro()
+            estilo_btn = botao_vidro(1) + " border-radius: 10px; padding: 8px 16px; font-weight: bold;"
+            estilo_btn_hover = botao_vidro(1, hover=True)
+            
+            # No 'Time Moves Slow', o aviso cai sobre as casas iluminadas, então ganha um painel de vidro próprio para a leitura
+            if estado.tema_atual == "Time Moves Slow":
+                estilo_aviso = painel_vidro() + " padding: 6px 12px;"
         else:
             estilo_fundo = f"background-color: {cor['cor_fundo_janela']};"
             estilo_card = f"background-color: {cor['cor_card']}; border: 1px solid {cor['cor_borda_card']}; border-radius: 14px;"
@@ -432,6 +485,7 @@ class DialogoPlataformas(QDialog):
                 font-size: 11px;
                 font-style: italic;
                 padding-top: 4px;
+                {estilo_aviso}
             }}
         """)
 
@@ -845,6 +899,13 @@ class DialogoConfiguracoes(QDialog):
                     DICIONARIO_IDIOMAS["msg_erro_salvar_config"][estado.idioma_atual]
                 )
 
+    def paintEvent(self, event):
+        
+        # Nos temas de vidro, o fundo da janela é a cena do tema (parada), e os painéis de vidro ficam por cima
+        if estado.tema_atual in VIDRO_TEMAS:
+            pintar_fundo_cena(self)
+        super().paintEvent(event)
+
     def atualizar_textos_e_tema(self):
         cor = TEMAS[estado.tema_atual]
 
@@ -938,10 +999,25 @@ class DialogoConfiguracoes(QDialog):
             estilo_btn_sec_hover = "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #788EAF, stop:0.48 #586C8C, stop:0.52 #455776, stop:1 #536886); border: 1px solid #B0C4DE;"
             estilo_btn_prim = "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7592B8, stop:0.48 #547298, stop:0.52 #405C80, stop:1 #4D6B90); color: #FFFFFF; border: 1px solid #A2B9D7; border-radius: 10px; padding: 8px 22px;"
             estilo_btn_prim_hover = "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8BA7CE, stop:0.48 #6584AB, stop:0.52 #4F6F94, stop:1 #6080A5); border: 1px solid #C4D7F0;"
+        elif estado.tema_atual in VIDRO_TEMAS:
+            vidro = VIDRO_TEMAS[estado.tema_atual]
+            estilo_fundo = f"background-color: {cor['cor_fundo_janela']};"
+            estilo_card = painel_vidro()
+            
+            # vidro discreto, a aba aberta fica mais clara e com a borda na cor de destaque, como um painel aceso
+            estilo_tab = f"background: {vidro['aba']}; color: {cor['cor_texto_secundario']}; border: 1px solid {vidro['aba_borda']}; border-radius: 9px;"
+            estilo_tab_hover = f"background: {vidro['aba_hover']}; color: {cor['cor_do_texto']}; border: 1px solid {vidro['borda_bolha']};"
+            estilo_tab_selected = vidro["bolha_2"] + f" color: #FFFFFF; border: 1px solid {vidro['destaque']}; border-radius: 9px;"
+            estilo_combo = botao_vidro(1) + " border-radius: 9px; padding: 4px 30px 4px 14px;"
+            estilo_combo_hover = botao_vidro(1, hover=True)
+            estilo_btn_sec = botao_vidro(1) + " border-radius: 10px; padding: 8px 18px;"
+            estilo_btn_sec_hover = botao_vidro(1, hover=True)
+            estilo_btn_prim = botao_vidro(2) + " border-radius: 10px; padding: 8px 22px;"
+            estilo_btn_prim_hover = botao_vidro(2, hover=True)
         else:
             estilo_fundo = f"background-color: {cor['cor_fundo_janela']};"
             estilo_card = f"background-color: {cor['cor_card']}; border: 1px solid {cor['cor_borda_card']}; border-radius: 14px;"
-            estilo_tab = f"background-color: {cor['cor_card']}; color: {cor['cor_texto_secundario']}; border: 1px solid {cor['cor_borda_card']}; border-radius: 9px;"
+            estilo_tab =f"background-color: {cor['cor_card']}; color: {cor['cor_texto_secundario']}; border: 1px solid {cor['cor_borda_card']}; border-radius: 9px;"
             estilo_tab_hover = f"background-color: {cor['cor_do_hover_dropdown']}; color: {cor['cor_do_texto']};"
             estilo_tab_selected = f"background-color: {cor['cor_botao_video']}; color: {cor['cor_fonte_botoes']}; border: 1px solid {cor['cor_da_borda_botao_video']}; border-radius: 9px;"
             estilo_combo = f"background-color: {cor['cor_botao_audio']}; color: {cor['cor_fonte_botoes']}; border: 1px solid {cor['cor_da_borda_botao_audio']}; border-radius: 8px; padding: 4px 30px 4px 14px;"

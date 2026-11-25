@@ -165,6 +165,38 @@ def erro_disco_cheio(erro):
             erro = erro.__cause__ or erro.__context__
     return False
 
+# --- Tradução de Erros para o Usuário ---
+# O yt-dlp devolve mensagens técnicas em inglês (ex: "ERROR: [youtube] abc: Private video. Sign in if...")
+# Esta lista liga trechos dessas mensagens a uma chave do dicionário de idiomas, com um texto amigável e traduzido
+# A ordem importa e a primeira categoria que bater vence (ex: "Private video. Sign in..." deve virar "indisponível", não "login")
+CATEGORIAS_ERRO = [
+    ("erro_ao_vivo",       ["live event will begin", "premieres in", "this live event", "is upcoming", "will begin in"]),
+    ("erro_drm",           ["drm"]),
+    ("erro_regiao",        ["not available in your country", "in your country", "from your location", "geo restrict", "geo-restrict"]),
+    ("erro_bloqueio",      ["http error 429", "too many requests", "rate-limit", "rate limit", "http error 403", "forbidden"]),
+    ("erro_indisponivel",  ["private video", "this video is private", "has been removed", "http error 404", "http error 410"]),
+    ("erro_login",         ["sign in", "log in", "logged-in", "logged in", "login", "confirm your age", "age-restricted", "age restricted",
+                            "inappropriate for some users", "members-only", "members only", "join this channel", "cookies", "authentication",
+                            "purchase", "payment", "rental", "premium"]),
+    ("erro_formato",       ["requested format is not available", "format is not available", "no video formats found", "no formats found"]),
+    ("erro_conversao",     ["ffmpeg", "ffprobe", "postprocessing", "conversion failed", "invalid data found"]),  # Antes de "not found", por causa do "ffmpeg not found"
+    ("erro_indisponivel",  ["unavailable", "does not exist", "not found", "been deleted", "terminated", "no longer available"]),
+    ("erro_conexao",       ["unable to download", "getaddrinfo", "name or service not known", "temporary failure in name resolution",
+                            "timed out", "connection", "network is unreachable", "urlopen error", "http error 5", "ssl"]),
+    ("erro_link_invalido", ["unsupported url", "is not a valid url", "not a valid url"]),
+    ("erro_permissao",     ["permission denied", "errno 13", "read-only file system", "errno 30", "access is denied", "winerror 5"]),
+]
+
+def classificar_erro(mensagem):
+
+    # Devolve a chave do dicionário de idiomas com a explicação amigável do erro (ou a genérica, se nenhuma bater)
+    texto = str(mensagem).lower()
+    
+    for chave, trechos in CATEGORIAS_ERRO:
+        if any(trecho in texto for trecho in trechos):
+            return chave
+    return "erro_desconhecido"
+
 def espaco_livre(*pastas):
 
     # Devolve o menor espaço livre (em bytes) entre as pastas informadas (a pasta temporária e a de destino)
