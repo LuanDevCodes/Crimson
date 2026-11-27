@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue" alt="License: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Release-v4.2.0-brightgreen" alt="Release: v4.2.0">
+  <img src="https://img.shields.io/badge/Release-v4.3.0-brightgreen" alt="Release: v4.3.0">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/GUI-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
   <img src="https://img.shields.io/badge/Engine-yt--dlp%20%7C%20FFmpeg-E50914" alt="Engine: yt-dlp & FFmpeg">
@@ -23,7 +23,7 @@ The software autonomously manages its underlying extraction engine, performing a
 
 ## ❏ Graphical Interface & Themes
 
-### → Release 4.2.0 (Current)
+### → Release 4.3.0 (Current)
 <div align="center">
   <p><b>Main Window Overview (Frutiger Aero Theme - PySide6)</b></p>
   <img src="Screenshots/Crimson_main_window.png" alt="Crimson Main Window" width="85%">
@@ -76,7 +76,6 @@ The software autonomously manages its underlying extraction engine, performing a
 - **Disk-Full Protection**: When the disk runs out of space, the download is paused instead of failing and can be resumed after freeing some space.
 - **Friendly Error Messages**: When a download fails, Crimson shows a short, translated explanation (unsupported link, private or removed content, login required, region-locked, DRM-protected, temporarily blocked by the site, quality or format unavailable, conversion failure, connection problem, live stream not started, or no permission to write to the folder) instead of the technical message, which is kept only in the error log.
 - **Direct Stream Multiplexing (FFmpeg)**: Video and audio channels are merged without re-encoding overhead whenever possible, preserving CPU cycles and completing conversions in seconds.
-- **Real-Time Internationalization (45 Native Languages)**: Full native support for 45 languages sorted alphabetically, including Amharic, Arabic, Bambara, Bengali, Catalan, Chinese (Simplified and Traditional), Czech, Dutch, English, Filipino, French, German, Greek, Hausa, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Latin, Malay, Marathi, Nepali, Norwegian, Persian, Polish, Portuguese, Quechua, Romanian, Russian, Spanish, Swahili, Swedish, Tamil, Telugu, Thai, Turkish, Ukrainian, Urdu, Uzbek, Vietnamese, Yoruba, and Zulu. Languages can be switched on the fly without restarting.
 - **Visual Identity & 9 Dynamic Themes**: Curated aesthetic options including the signature **Frutiger Aero** (featuring animated bubbles, sky gradients, and glossy Aqua glassmorphism), **Dark**, **Egg**, **Matcha**, **Savage**, and **Platinum Disc**, plus three animated glass themes: **Star Hunter** (deep space), **Komoki** (ancient forest with water) and **Time Moves Slow** (pixel art countryside at sunset), with a built-in animation toggle switch for zero-CPU static mode.
 - **Hardware Optimization for Low-End PCs**:
   - *In-Memory Icon Cache*: Image assets are read from disk only once; subsequent lookups take microseconds directly from RAM.
@@ -90,55 +89,27 @@ The software autonomously manages its underlying extraction engine, performing a
 - **Context Menus**: Right-click actions for quick Paste and Clear operations on the URL input bar.
 - **Customized Scrollbars**: Discreet, slim vertical scrollbars styled to match the active theme across extensive dropdown lists.
 
-## ಄ Supported Languages (45 Native Languages)
+## ಄ Supported Languages (58 Native Languages)
 
-| Language | Code | Status |
-|---|---|---|
-| አማርኛ (Amharic) | `Amharic` | [✓] Complete |
-| &lrm;العربية (Arabic) | `Arabic` | [✓] Complete |
-| Bamanankan (Bambara) | `Bambara` | [✓] Complete |
-| বাংলা (Bengali) | `Bengali` | [✓] Complete |
-| Català (Catalan) | `Catalan` | [✓] Complete |
-| 中文 (Simplified Mandarin) | `Chinese` | [✓] Complete |
-| Čeština (Czech) | `Czech` | [✓] Complete |
-| Nederlands (Dutch) | `Dutch` | [✓] Complete |
-| English | `English` | [✓] Complete |
-| Filipino / Tagalog | `Filipino` | [✓] Complete |
-| Français (French) | `French` | [✓] Complete |
-| Deutsch (German) | `German` | [✓] Complete |
-| Ελληνικά (Greek) | `Greek` | [✓] Complete |
-| Harshen Hausa (Hausa) | `Hausa` | [✓] Complete |
-| हिन्दी (Hindi) | `Hindi` | [✓] Complete |
-| Magyar (Hungarian) | `Hungarian` | [✓] Complete |
-| Bahasa Indonesia | `Indonesian` | [✓] Complete |
-| Italiano (Italian) | `Italian` | [✓] Complete |
-| 日本語 (Japanese) | `Japanese` | [✓] Complete |
-| 한국어 (Korean) | `Korean` | [✓] Complete |
-| Latina (Latin) | `Latin` | [✓] Complete |
-| Bahasa Melayu (Malay) | `Malay` | [✓] Complete |
-| मराठी (Marathi) | `Marathi` | [✓] Complete |
-| नेपाली (Nepali) | `Nepali` | [✓] Complete |
-| Norsk (Norwegian) | `Norwegian` | [✓] Complete |
-| &lrm;فارسی (Persian) | `Persian` | [✓] Complete |
-| Polski (Polish) | `Polish` | [✓] Complete |
-| Português (Brasil) | `Portuguese` | [✓] Complete |
-| Runasimi (Quechua) | `Quechua` | [✓] Complete |
-| Română (Romanian) | `Romanian` | [✓] Complete |
-| Русский (Russian) | `Russian` | [✓] Complete |
-| Español | `Spanish` | [✓] Complete |
-| Kiswahili (Swahili) | `Swahili` | [✓] Complete |
-| Svenska (Swedish) | `Swedish` | [✓] Complete |
-| தமிழ் (Tamil) | `Tamil` | [✓] Complete |
-| తెలుగు (Telugu) | `Telugu` | [✓] Complete |
-| ไทย (Thai) | `Thai` | [✓] Complete |
-| 繁體中文 (Traditional Chinese) | `Traditional Chinese` | [✓] Complete |
-| Türkçe (Turkish) | `Turkish` | [✓] Complete |
-| Українська (Ukrainian) | `Ukrainian` | [✓] Complete |
-| &lrm;اردو (Urdu) | `Urdu` | [✓] Complete |
-| Oʻzbekcha (Uzbek) | `Uzbek` | [✓] Complete |
-| Tiếng Việt (Vietnamese) | `Vietnamese` | [✓] Complete |
-| Yorùbá (Yoruba) | `Yoruba` | [✓] Complete |
-| isiZulu (Zulu) | `Zulu` | [✓] Complete |
+All 58 languages are fully translated, and the in-app menu shows each one by its native name.
+
+<table>
+  <tr><td>አማርኛ (Amharic)</td><td>&lrm;العربية (Arabic)</td><td>Bamanankan (Bambara)</td><td>বাংলা (Bengali)</td></tr>
+  <tr><td>Български (Bulgarian)</td><td>Català (Catalan)</td><td>中文 (Simplified Mandarin)</td><td>Hrvatski (Croatian)</td></tr>
+  <tr><td>Čeština (Czech)</td><td>Dansk (Danish)</td><td>Nederlands (Dutch)</td><td>English</td></tr>
+  <tr><td>Eesti (Estonian)</td><td>Filipino / Tagalog</td><td>Suomi (Finnish)</td><td>Français (French)</td></tr>
+  <tr><td>Deutsch (German)</td><td>Ελληνικά (Greek)</td><td>ગુજરાતી (Gujarati)</td><td>Harshen Hausa (Hausa)</td></tr>
+  <tr><td>हिन्दी (Hindi)</td><td>Magyar (Hungarian)</td><td>Bahasa Indonesia</td><td>Italiano (Italian)</td></tr>
+  <tr><td>日本語 (Japanese)</td><td>ಕನ್ನಡ (Kannada)</td><td>한국어 (Korean)</td><td>Latina (Latin)</td></tr>
+  <tr><td>Latviešu (Latvian)</td><td>Lietuvių (Lithuanian)</td><td>Bahasa Melayu (Malay)</td><td>മലയാളം (Malayalam)</td></tr>
+  <tr><td>मराठी (Marathi)</td><td>नेपाली (Nepali)</td><td>Norsk (Norwegian)</td><td>&lrm;فارسی (Persian)</td></tr>
+  <tr><td>Polski (Polish)</td><td>Português (Brasil)</td><td>ਪੰਜਾਬੀ (Punjabi)</td><td>Runasimi (Quechua)</td></tr>
+  <tr><td>Română (Romanian)</td><td>Русский (Russian)</td><td>Српски (Serbian)</td><td>Slovenčina (Slovak)</td></tr>
+  <tr><td>Español</td><td>Kiswahili (Swahili)</td><td>Svenska (Swedish)</td><td>தமிழ் (Tamil)</td></tr>
+  <tr><td>తెలుగు (Telugu)</td><td>ไทย (Thai)</td><td>繁體中文 (Traditional Chinese)</td><td>Türkçe (Turkish)</td></tr>
+  <tr><td>Українська (Ukrainian)</td><td>&lrm;اردو (Urdu)</td><td>Oʻzbekcha (Uzbek)</td><td>Tiếng Việt (Vietnamese)</td></tr>
+  <tr><td>Yorùbá (Yoruba)</td><td>isiZulu (Zulu)</td></tr>
+</table>
 
 Translation reviews by native speakers are very welcome: if you find a term that sounds unnatural in your language, please open an issue.
 
@@ -206,7 +177,7 @@ Since V.4.0.0, Crimson is a modular Python package (`crimson/`) with its own bui
 | `crimson/dialogos.py` | Settings/About and Supported Platforms dialogs |
 | `crimson/widgets.py` | Custom widgets (dropdown, progress bar, switch, animated background) |
 | `crimson/motor.py` | yt-dlp and FFmpeg download engine, pause mechanism and process cleanup |
-| `crimson/idiomas.py` / `crimson/temas.py` | The 45 translations and the 9 visual themes |
+| `crimson/idiomas.py` / `crimson/temas.py` | The 58 translations and the 9 visual themes |
 | `crimson/config.py` / `crimson/estado.py` | Saved settings, paths and shared state |
 | `crimson/icones.py` | Icon loading and theme recoloring |
 | `data/` | Desktop entry and AppStream metadata for Linux |

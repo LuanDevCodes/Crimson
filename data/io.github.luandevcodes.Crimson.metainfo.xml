@@ -31,7 +31,7 @@
       <li>Download a single media link or an entire playlist, or queue up to 50 links with Sequential Archiving</li>
       <li>Save directly to a default folder, pause and resume transfers, and get a warning when the disk runs out of space</li>
       <li>Customize the interface with nine curated visual themes, including Frutiger Aero and the animated glass themes</li>
-      <li>Switch instantly between 45 supported languages at runtime</li>
+      <li>Switch instantly between 58 supported languages at runtime</li>
     </ul>
   </description>
 
@@ -41,36 +41,46 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_main_window.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.3.0/Screenshots/Crimson_main_window.png</image>
       <caption>Main download interface in the Frutiger Aero theme</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_download_progress.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.3.0/Screenshots/Crimson_download_progress.png</image>
       <caption>Live download progress with transfer speed and time remaining</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_sequential_archiving.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.3.0/Screenshots/Crimson_sequential_archiving.png</image>
       <caption>Sequential Archiving queue for downloading several links one after another</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_settings_tab.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.3.0/Screenshots/Crimson_settings_tab.png</image>
       <caption>System tab with language, theme and animation settings</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_advanced_tab.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.3.0/Screenshots/Crimson_advanced_tab.png</image>
       <caption>Advanced tab with download quality, playlist and default folder options</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_about_tab.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.3.0/Screenshots/Crimson_about_tab.png</image>
       <caption>About tab with license information and credits</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.2.0/Screenshots/Crimson_supported_platforms.png</image>
+      <image>https://raw.githubusercontent.com/LuanDevCodes/Crimson/V.4.3.0/Screenshots/Crimson_supported_platforms.png</image>
       <caption>Dialog linking to the list of supported media platforms</caption>
     </screenshot>
   </screenshots>
 
   <releases>
+    <release version="4.3.0" date="2026-11-26">
+      <description>
+        <p>13 new languages and a friendlier language menu:</p>
+        <ul>
+          <li>New languages: Bulgarian, Croatian, Danish, Estonian, Finnish, Gujarati, Kannada, Latvian, Lithuanian, Malayalam, Punjabi, Serbian and Slovak, for a total of 58</li>
+          <li>The language menu now shows each language by its native name, sorted like GNOME</li>
+          <li>The settings window now grows to fit languages with longer texts instead of cutting them off</li>
+        </ul>
+      </description>
+    </release>
     <release version="4.2.0" date="2026-11-24">
       <description>
         <p>New visual themes and clearer error messages:</p>

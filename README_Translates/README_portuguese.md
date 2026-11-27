@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="../LICENSE"><img src="https://img.shields.io/badge/Licença-GPLv3-blue" alt="Licença: GPLv3"></a>
-  <img src="https://img.shields.io/badge/Versão-v4.2.0-brightgreen" alt="Versão: v4.2.0">
+  <img src="https://img.shields.io/badge/Versão-v4.3.0-brightgreen" alt="Versão: v4.3.0">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/Interface-PySide6%20(Qt6)-41CD52?logo=qt&logoColor=white" alt="PySide6 Qt6">
   <img src="https://img.shields.io/badge/Motor-yt--dlp%20%7C%20FFmpeg-E50914" alt="Motor: yt-dlp & FFmpeg">
@@ -21,7 +21,7 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 
 ## ❏ Interface Visual
 
-### → Release 4.2.0 (Atual)
+### → Release 4.3.0 (Atual)
 <div align="center">
   <p><b>Visão Geral da Nova Interface (Tema Frutiger Aero - PySide6)</b></p>
   <img src="../Screenshots/Crimson_main_window.png" alt="Janela Principal do Crimson" width="85%">
@@ -74,7 +74,6 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 - **Proteção Contra Disco Cheio**: Quando o disco enche, o download é pausado em vez de falhar, e pode ser retomado depois de liberar espaço.
 - **Mensagens de Erro Amigáveis**: Quando um download falha, o Crimson mostra uma explicação curta e traduzida (link não suportado, conteúdo privado ou removido, login exigido, bloqueio por região, proteção contra cópia (DRM), bloqueio temporário do site, qualidade ou formato indisponível, falha na conversão, problema de conexão, transmissão ao vivo que ainda não começou ou falta de permissão para gravar na pasta) no lugar da mensagem técnica, que fica guardada apenas no registro de erros.
 - **Conversão por Fator Externo (FFmpeg)**: O motor de extração puxa nativamente os vídeos na melhor qualidade, mas geralmente separadamente da faixa de áudio de alta resolução. O Crimson aciona o FFmpeg de maneira integrada para mesclar essas duas camadas ou convertê-las para formatos específicos.
-- **Internacionalização Completa em Tempo Real (45 Idiomas Nativos)**: Suporte integral a 45 idiomas organizados em ordem alfabética (Amárico, Árabe, Bambara, Bengali, Catalão, Chinês Simplificado e Tradicional, Tcheco, Holandês, Inglês, Filipino, Francês, Alemão, Grego, Hauçá, Hindi, Húngaro, Indonésio, Italiano, Japonês, Coreano, Latim, Malaio, Marati, Nepalês, Norueguês, Persa, Polonês, Português, Quíchua, Romeno, Russo, Espanhol, Suaíli, Sueco, Tâmil, Telugu, Tailandês, Turco, Ucraniano, Urdu, Uzbeque, Vietnamita, Iorubá e Zulu). A troca é instantânea pelo Painel de Configurações, sem necessidade de reiniciar.
 - **Identidade Visual e 9 Temas Dinâmicos**: O aplicativo suporta variações completas de tema com paletas harmoniosas: `Frutiger Aero` (tema principal com bolhas animadas e vidro Aqua 3D), `Dark` (escuro moderno), `Egg` (creme aconchegante), `Matcha` (verde suave), `Savage` (vermelho vivo e carmesim puro), `Platinum Disc` (cinza titânio metálico) e três temas animados de vidro: `Star Hunter` (espaço profundo), `Komoki` (floresta antiga com água) e `Time Moves Slow` (interior em pixel art ao pôr do sol), além de contar com um interruptor (switch) dedicado para desativar animações quando desejado.
 - **Eficiência Extrema para Computadores Modestos**:
   - *Cache em RAM de Ícones*: O disco só é lido uma única vez; acessos subsequentes ocorrem em microssegundos direto da memória.
@@ -86,55 +85,27 @@ O Crimson é uma aplicação desenvolvida em Python com uma interface gráfica m
 - **Controle de Instâncias (Anti-Spam)**: As janelas do sistema (como as Plataformas e Configurações) possuem um bloqueio inteligente e modal que impede a abertura simultânea de dezenas de abas ao clicar repetidas vezes.
 - **Menu de Contexto Intuitivo**: Interaja com a barra de pesquisa usando o botão direito do mouse para *Colar* links ou *Apagar* seleções de texto de forma rápida.
 
-## ಄ Idiomas Suportados (45 Idiomas Nativos)
+## ಄ Idiomas Suportados (58 Idiomas Nativos)
 
-| Idioma | Código | Status |
-|---|---|---|
-| አማርኛ (Amárico) | `Amharic` | [✓] Completo |
-| &lrm;العربية (Árabe) | `Arabic` | [✓] Completo |
-| Bamanankan (Bambara) | `Bambara` | [✓] Completo |
-| বাংলা (Bengali) | `Bengali` | [✓] Completo |
-| Català (Catalão) | `Catalan` | [✓] Completo |
-| 中文 (Mandarim Simplificado) | `Chinese` | [✓] Completo |
-| Čeština (Tcheco) | `Czech` | [✓] Completo |
-| Nederlands (Holandês) | `Dutch` | [✓] Completo |
-| English (Inglês) | `English` | [✓] Completo |
-| Filipino / Tagalog | `Filipino` | [✓] Completo |
-| Français (Francês) | `French` | [✓] Completo |
-| Deutsch (Alemão) | `German` | [✓] Completo |
-| Ελληνικά (Grego) | `Greek` | [✓] Completo |
-| Harshen Hausa (Hauçá) | `Hausa` | [✓] Completo |
-| हिन्दी (Hindi) | `Hindi` | [✓] Completo |
-| Magyar (Húngaro) | `Hungarian` | [✓] Completo |
-| Bahasa Indonesia | `Indonesian` | [✓] Completo |
-| Italiano | `Italian` | [✓] Completo |
-| 日本語 (Japonês) | `Japanese` | [✓] Completo |
-| 한국어 (Sul Coreano) | `Korean` | [✓] Completo |
-| Latina (Latim) | `Latin` | [✓] Completo |
-| Bahasa Melayu (Malaio) | `Malay` | [✓] Completo |
-| मराठी (Marati) | `Marathi` | [✓] Completo |
-| नेपाली (Nepalês) | `Nepali` | [✓] Completo |
-| Norsk (Norueguês) | `Norwegian` | [✓] Completo |
-| &lrm;فارسی (Persa) | `Persian` | [✓] Completo |
-| Polski (Polonês) | `Polish` | [✓] Completo |
-| Português (Brasil) | `Portuguese` | [✓] Completo |
-| Runasimi (Quíchua) | `Quechua` | [✓] Completo |
-| Română (Romeno) | `Romanian` | [✓] Completo |
-| Русский (Russo) | `Russian` | [✓] Completo |
-| Español (Espanhol) | `Spanish` | [✓] Completo |
-| Kiswahili (Suaíli) | `Swahili` | [✓] Completo |
-| Svenska (Sueco) | `Swedish` | [✓] Completo |
-| தமிழ் (Tâmil) | `Tamil` | [✓] Completo |
-| తెలుగు (Telugu) | `Telugu` | [✓] Completo |
-| ไทย (Tailandês) | `Thai` | [✓] Completo |
-| 繁體中文 (Chinês Tradicional) | `Traditional Chinese` | [✓] Completo |
-| Türkçe (Turco) | `Turkish` | [✓] Completo |
-| Українська (Ucraniano) | `Ukrainian` | [✓] Completo |
-| &lrm;اردو (Urdu) | `Urdu` | [✓] Completo |
-| Oʻzbekcha (Uzbeque) | `Uzbek` | [✓] Completo |
-| Tiếng Việt (Vietnamita) | `Vietnamese` | [✓] Completo |
-| Yorùbá (Iorubá) | `Yoruba` | [✓] Completo |
-| isiZulu (Zulu) | `Zulu` | [✓] Completo |
+Os 58 idiomas estão totalmente traduzidos, e o menu do aplicativo mostra cada um pelo seu nome nativo.
+
+<table>
+  <tr><td>አማርኛ (Amárico)</td><td>&lrm;العربية (Árabe)</td><td>Bamanankan (Bambara)</td><td>বাংলা (Bengali)</td></tr>
+  <tr><td>Български (Búlgaro)</td><td>Català (Catalão)</td><td>中文 (Mandarim Simplificado)</td><td>Hrvatski (Croata)</td></tr>
+  <tr><td>Čeština (Tcheco)</td><td>Dansk (Dinamarquês)</td><td>Nederlands (Holandês)</td><td>English (Inglês)</td></tr>
+  <tr><td>Eesti (Estoniano)</td><td>Filipino / Tagalog</td><td>Suomi (Finlandês)</td><td>Français (Francês)</td></tr>
+  <tr><td>Deutsch (Alemão)</td><td>Ελληνικά (Grego)</td><td>ગુજરાતી (Guzerate)</td><td>Harshen Hausa (Hauçá)</td></tr>
+  <tr><td>हिन्दी (Hindi)</td><td>Magyar (Húngaro)</td><td>Bahasa Indonesia</td><td>Italiano</td></tr>
+  <tr><td>日本語 (Japonês)</td><td>ಕನ್ನಡ (Canarês)</td><td>한국어 (Coreano)</td><td>Latina (Latim)</td></tr>
+  <tr><td>Latviešu (Letão)</td><td>Lietuvių (Lituano)</td><td>Bahasa Melayu (Malaio)</td><td>മലയാളം (Malaiala)</td></tr>
+  <tr><td>मराठी (Marati)</td><td>नेपाली (Nepalês)</td><td>Norsk (Norueguês)</td><td>&lrm;فارسی (Persa)</td></tr>
+  <tr><td>Polski (Polonês)</td><td>Português (Brasil)</td><td>ਪੰਜਾਬੀ (Punjabi)</td><td>Runasimi (Quíchua)</td></tr>
+  <tr><td>Română (Romeno)</td><td>Русский (Russo)</td><td>Српски (Sérvio)</td><td>Slovenčina (Eslovaco)</td></tr>
+  <tr><td>Español (Espanhol)</td><td>Kiswahili (Suaíli)</td><td>Svenska (Sueco)</td><td>தமிழ் (Tâmil)</td></tr>
+  <tr><td>తెలుగు (Telugu)</td><td>ไทย (Tailandês)</td><td>繁體中文 (Chinês Tradicional)</td><td>Türkçe (Turco)</td></tr>
+  <tr><td>Українська (Ucraniano)</td><td>&lrm;اردو (Urdu)</td><td>Oʻzbekcha (Uzbeque)</td><td>Tiếng Việt (Vietnamita)</td></tr>
+  <tr><td>Yorùbá (Iorubá)</td><td>isiZulu (Zulu)</td></tr>
+</table>
 
 Revisões de tradução feitas por falantes nativos são muito bem-vindas: se encontrar um termo que soe estranho no seu idioma, abra uma issue.
 
@@ -198,7 +169,7 @@ Desde a V.4.0.0, o Crimson é um pacote Python modular (`crimson/`) com sistema 
 | `crimson/dialogos.py` | Janelas de Configurações/Sobre e de Plataformas Suportadas |
 | `crimson/widgets.py` | Widgets personalizados (dropdown, barra de progresso, interruptor e fundo animado) |
 | `crimson/motor.py` | Motor de download (yt-dlp e FFmpeg), mecanismo de pausa e limpeza de processos |
-| `crimson/idiomas.py` / `crimson/temas.py` | As 45 traduções e os 9 temas visuais |
+| `crimson/idiomas.py` / `crimson/temas.py` | As 58 traduções e os 9 temas visuais |
 | `crimson/config.py` / `crimson/estado.py` | Configurações salvas, caminhos e estado compartilhado |
 | `crimson/icones.py` | Carregamento e recoloração dos ícones |
 | `data/` | Atalho (`.desktop`) e metadados AppStream para Linux |

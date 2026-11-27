@@ -17,7 +17,7 @@ from crimson import TITULO_JANELA
 from crimson.config import registrar_erro, salvar_configuracoes
 from crimson.estado import estado
 from crimson.temas import TEMAS, VIDRO_TEMAS, estilo_lista_dropdown, estilo_desativado, icone_github
-from crimson.idiomas import IDIOMAS_SUPORTADOS, DICIONARIO_IDIOMAS
+from crimson.idiomas import IDIOMAS_ORDEM_MENU, NOMES_NATIVOS, DICIONARIO_IDIOMAS
 from crimson.icones import carregar_pixmap_icone, carregar_icone_tematico
 from crimson.motor import encerrar_processos_filhos, QUALIDADES_AUDIO, QUALIDADES_VIDEO
 from crimson.widgets import ComboBoxModerno, BotaoSwitchTema, pintar_fundo_cena
@@ -501,6 +501,15 @@ class DialogoConfiguracoes(QDialog):
         self.setMinimumSize(450, 500)
         self.construir_ui()
         self.atualizar_textos_e_tema()
+        self.ajustar_tamanho()
+
+    def ajustar_tamanho(self):
+
+        # A janela abre com 450 x 500, mas idiomas de textos longos (ex: malaiala) precisam de mais espaço
+        # Como o setMinimumSize acima substitui o mínimo calculado pelo layout, o Qt não alarga a janela sozinho
+        # Aqui ela cresce só o necessário para o conteúdo caber (nunca diminui, para respeitar quem esticou a janela)
+        self.layout().activate()
+        self.resize(self.size().expandedTo(self.minimumSizeHint()))
 
     def construir_ui(self):
         layout_principal = QVBoxLayout(self)
@@ -530,9 +539,11 @@ class DialogoConfiguracoes(QDialog):
         self.label_idioma.setObjectName("labelSecao")
         layout_prefs.addWidget(self.label_idioma)
 
+        # Cada item mostra o nome nativo do idioma (ex: 'Deutsch') e guarda o nome interno (ex: 'German') no userData
         self.dropdown_idioma = ComboBoxModerno()
-        self.dropdown_idioma.addItems(IDIOMAS_SUPORTADOS)
-        self.dropdown_idioma.setCurrentText(estado.idioma_atual)
+        for idioma in IDIOMAS_ORDEM_MENU:
+            self.dropdown_idioma.addItem(NOMES_NATIVOS[idioma], idioma)
+        self.dropdown_idioma.setCurrentIndex(max(self.dropdown_idioma.findData(estado.idioma_atual), 0))
         self.dropdown_idioma.setFixedWidth(190)
         self.dropdown_idioma.setFixedHeight(38)
         self.dropdown_idioma.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
@@ -846,7 +857,7 @@ class DialogoConfiguracoes(QDialog):
                 registrar_erro("limpar_processos", erro_limpeza)
 
     def confirmar_e_salvar(self):
-        novo_idioma = self.dropdown_idioma.currentText()
+        novo_idioma = self.dropdown_idioma.currentData()  # Nome interno (ex: 'German'), e não o texto exibido ('Deutsch')
         novo_tema = self.dropdown_tema.currentText()
         novo_desativar_anim = self.switch_animacoes.isChecked()
 
@@ -886,6 +897,7 @@ class DialogoConfiguracoes(QDialog):
             self.janela_mae.atualizar_idioma_ui()
             self.janela_mae.aplicar_tema()
             self.atualizar_textos_e_tema()
+            self.ajustar_tamanho()  # O novo idioma ou tema pode precisar de mais espaço
 
             # Só diz "salvo com sucesso" se o arquivo foi gravado de verdade (ex: disco cheio ou sem permissão)
             if salvou:
